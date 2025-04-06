@@ -16,11 +16,13 @@ import com.ad.cookgood.search.presentation.SearchScreen
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CookGoodMavHost(
-   navController: NavHostController
+   navController: NavHostController,
+   paddingValues: PaddingValues,
 ) {
    NavHost(
       navController = navController,
-      startDestination = SearchScreen.ROUTE
+      startDestination = SearchScreen.ROUTE,
+      modifier = Modifier.padding(paddingValues)
    ) {
       composable(route = SearchScreen.ROUTE) {
          SearchScreen()
