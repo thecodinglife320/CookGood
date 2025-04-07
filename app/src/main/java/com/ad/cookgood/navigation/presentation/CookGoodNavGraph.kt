@@ -9,26 +9,37 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.ad.cookgood.mycookbook.presentaion.MyCookBookScreen
+import com.ad.cookgood.myrecipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.MyCookBookScreen
+import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.search.presentation.SearchScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CookGoodMavHost(
+fun CookGoodNavHost(
    navController: NavHostController,
    paddingValues: PaddingValues,
 ) {
    NavHost(
       navController = navController,
-      startDestination = SearchScreen.ROUTE,
+      startDestination = SearchScreen.route,
       modifier = Modifier.padding(paddingValues)
    ) {
-      composable(route = SearchScreen.ROUTE) {
+
+      //search screen
+      composable(route = SearchScreen.route) {
          SearchScreen()
       }
-      composable(route = MyCookBookScreen.ROUTE) {
+
+      //my cook book screen
+      composable(route = MyCookBookScreen.route) {
          MyCookBookScreen()
+      }
+
+      //recipe entry screen
+      composable(route = RecipeEntryScreen.route) {
+         RecipeEntryScreen()
       }
    }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_image">📷 Đăng hình đại diện cho món ăn</string>
+    <string name="recipe_entry_name_label">Tên món</string>
+    <string name="recipe_entry_name_placeholder">Đặc sản Tây Bắc</string>
+
+    <string name="recipe_entry_info_label">Thông tin</string>
+    <string name="recipe_entry_info_placeholder">Chia sẻ đôi điều về món ăn</string>
+
+    <string name="recipe_entry_serving_labelTruoc">Khẩu phần</string>
+    <string name="recipe_entry_serving_labelSau">người</string>
+
+    <!--    <string name="recipe_entry_cook_time_label">Thời gian nấu</string>-->
+    <!--    <string name="recipe_entry_cook_time_placeholder"></string>-->
+</resources>

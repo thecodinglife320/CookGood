@@ -14,6 +14,6 @@ data class BottomNavItem(
 )
 
 val bottomNavItems = listOf(
-   BottomNavItem(R.string.search , Icons.Filled.Search, SearchScreen.ROUTE),
-   BottomNavItem(R.string.mycookbook, Icons.Filled.Face, MyCookBookScreen.ROUTE)
+   BottomNavItem(R.string.search, Icons.Filled.Search, SearchScreen.route),
+   BottomNavItem(R.string.mycookbook, Icons.Filled.Face, MyCookBookScreen.route)
 )
