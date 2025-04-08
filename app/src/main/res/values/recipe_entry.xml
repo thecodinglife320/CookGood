@@ -10,6 +10,9 @@
     <string name="recipe_entry_serving_labelTruoc">Khẩu phần</string>
     <string name="recipe_entry_serving_labelSau">người</string>
 
-    <!--    <string name="recipe_entry_cook_time_label">Thời gian nấu</string>-->
-    <!--    <string name="recipe_entry_cook_time_placeholder"></string>-->
+    <string name="recipe_entry_cook_time_label">Thời gian nấu</string>
+    <string name="minute_label">Tiếng</string>
+    <string name="hour_label">Giờ</string>
+
+    <string name="default00">00</string>
 </resources>

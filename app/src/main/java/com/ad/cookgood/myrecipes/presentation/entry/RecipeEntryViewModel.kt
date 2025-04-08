@@ -8,19 +8,14 @@ class RecipeEntryViewModel : ViewModel() {
 
    //prepare state
    private val _recipeEntryUiState = mutableStateOf(
-      RecipeEntryUiState(
-         name = "",
-         brief = "",
-         serving = 0,
-         cookTime = 0
-      )
+      RecipeEntryUiState()
    )
 
    //expose state
    val recipeEntryUiState: State<RecipeEntryUiState> get() = _recipeEntryUiState
 
-   fun updateUiState(recipeEntryUiState: RecipeEntryUiState) {
-      _recipeEntryUiState.value = recipeEntryUiState
-   }
-
+   fun updateUiState(recipeEntryUiState: RecipeEntryUiState) =
+      let {
+         _recipeEntryUiState.value = recipeEntryUiState
+      }
 }
