@@ -4,7 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,7 +27,7 @@ import com.ad.cookgood.navigation.presentation.CookGoodNavHost
 import com.ad.cookgood.ui.theme.CookGoodTheme
 
 class MainActivity : ComponentActivity() {
-   @OptIn(ExperimentalMaterial3Api::class)
+   @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       enableEdgeToEdge()
@@ -48,7 +50,9 @@ class MainActivity : ComponentActivity() {
             }
 
             Scaffold(
-               modifier = Modifier.fillMaxSize(),
+               modifier = Modifier
+                  .fillMaxSize()
+                  .imePadding(),
                topBar = {
                   if (!isRecipeEntryScreen) {
                      CookGoodAppBar(

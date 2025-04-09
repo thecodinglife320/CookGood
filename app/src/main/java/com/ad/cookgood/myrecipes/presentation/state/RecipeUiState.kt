@@ -1,6 +1,6 @@
-package com.ad.cookgood.myrecipes.presentation.entry
+package com.ad.cookgood.myrecipes.presentation.state
 
-data class RecipeEntryUiState(
+data class RecipeUiState(
    val name: String = "",
    val brief: String = "",
    val servings: String = "",

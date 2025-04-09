@@ -11,8 +11,17 @@
     <string name="recipe_entry_serving_labelSau">người</string>
 
     <string name="recipe_entry_cook_time_label">Thời gian nấu</string>
-    <string name="minute_label">Tiếng</string>
-    <string name="hour_label">Giờ</string>
+    <string name="minute_label">phút</string>
+    <string name="hour_label">tiếng</string>
 
     <string name="default00">00</string>
+    <string name="nguyen_lieu">Nguyên liệu</string>
+    <string name="them_nguyen_lieu">Thêm nguyên liệu</string>
+    <string name="ingredient_entry_place_holder">250g bột</string>
+
+
+    <string name="cach_lam">Cách làm</string>
+    <string name="them_buoc_lam">Thêm bước làm</string>
+    <string name="luu">Lưu</string>
+    <string name="huy">Hủy</string>
 </resources>
