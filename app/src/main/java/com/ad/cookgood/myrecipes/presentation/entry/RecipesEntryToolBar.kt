@@ -9,6 +9,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -16,9 +17,12 @@ import androidx.compose.ui.tooling.preview.Preview
 @Composable
 fun RecipeEntryToolBar(
    modifier: Modifier = Modifier,
-   navigateBack: () -> Unit = {},
    navigateUp: () -> Unit = {},
+   saveRecipe: () -> Unit = {},
 ) {
+
+   val keyboardController = LocalSoftwareKeyboardController.current
+
    TopAppBar(
       modifier = modifier,
       navigationIcon = {
@@ -34,7 +38,8 @@ fun RecipeEntryToolBar(
       actions = {
          IconButton(
             onClick = {
-               navigateBack()
+               keyboardController?.hide()
+               saveRecipe()
             }
          ) {
             Icon(

@@ -13,15 +13,14 @@ import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import com.ad.cookgood.search.presentation.SearchField
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
-fun CookGoodAppBar(
+fun SearchScreenAppBar(
    modifier: Modifier = Modifier,
-   titleAppBar: String = "Tim kiem",
+   titleAppBar: Int,
    //canNavigateBack: Boolean = false,
    //navigateUp: () -> Unit = {},
    textFieldState: TextFieldState = rememberTextFieldState(),
@@ -32,7 +31,7 @@ fun CookGoodAppBar(
       horizontalAlignment = Alignment.CenterHorizontally
    ) {
 
-      TopAppBar(title = { Text(titleAppBar) })
+      TopAppBar(title = { Text(stringResource(titleAppBar)) })
 
       SearchBar(
          state = searchBarState,

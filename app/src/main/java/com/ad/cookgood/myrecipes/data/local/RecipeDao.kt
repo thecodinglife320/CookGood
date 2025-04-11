@@ -7,5 +7,5 @@ import androidx.room.Insert
 interface RecipeDao {
 
    @Insert
-   suspend fun insertRecipe(localRecipe: LocalRecipe)
+   suspend fun insertRecipe(localRecipe: LocalRecipe): Long
 }

@@ -10,6 +10,7 @@ import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 import com.ad.cookgood.myrecipes.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,6 +38,16 @@ class RecipeEntryViewModel @Inject constructor(
    val ingredientsUiState: State<List<IngredientUiState>> get() = _ingredientsUiState
 
    val instructionsUiState: State<List<InstructionUiState>> get() = _instructionsUiState
+
+   //coroutine exception handle
+   private val coroutineExceptionHandler =
+      CoroutineExceptionHandler { _, ex ->
+         ex.printStackTrace()
+         _recipeUiState.value = _recipeUiState.value.copy(
+            error = ex.message
+         )
+      }
+
 
    fun updateRecipeUiState(recipeUiState: RecipeUiState) =
       let {
@@ -76,8 +87,11 @@ class RecipeEntryViewModel @Inject constructor(
    }
 
    fun saveRecipe() {
-      viewModelScope.launch {
-         addRecipeUseCase(_recipeUiState.value.toDomain())
+      viewModelScope.launch(coroutineExceptionHandler) {
+         _recipeUiState.value = _recipeUiState.value.copy(
+            addedRecipeId = addRecipeUseCase(_recipeUiState.value.toDomain()),
+            successMessage = "da luu"
+         )
       }
    }
 }
