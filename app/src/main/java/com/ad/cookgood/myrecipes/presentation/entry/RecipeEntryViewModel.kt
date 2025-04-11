@@ -3,11 +3,20 @@ package com.ad.cookgood.myrecipes.presentation.entry
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
+import com.ad.cookgood.myrecipes.toDomain
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class RecipeEntryViewModel : ViewModel() {
+@HiltViewModel
+class RecipeEntryViewModel @Inject constructor(
+   private val addRecipeUseCase: AddRecipeUseCase,
+) : ViewModel() {
 
    //prepare state
    private val _recipeUiState = mutableStateOf(
@@ -64,5 +73,11 @@ class RecipeEntryViewModel : ViewModel() {
       _instructionsUiState.value = _instructionsUiState.value
          .filterNot { it.id == id }
          .mapIndexed { index, instructionUiState -> instructionUiState.copy(id = index + 1) }
+   }
+
+   fun saveRecipe() {
+      viewModelScope.launch {
+         addRecipeUseCase(_recipeUiState.value.toDomain())
+      }
    }
 }

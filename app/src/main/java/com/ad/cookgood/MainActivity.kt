@@ -25,7 +25,9 @@ import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.navigation.presentation.BottomNavigationBar
 import com.ad.cookgood.navigation.presentation.CookGoodNavHost
 import com.ad.cookgood.ui.theme.CookGoodTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
    @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
    override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,10 +60,14 @@ class MainActivity : ComponentActivity() {
                      CookGoodAppBar(
                         titleAppBar = stringResource(titleAppBarRes)
                      )
-                  } else RecipeEntryToolBar(
-                     navigateBack = { navController.popBackStack() },
-                     navigateUp = { navController.navigateUp() }
-                  )
+                  } else {
+                     RecipeEntryToolBar(
+                        navigateBack = { navController.popBackStack() },
+                        navigateUp = {
+                           navController.navigateUp()
+                        },
+                     )
+                  }
                },
                bottomBar = {
                   if (!isRecipeEntryScreen) {

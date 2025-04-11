@@ -20,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -39,19 +40,27 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ad.cookgood.R
+import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
+import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
+import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 
 @Preview
 @Composable
 fun RecipeEntryScreen(
    modifier: Modifier = Modifier,
+   recipeUiState: RecipeUiState = RecipeUiState(),
+   ingredientsUiState: List<IngredientUiState> = listOf(),
+   instructionsUiState: List<InstructionUiState> = listOf(),
+   updateRecipeUiState: (RecipeUiState) -> Unit = {},
+   updateIngredientUiState: (Int, String) -> Unit = { _, _ -> },
+   updateInstructionUiState: (Int, String) -> Unit = { _, _ -> },
+   removeIngredientUiState: (Int) -> Unit = {},
+   addIngredientUiState: () -> Unit = {},
+   removeInstructionUiState: (Int) -> Unit = {},
+   addInstructionUiState: () -> Unit = {},
+   saveRecipe: () -> Unit = {},
 ) {
-
-   val vm: RecipeEntryViewModel = viewModel()
-   val recipeUiState = vm.recipeUiState.value
-   val ingredientsUiState = vm.ingredientsUiState.value
-   val instructionsUiState = vm.instructionsUiState.value
 
    Column(
       modifier = modifier
@@ -84,9 +93,9 @@ fun RecipeEntryScreen(
          label = R.string.recipe_entry_name_label,
          placeHolder = R.string.recipe_entry_name_placeholder,
          modifier = modifier,
-         value = recipeUiState.name,
-         onValueChange = { name ->
-            vm.updateRecipeUiState(recipeUiState.copy(name = name))
+         value = recipeUiState.title,
+         onValueChange = {
+            updateRecipeUiState(recipeUiState.copy(title = it))
          },
          keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -102,7 +111,7 @@ fun RecipeEntryScreen(
          modifier = modifier.height(150.dp),
          value = recipeUiState.brief,
          onValueChange = { brief ->
-            vm.updateRecipeUiState(recipeUiState.copy(brief = brief))
+            updateRecipeUiState(recipeUiState.copy(brief = brief))
          },
          keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -126,7 +135,7 @@ fun RecipeEntryScreen(
             placeHolder = R.string.default00,
             value = recipeUiState.servings,
             onValueChange = {
-               vm.updateRecipeUiState(recipeUiState.copy(servings = it))
+               updateRecipeUiState(recipeUiState.copy(servings = it))
             },
             keyboardOptions = KeyboardOptions(
                keyboardType = KeyboardType.Number,
@@ -150,7 +159,7 @@ fun RecipeEntryScreen(
             placeHolder = R.string.default00,
             value = recipeUiState.cookTimeHours,
             onValueChange = {
-               vm.updateRecipeUiState(recipeUiState.copy(cookTimeHours = it))
+               updateRecipeUiState(recipeUiState.copy(cookTimeHours = it))
             },
             keyboardOptions = KeyboardOptions(
                keyboardType = KeyboardType.Number,
@@ -164,7 +173,7 @@ fun RecipeEntryScreen(
             placeHolder = R.string.default00,
             value = recipeUiState.cookTimeMinutes,
             onValueChange = {
-               vm.updateRecipeUiState(recipeUiState.copy(cookTimeMinutes = it))
+               updateRecipeUiState(recipeUiState.copy(cookTimeMinutes = it))
             },
             keyboardOptions = KeyboardOptions(
                keyboardType = KeyboardType.Number,
@@ -186,20 +195,20 @@ fun RecipeEntryScreen(
                   placeholder = { Text(stringResource(R.string.ingredient_entry_place_holder)) },
                   value = ingredientUiState.name,
                   onValueChange = {
-                     vm.updateIngredientUiState(ingredientUiState.id, it)
+                     updateIngredientUiState(ingredientUiState.id, it)
                   },
                   modifier = Modifier.weight(1f),
                   singleLine = true,
                )
 
-               IconButton(onClick = { vm.removeIngredientUiState(ingredientUiState.id) }) {
+               IconButton(onClick = { removeIngredientUiState(ingredientUiState.id) }) {
                   Icon(Icons.Default.Delete, contentDescription = null)
                }
             }
          }
 
          OutlinedButton(
-            onClick = { vm.addIngredientUiState() },
+            onClick = { addIngredientUiState() },
          ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
             Text(stringResource(R.string.them_nguyen_lieu))
@@ -222,25 +231,27 @@ fun RecipeEntryScreen(
                OutlinedTextField(
                   value = instructionUiState.name,
                   onValueChange = {
-                     vm.updateInstructionUiState(instructionUiState.id, it)
+                     updateInstructionUiState(instructionUiState.id, it)
                   },
                   modifier = Modifier.weight(1f),
                   singleLine = true,
                )
 
-               IconButton(onClick = { vm.removeInstructionUiState(instructionUiState.id) }) {
+               IconButton(onClick = { removeInstructionUiState(instructionUiState.id) }) {
                   Icon(Icons.Default.Delete, contentDescription = null)
                }
             }
          }
 
          OutlinedButton(
-            onClick = { vm.addInstructionUiState() },
+            onClick = { addInstructionUiState() },
          ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)
             Text(stringResource(R.string.them_buoc_lam))
          }
-
+         Button(onClick = saveRecipe) {
+            Text("save")
+         }
          Spacer(Modifier.height(64.dp))
       }
    }
