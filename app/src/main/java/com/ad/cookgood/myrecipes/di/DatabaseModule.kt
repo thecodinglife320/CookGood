@@ -26,8 +26,6 @@ object DatabaseModule {
    @Provides
    fun provideRecipeDao(database: CookGookDb) = database.recipeDao
 
-//   @Provides
-//   @Singleton
-//   fun provideRecipeRepository(dao: RecipeDao): RecipeRepository =
-//      LocalRecipeRepository(dao)
+   @Provides
+   fun provideIngredientDao(cookGookDb: CookGookDb) = cookGookDb.ingredientDao
 }

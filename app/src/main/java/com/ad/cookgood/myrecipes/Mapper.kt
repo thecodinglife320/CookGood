@@ -1,6 +1,8 @@
 package com.ad.cookgood.myrecipes
 
+import com.ad.cookgood.myrecipes.data.local.LocalIngredient
 import com.ad.cookgood.myrecipes.data.local.LocalRecipe
+import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Recipe
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 
@@ -34,4 +36,10 @@ fun RecipeUiState.toDomain() =
          cookTime = hoursInt * 60 + minutesInt
       )
    }
+
+fun Ingredient.toLocalIngredient(recipeId: Long) =
+   LocalIngredient(
+      name = this.name,
+      recipeId = recipeId.toInt()
+   )
 
