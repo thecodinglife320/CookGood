@@ -4,9 +4,10 @@ import com.ad.cookgood.myrecipes.data.local.LocalIngredient
 import com.ad.cookgood.myrecipes.data.local.LocalRecipe
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Recipe
+import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 
-fun Recipe.toLocalRecipe() =
+fun Recipe.toLocal() =
    LocalRecipe(
       title = this.title,
       brief = this.brief,
@@ -14,7 +15,7 @@ fun Recipe.toLocalRecipe() =
       cookTime = this.cookTime
    )
 
-fun LocalRecipe.toDomainRecipe() =
+fun LocalRecipe.toDomain() =
    Recipe(
       title = this.title,
       brief = this.brief,
@@ -37,9 +38,13 @@ fun RecipeUiState.toDomain() =
       )
    }
 
-fun Ingredient.toLocalIngredient(recipeId: Long) =
+fun Ingredient.toLocal(recipeId: Long) =
    LocalIngredient(
       name = this.name,
       recipeId = recipeId.toInt()
    )
+
+fun IngredientUiState.toDomain() =
+   Ingredient(name = name)
+
 

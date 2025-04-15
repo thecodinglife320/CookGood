@@ -9,7 +9,7 @@ import com.ad.cookgood.myrecipes.data.local.RecipeDao
 import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
 import com.ad.cookgood.myrecipes.domain.model.Recipe
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
-import com.ad.cookgood.myrecipes.toLocalRecipe
+import com.ad.cookgood.myrecipes.toLocal
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
@@ -61,7 +61,7 @@ class AddRecipeUseCaseIntegrationTest {
       assert(recipeId > 0)
 
       val retrievedRecipe = recipeDao.getRecipeById(recipeId)
-      val localRecipe = recipe.toLocalRecipe()
+      val localRecipe = recipe.toLocal()
 
       assertEquals(localRecipe.title, retrievedRecipe?.title)
       assertEquals(localRecipe.brief, retrievedRecipe?.brief)

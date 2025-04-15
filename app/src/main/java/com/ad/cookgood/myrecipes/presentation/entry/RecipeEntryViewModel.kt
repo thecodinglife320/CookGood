@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.myrecipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
@@ -17,6 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class RecipeEntryViewModel @Inject constructor(
    private val addRecipeUseCase: AddRecipeUseCase,
+   private val addIngredientUseCase: AddIngredientUseCase,
 ) : ViewModel() {
 
    //prepare state
@@ -47,7 +49,6 @@ class RecipeEntryViewModel @Inject constructor(
             error = ex.message
          )
       }
-
 
    fun updateRecipeUiState(recipeUiState: RecipeUiState) =
       let {
@@ -88,8 +89,14 @@ class RecipeEntryViewModel @Inject constructor(
 
    fun saveRecipe() {
       viewModelScope.launch(coroutineExceptionHandler) {
+         val recipeId = addRecipeUseCase(_recipeUiState.value.toDomain())
+
+         _ingredientsUiState.value.forEach {
+            addIngredientUseCase(it.toDomain(), recipeId)
+         }
+
          _recipeUiState.value = _recipeUiState.value.copy(
-            addedRecipeId = addRecipeUseCase(_recipeUiState.value.toDomain()),
+            addedRecipeId = recipeId,
             successMessage = "da luu"
          )
       }
