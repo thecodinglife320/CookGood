@@ -75,6 +75,8 @@ class RecipeEntryViewModel @Inject constructor(
    fun addInstructionUiState() {
       val newId = (_instructionsUiState.value.maxOfOrNull { it.id } ?: 0) + 1
       _instructionsUiState.value = _instructionsUiState.value + InstructionUiState(id = newId)
+
+
    }
 
    fun removeIngredientUiState(id: Int) {
