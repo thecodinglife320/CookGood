@@ -60,11 +60,11 @@ fun RecipeEntryScreen(
    ingredientsUiState: List<IngredientUiState> = listOf(),
    instructionsUiState: List<InstructionUiState> = listOf(),
    updateRecipeUiState: (RecipeUiState) -> Unit = {},
-   updateIngredientUiState: (Int, String) -> Unit = { _, _ -> },
-   updateInstructionUiState: (Int, String) -> Unit = { _, _ -> },
-   removeIngredientUiState: (Int) -> Unit = {},
+   updateIngredientUiState: (IngredientUiState, String) -> Unit = { _, _ -> },
+   updateInstructionUiState: (InstructionUiState, String) -> Unit = { _, _ -> },
+   removeIngredientUiState: (IngredientUiState) -> Unit = {},
    addIngredientUiState: () -> Unit = {},
-   removeInstructionUiState: (Int) -> Unit = {},
+   removeInstructionUiState: (InstructionUiState) -> Unit = {},
    addInstructionUiState: () -> Unit = {},
    saveRecipe: () -> Unit = {},
    navigateUp: () -> Unit = {},
@@ -241,13 +241,13 @@ fun RecipeEntryScreen(
                      placeholder = { Text(stringResource(R.string.ingredient_entry_place_holder)) },
                      value = ingredientUiState.name,
                      onValueChange = {
-                        updateIngredientUiState(ingredientUiState.id, it)
+                        updateIngredientUiState(ingredientUiState, it)
                      },
                      modifier = Modifier.weight(1f),
                      singleLine = true,
                   )
 
-                  IconButton(onClick = { removeIngredientUiState(ingredientUiState.id) }) {
+                  IconButton(onClick = { removeIngredientUiState(ingredientUiState) }) {
                      Icon(Icons.Default.Delete, contentDescription = null)
                   }
                }
@@ -267,37 +267,37 @@ fun RecipeEntryScreen(
          ) {
             Text(stringResource(R.string.cach_lam))
 
-            instructionsUiState.forEach { instructionUiState ->
+            instructionsUiState.forEachIndexed { index, instructionUiState ->
                Row(
                   modifier,
                   verticalAlignment = Alignment.CenterVertically
                ) {
-                  CircularText("${instructionUiState.id}")
+                  CircularText("${index + 1}")
                   Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
                   OutlinedTextField(
                      value = instructionUiState.name,
                      onValueChange = {
-                        updateInstructionUiState(instructionUiState.id, it)
+                        updateInstructionUiState(instructionUiState, it)
                      },
                      modifier = Modifier.weight(1f),
                      singleLine = true,
                   )
 
-                  IconButton(onClick = { removeInstructionUiState(instructionUiState.id) }) {
+                  IconButton(onClick = { removeInstructionUiState(instructionUiState) }) {
                      Icon(Icons.Default.Delete, contentDescription = null)
                   }
                }
             }
-
-            OutlinedButton(
-               onClick = { addInstructionUiState() },
-            ) {
-               Icon(imageVector = Icons.Default.Add, contentDescription = null)
-               Text(stringResource(R.string.them_buoc_lam))
-            }
-
-            Spacer(Modifier.height(64.dp))
          }
+
+         OutlinedButton(
+            onClick = { addInstructionUiState() },
+         ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = null)
+            Text(stringResource(R.string.them_buoc_lam))
+         }
+
+         Spacer(Modifier.height(64.dp))
       }
    }
 }
