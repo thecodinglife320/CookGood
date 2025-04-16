@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -100,9 +100,10 @@ fun RecipeEntryScreen(
 
    Scaffold(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-      modifier = modifier.imePadding(),
+      modifier = modifier,
       topBar = {
          RecipeEntryToolBar(
+            modifier = modifier,
             navigateUp = navigateUp,
             saveRecipe = saveRecipe
          )
@@ -110,7 +111,8 @@ fun RecipeEntryScreen(
    ) {
 
       Column(
-         modifier = Modifier
+         modifier = modifier
+            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(it)
       ) {
@@ -144,7 +146,7 @@ fun RecipeEntryScreen(
             onValueChange = {
                updateRecipeUiState(recipeUiState.copy(title = it))
             },
-            keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardOptions = KeyboardOptions(
                capitalization = KeyboardCapitalization.Sentences,
                keyboardType = KeyboardType.Text,
                imeAction = ImeAction.Next,
@@ -160,39 +162,34 @@ fun RecipeEntryScreen(
             onValueChange = { brief ->
                updateRecipeUiState(recipeUiState.copy(brief = brief))
             },
-            keyboardOptions = KeyboardOptions.Default.copy(
+            keyboardOptions = KeyboardOptions(
                capitalization = KeyboardCapitalization.Sentences,
                keyboardType = KeyboardType.Text,
                imeAction = ImeAction.Next,
             )
          )
 
-         val keyboardOptions = remember {
-            KeyboardOptions.Default.copy(
-               keyboardType = KeyboardType.Number,
-               imeAction = ImeAction.Next,
-            )
-         }
-
          //nhap khau phan
          Row(
             modifier,
             verticalAlignment = Alignment.CenterVertically
          ) {
-            Text(
-               stringResource(R.string.recipe_entry_serving_labelTruoc),
-               modifier = Modifier.weight(1f)
-            )
+            Text(stringResource(R.string.recipe_entry_serving_labelTruoc))
+
+            Spacer(modifier = Modifier.weight(1f))
 
             RecipeEntryInput(
-               modifier = Modifier.width(90.dp),
+               modifier = Modifier.width(100.dp),
                label = R.string.recipe_entry_serving_labelSau,
                placeHolder = R.string.default00,
                value = recipeUiState.servings,
                onValueChange = {
                   updateRecipeUiState(recipeUiState.copy(servings = it))
                },
-               keyboardOptions = keyboardOptions
+               keyboardOptions = KeyboardOptions(
+                  keyboardType = KeyboardType.Number,
+                  imeAction = ImeAction.Next,
+               )
             )
          }
 
@@ -206,25 +203,31 @@ fun RecipeEntryScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             RecipeEntryInput(
-               modifier = Modifier.width(90.dp),
+               modifier = Modifier.width(100.dp),
                label = R.string.hour_label,
                placeHolder = R.string.default00,
                value = recipeUiState.cookTimeHours,
                onValueChange = {
                   updateRecipeUiState(recipeUiState.copy(cookTimeHours = it))
                },
-               keyboardOptions = keyboardOptions
+               keyboardOptions = KeyboardOptions(
+                  keyboardType = KeyboardType.Number,
+                  imeAction = ImeAction.Next,
+               )
             )
 
             RecipeEntryInput(
-               modifier = Modifier.width(90.dp),
+               modifier = Modifier.width(100.dp),
                label = R.string.minute_label,
                placeHolder = R.string.default00,
                value = recipeUiState.cookTimeMinutes,
                onValueChange = {
                   updateRecipeUiState(recipeUiState.copy(cookTimeMinutes = it))
                },
-               keyboardOptions = keyboardOptions
+               keyboardOptions = KeyboardOptions(
+                  keyboardType = KeyboardType.Number,
+                  imeAction = ImeAction.Next,
+               )
             )
          }
 

@@ -49,7 +49,7 @@ class AddIngredientUseCaseIntegrationTest {
    fun tearDown() = db.close()
 
    @Test
-   fun invoke_should_insert_ingredient_after_insert_recipe() = runTest {
+   fun invoke_should_insert_ingredient_for_a_given_recipeId() = runTest {
 
       // Arrange
       val recipe = Recipe()

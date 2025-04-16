@@ -38,7 +38,7 @@ class AddRecipeUseCaseTest {
       //dinh nghia hanh vi cua mock repository khi insert recipe
       `when`(recipeRepository.insertRecipe(recipe)).thenReturn(expectedRecipeId)
 
-      //act
+      //thuc te
       val actualRecipeId = addRecipeUseCase.invoke(recipe)
 
       //assert
