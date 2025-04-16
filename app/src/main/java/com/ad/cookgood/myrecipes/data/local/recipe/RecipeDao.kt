@@ -1,4 +1,4 @@
-package com.ad.cookgood.myrecipes.data.local
+package com.ad.cookgood.myrecipes.data.local.recipe
 
 import androidx.room.Dao
 import androidx.room.Insert

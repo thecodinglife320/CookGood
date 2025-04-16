@@ -1,12 +1,15 @@
 package com.ad.cookgood.myrecipes
 
-import com.ad.cookgood.myrecipes.data.local.LocalIngredient
-import com.ad.cookgood.myrecipes.data.local.LocalRecipe
+import com.ad.cookgood.myrecipes.data.local.ingredient.LocalIngredient
+import com.ad.cookgood.myrecipes.data.local.instruction.LocalInstruction
+import com.ad.cookgood.myrecipes.data.local.recipe.LocalRecipe
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
+import com.ad.cookgood.myrecipes.domain.model.Instruction
 import com.ad.cookgood.myrecipes.domain.model.Recipe
+import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 
-fun Recipe.toLocalRecipe() =
+fun Recipe.toLocal() =
    LocalRecipe(
       title = this.title,
       brief = this.brief,
@@ -14,7 +17,7 @@ fun Recipe.toLocalRecipe() =
       cookTime = this.cookTime
    )
 
-fun LocalRecipe.toDomainRecipe() =
+fun LocalRecipe.toDomain() =
    Recipe(
       title = this.title,
       brief = this.brief,
@@ -37,9 +40,20 @@ fun RecipeUiState.toDomain() =
       )
    }
 
-fun Ingredient.toLocalIngredient(recipeId: Long) =
+fun Ingredient.toLocal(recipeId: Long) =
    LocalIngredient(
       name = this.name,
-      recipeId = recipeId.toInt()
+      recipeId = recipeId
    )
+
+fun IngredientUiState.toDomain() =
+   Ingredient(name = name)
+
+fun Instruction.toLocal(recipeId: Long) =
+   LocalInstruction(
+      name = name,
+      strepNumber = stepNumber,
+      recipeId = recipeId
+   )
+
 

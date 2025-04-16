@@ -28,4 +28,7 @@ object DatabaseModule {
 
    @Provides
    fun provideIngredientDao(cookGookDb: CookGookDb) = cookGookDb.ingredientDao
+
+   @Provides
+   fun provideInstructionDao(cookGookDb: CookGookDb) = cookGookDb.instructionDao
 }

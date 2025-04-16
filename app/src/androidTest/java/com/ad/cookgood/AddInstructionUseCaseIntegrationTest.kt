@@ -3,29 +3,22 @@ package com.ad.cookgood
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ad.cookgood.myrecipes.data.local.CookGookDb
 import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
-import com.ad.cookgood.myrecipes.data.local.recipe.RecipeDao
+import com.ad.cookgood.myrecipes.domain.model.Instruction
 import com.ad.cookgood.myrecipes.domain.model.Recipe
+import com.ad.cookgood.myrecipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
-import com.ad.cookgood.myrecipes.toLocalRecipe
-import junit.framework.TestCase.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import org.junit.runner.RunWith
 
-
-@ExperimentalCoroutinesApi
-@RunWith(AndroidJUnit4::class)
-class AddRecipeUseCaseIntegrationTest {
-
+class AddInstructionUseCaseIntegrationTest {
    private lateinit var addRecipeUseCase: AddRecipeUseCase
+   private lateinit var addInstructionUseCase: AddInstructionUseCase
    private lateinit var recipeRepository: RecipeRepositoryImpl
-   private lateinit var recipeDao: RecipeDao
    private lateinit var db: CookGookDb
 
    @Before
@@ -37,9 +30,9 @@ class AddRecipeUseCaseIntegrationTest {
             .allowMainThreadQueries()
             .build()
 
-         recipeDao = db.recipeDao
-         recipeRepository = RecipeRepositoryImpl(recipeDao, db.ingredientDao, db.instructionDao)
+         recipeRepository = RecipeRepositoryImpl(db.recipeDao, db.ingredientDao, db.instructionDao)
          addRecipeUseCase = AddRecipeUseCase(recipeRepository)
+         addInstructionUseCase = AddInstructionUseCase(recipeRepository)
       }
 
    @After
@@ -48,23 +41,22 @@ class AddRecipeUseCaseIntegrationTest {
    }
 
    @Test
-   fun insert_recipe_and_return_id() = runTest {
-      val recipe = Recipe(
-         title = "a",
-         brief = "a",
-         serving = 1,
-         cookTime = 1
-      )
+   fun insert_instruction_after_insert_recipe() = runTest {
 
+      // Arrange
+      val recipe = Recipe()
       val recipeId = addRecipeUseCase.invoke(recipe)
 
-      assert(recipeId > 0)
+      // Act
+      addInstructionUseCase.invoke(Instruction(1, "b1"), recipeId)
+      addInstructionUseCase.invoke(Instruction(2, "b2"), recipeId)
 
-      val retrievedRecipe = recipeDao.getRecipeById(recipeId)
-      val localRecipe = recipe.toLocalRecipe()
-
-      assertEquals(localRecipe.title, retrievedRecipe?.title)
-      assertEquals(localRecipe.brief, retrievedRecipe?.brief)
+      // Assert
+      // Kiểm tra xem instruction đã được insert vào database và liên kết với recipeId hay chưa
+      db.instructionDao.getAllInstruction().also {
+         it.forEach {
+            Assert.assertEquals(recipeId, it.recipeId)
+         }
+      }
    }
-
 }

@@ -1,4 +1,4 @@
-package com.ad.cookgood.myrecipes.data.local
+package com.ad.cookgood.myrecipes.data.local.ingredient
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -14,5 +14,5 @@ interface IngredientDao {
    suspend fun getIngredientById(ingredientId: Long): LocalIngredient?
 
    @Query("select * from ingredients")
-   suspend fun getAllIngredient(): List<LocalIngredient>?
+   suspend fun getAllIngredient(): List<LocalIngredient>
 }

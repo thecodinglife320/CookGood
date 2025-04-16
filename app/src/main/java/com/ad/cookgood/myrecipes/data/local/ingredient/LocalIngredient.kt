@@ -1,10 +1,11 @@
-package com.ad.cookgood.myrecipes.data.local
+package com.ad.cookgood.myrecipes.data.local.ingredient
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import com.ad.cookgood.myrecipes.data.local.recipe.LocalRecipe
 
 @Entity(
    tableName = "ingredients",
@@ -19,7 +20,7 @@ import androidx.room.PrimaryKey
    ], indices = [Index("recipe_id")]
 )
 data class LocalIngredient(
-   @PrimaryKey(autoGenerate = true) val id: Int = 0,
+   @PrimaryKey(autoGenerate = true) val id: Long = 0,
    val name: String,
-   @ColumnInfo(name = "recipe_id") val recipeId: Int,
+   @ColumnInfo(name = "recipe_id") val recipeId: Long,
 )

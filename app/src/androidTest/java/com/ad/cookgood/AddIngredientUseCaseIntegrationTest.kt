@@ -5,8 +5,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ad.cookgood.myrecipes.data.local.CookGookDb
-import com.ad.cookgood.myrecipes.data.local.IngredientDao
 import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
+import com.ad.cookgood.myrecipes.data.local.ingredient.IngredientDao
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Recipe
 import com.ad.cookgood.myrecipes.domain.usecase.AddIngredientUseCase
@@ -38,7 +38,7 @@ class AddIngredientUseCaseIntegrationTest {
          .build().apply {
             db = this
             ingredientDao1 = ingredientDao
-            RecipeRepositoryImpl(recipeDao, ingredientDao).apply {
+            RecipeRepositoryImpl(recipeDao, ingredientDao, db.instructionDao).apply {
                addRecipeUseCase = AddRecipeUseCase(this)
                addIngredientUseCase = AddIngredientUseCase(this)
             }
@@ -61,7 +61,7 @@ class AddIngredientUseCaseIntegrationTest {
 
       // Assert
       // Kiểm tra xem ingredient đã được insert vào database và liên kết với recipeId hay chưa
-      ingredientDao1.getAllIngredient()?.also {
+      ingredientDao1.getAllIngredient().also {
          it.forEach {
             assertEquals(recipeId, it.recipeId.toLong())
          }
