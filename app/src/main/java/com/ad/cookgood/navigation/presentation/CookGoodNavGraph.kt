@@ -64,8 +64,8 @@ fun CookGoodNavHost(
          val vm: RecipeEntryViewModel = hiltViewModel(it)
          RecipeEntryScreen(
             recipeUiState = vm.recipeUiState.value,
-            ingredientsUiState = vm.ingredientsUiState,
-            instructionsUiState = vm.instructionsUiState,
+            ingredientsUiState = vm.ingredientUiStates.value,
+            instructionsUiState = vm.instructionUiStates.value,
             updateRecipeUiState = { vm.updateRecipeUiState(it) },
             updateIngredientUiState = { id, name -> vm.updateIngredientUiState(id, name) },
             updateInstructionUiState = { id, name -> vm.updateInstructionUiState(id, name) },

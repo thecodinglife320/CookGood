@@ -5,9 +5,6 @@
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="AddRecipeUseCaseIntegrationTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="invoke_should_insert_ingredient_after_insert_recipe()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -15,6 +12,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="insert_recipe_and_return_id()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="insert_instruction_after_insert_recipe()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

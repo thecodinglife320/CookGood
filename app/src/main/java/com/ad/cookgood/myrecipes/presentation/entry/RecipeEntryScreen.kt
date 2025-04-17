@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -60,11 +61,11 @@ fun RecipeEntryScreen(
    ingredientsUiState: List<IngredientUiState> = listOf(),
    instructionsUiState: List<InstructionUiState> = listOf(),
    updateRecipeUiState: (RecipeUiState) -> Unit = {},
-   updateIngredientUiState: (IngredientUiState, String) -> Unit = { _, _ -> },
-   updateInstructionUiState: (InstructionUiState, String) -> Unit = { _, _ -> },
-   removeIngredientUiState: (IngredientUiState) -> Unit = {},
+   updateIngredientUiState: (Int, String) -> Unit = { _, _ -> },
+   updateInstructionUiState: (Int, String) -> Unit = { _, _ -> },
+   removeIngredientUiState: (Int) -> Unit = {},
    addIngredientUiState: () -> Unit = {},
-   removeInstructionUiState: (InstructionUiState) -> Unit = {},
+   removeInstructionUiState: (Int) -> Unit = {},
    addInstructionUiState: () -> Unit = {},
    saveRecipe: () -> Unit = {},
    navigateUp: () -> Unit = {},
@@ -100,7 +101,7 @@ fun RecipeEntryScreen(
 
    Scaffold(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-      modifier = modifier,
+      modifier = modifier.imePadding(),
       topBar = {
          RecipeEntryToolBar(
             modifier = modifier,
@@ -244,13 +245,13 @@ fun RecipeEntryScreen(
                      placeholder = { Text(stringResource(R.string.ingredient_entry_place_holder)) },
                      value = ingredientUiState.name,
                      onValueChange = {
-                        updateIngredientUiState(ingredientUiState, it)
+                        updateIngredientUiState(ingredientUiState.id, it)
                      },
                      modifier = Modifier.weight(1f),
                      singleLine = true,
                   )
 
-                  IconButton(onClick = { removeIngredientUiState(ingredientUiState) }) {
+                  IconButton(onClick = { removeIngredientUiState(ingredientUiState.id) }) {
                      Icon(Icons.Default.Delete, contentDescription = null)
                   }
                }
@@ -280,13 +281,13 @@ fun RecipeEntryScreen(
                   OutlinedTextField(
                      value = instructionUiState.name,
                      onValueChange = {
-                        updateInstructionUiState(instructionUiState, it)
+                        updateInstructionUiState(instructionUiState.id, it)
                      },
                      modifier = Modifier.weight(1f),
                      singleLine = true,
                   )
 
-                  IconButton(onClick = { removeInstructionUiState(instructionUiState) }) {
+                  IconButton(onClick = { removeInstructionUiState(instructionUiState.id) }) {
                      Icon(Icons.Default.Delete, contentDescription = null)
                   }
                }

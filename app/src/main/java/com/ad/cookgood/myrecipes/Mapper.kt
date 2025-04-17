@@ -7,6 +7,7 @@ import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Instruction
 import com.ad.cookgood.myrecipes.domain.model.Recipe
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
+import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
 
 fun Recipe.toLocal() =
@@ -54,6 +55,12 @@ fun Instruction.toLocal(recipeId: Long) =
       name = name,
       strepNumber = stepNumber,
       recipeId = recipeId
+   )
+
+fun InstructionUiState.toDomain(stepNumber: Int) =
+   Instruction(
+      stepNumber = stepNumber,
+      name = name
    )
 
 
