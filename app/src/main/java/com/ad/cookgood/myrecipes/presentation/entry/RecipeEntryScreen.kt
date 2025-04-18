@@ -39,34 +39,12 @@ fun RecipeEntryScreen(
    modifier: Modifier = Modifier,
    navigateUp: () -> Unit = {},
    navigateBack: () -> Unit = {},
+   successMessage: String? = null,
+   error: String? = null,
+   vm: RecipeEntryViewModel = hiltViewModel(),
 ) {
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
-   val vm: RecipeEntryViewModel = hiltViewModel()
-
-   vm.recipeUiState.successMessage?.let {
-      scope.launch {
-         val result = snackBarHostState.showSnackbar(
-            message = it,
-            withDismissAction = true,
-            duration = SnackbarDuration.Short
-         )
-         when (result) {
-            SnackbarResult.Dismissed -> navigateBack()
-            SnackbarResult.ActionPerformed -> ""
-         }
-      }
-   }
-
-   vm.recipeUiState.error?.let {
-      scope.launch {
-         snackBarHostState.showSnackbar(
-            message = it,
-            withDismissAction = true,
-            duration = SnackbarDuration.Short
-         )
-      }
-   }
 
    Scaffold(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
@@ -133,7 +111,6 @@ fun RecipeEntryScreen(
             buttonTextRes = R.string.them_nguyen_lieu,
             label = R.string.ingredient_entry_label,
             placeHolder = R.string.ingredient_entry_place_holder,
-            stepNumber = {}
          )
 
          //nhap buoc lam
@@ -152,9 +129,30 @@ fun RecipeEntryScreen(
             commonUiStates = vm.instructionUiStates,
             label = R.string.instruction_entry_label,
             placeHolder = R.string.instruction_entry_placeholder,
-            stepNumber = { stepNumber ->
-               CircularText(stepNumber)
-            }
+         )
+      }
+   }
+
+   successMessage?.let {
+      scope.launch {
+         val result = snackBarHostState.showSnackbar(
+            message = it,
+            withDismissAction = true,
+            duration = SnackbarDuration.Short
+         )
+         when (result) {
+            SnackbarResult.Dismissed -> navigateBack()
+            SnackbarResult.ActionPerformed -> ""
+         }
+      }
+   }
+
+   error?.let {
+      scope.launch {
+         snackBarHostState.showSnackbar(
+            message = it,
+            withDismissAction = true,
+            duration = SnackbarDuration.Short
          )
       }
    }

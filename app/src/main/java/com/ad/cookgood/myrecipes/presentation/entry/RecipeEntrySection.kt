@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.ad.cookgood.R
 import com.ad.cookgood.myrecipes.presentation.state.CommonUiState
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
+import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
 
 @Preview
 @Composable
@@ -140,23 +141,19 @@ fun RecipeEntrySection3(
    ),
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
-   stepNumber: @Composable (String) -> Unit = {},
 ) {
    Column(modifier) {
 
-      //nhap nguyen lieu
       Text(stringResource(textRes))
 
-      commonUiStates.forEach {
-         key(it.id) {
+      commonUiStates.forEach { uiState ->
+         key(uiState.id) {
             CommonEntry(
                onValueChange = { name ->
-                  updateCommonUiState(it, name)
+                  updateCommonUiState(uiState, name)
                },
-               onRemove = { removeCommonUiState(it) },
-               stepNumber = {
-                  stepNumber("${it.stepNumber}")
-               },
+               onRemove = { removeCommonUiState(uiState) },
+               stepNumber = if (uiState is InstructionUiState) uiState.stepNumber else null,
                label = label,
                placeHolder = placeHolder
             )
@@ -178,7 +175,7 @@ fun CommonEntry(
    modifier: Modifier = Modifier,
    onValueChange: (String) -> Unit = {},
    onRemove: () -> Unit = {},
-   stepNumber: @Composable () -> Unit = { CircularText("1") },
+   stepNumber: Int? = null,
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
 ) {
@@ -186,7 +183,9 @@ fun CommonEntry(
       modifier,
       verticalAlignment = Alignment.CenterVertically
    ) {
-      stepNumber()
+      stepNumber?.let {
+         CircularText("$it")
+      }
       RecipeEntryInput(
          onValueChange = onValueChange,
          label = label,

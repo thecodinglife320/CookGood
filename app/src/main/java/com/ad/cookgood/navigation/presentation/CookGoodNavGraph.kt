@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import com.ad.cookgood.R
 import com.ad.cookgood.mycookbook.presentaion.MyCookBookScreen
 import com.ad.cookgood.myrecipes.presentation.entry.RecipeEntryScreen
+import com.ad.cookgood.myrecipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.navigation.data.MyCookBookScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
@@ -59,10 +61,13 @@ fun CookGoodNavHost(
       //recipe entry screen
       composable(route = RecipeEntryScreen.route) {
 
-         //val vm: RecipeEntryViewModel = hiltViewModel(it)
+         val vm: RecipeEntryViewModel = hiltViewModel(it)
          RecipeEntryScreen(
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
+            successMessage = vm.recipeUiState.successMessage,
+            error = vm.recipeUiState.error,
+            vm = vm,
          )
       }
    }
