@@ -1,12 +1,12 @@
 package com.ad.cookgood.myrecipes.presentation.entry
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.myrecipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.myrecipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
+import com.ad.cookgood.myrecipes.presentation.state.CommonUiState
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 import com.ad.cookgood.myrecipes.presentation.state.InstructionUiState
 import com.ad.cookgood.myrecipes.presentation.state.RecipeUiState
@@ -37,11 +37,11 @@ class RecipeEntryViewModel @Inject constructor(
    )
 
    //expose state
-   val recipeUiState: State<RecipeUiState> get() = _recipeUiState
+   val recipeUiState get() = _recipeUiState.value
 
-   val ingredientUiStates: State<List<IngredientUiState>> get() = _ingredientUiStates
+   val ingredientUiStates: List<IngredientUiState> get() = _ingredientUiStates.value
 
-   val instructionUiStates: State<List<InstructionUiState>> get() = _instructionUiStates
+   val instructionUiStates: List<InstructionUiState> get() = _instructionUiStates.value
 
    //coroutine exception handle
    private val coroutineExceptionHandler =
@@ -52,41 +52,42 @@ class RecipeEntryViewModel @Inject constructor(
          )
       }
 
-   fun updateRecipeUiState(recipeUiState: RecipeUiState) =
-      let {
-         _recipeUiState.value = recipeUiState
-      }
+   fun addCommonUiState(uiState: CommonUiState) {
+      when (uiState) {
+         is IngredientUiState -> _ingredientUiStates.value = _ingredientUiStates.value + uiState
 
-   fun addIngredientUiState() {
-      val newId = (_ingredientUiStates.value.maxOfOrNull { it.id } ?: 0) + 1
-      _ingredientUiStates.value = _ingredientUiStates.value + IngredientUiState(id = newId)
-   }
-
-   fun updateIngredientUiState(id: Int, newName: String) {
-      _ingredientUiStates.value = _ingredientUiStates.value.map {
-         if (it.id == id) it.copy(name = newName) else it
+         is InstructionUiState -> {
+            var stepNumber = (_instructionUiStates.value.maxOfOrNull { it.stepNumber } ?: 0) + 1
+            _instructionUiStates.value = _instructionUiStates.value + uiState.apply {
+               this.stepNumber = stepNumber
+            }
+         }
       }
    }
 
-   fun removeIngredientUiState(id: Int) {
-      _ingredientUiStates.value = _ingredientUiStates.value.filterNot { it.id == id }
-   }
+   fun updateCommonUiState(uiState: CommonUiState, newName: String) {
+      when (uiState) {
+         is IngredientUiState -> _ingredientUiStates.value = _ingredientUiStates.value.map {
+            if (it.id == uiState.id) it.copy(name = newName) else it
+         }
 
-   fun updateInstructionUiState(id: Int, newName: String) {
-      _instructionUiStates.value = _instructionUiStates.value.map {
-         if (it.id == id) it.copy(name = newName) else it
+         is InstructionUiState -> _instructionUiStates.value = _instructionUiStates.value.map {
+            if (it.id == uiState.id) it.copy(name = newName) else it
+         }
       }
    }
 
-   fun addInstructionUiState() {
-      val newId = (_instructionUiStates.value.maxOfOrNull { it.id } ?: 0) + 1
-      _instructionUiStates.value = _instructionUiStates.value + InstructionUiState(id = newId)
-   }
+   fun removeCommonUiState(uiState: CommonUiState) {
+      when (uiState) {
+         is InstructionUiState -> {
+            _instructionUiStates.value =
+               (_instructionUiStates.value - uiState).mapIndexed { index, uiState ->
+                  uiState.apply { stepNumber = index + 1 }
+               }
+         }
 
-   fun removeInstructionUiState(id: Int) {
-      _instructionUiStates.value = _instructionUiStates.value
-         .filterNot { it.id == id }
-         .mapIndexed { index, instructionUiState -> instructionUiState.copy(id = index + 1) }
+         is IngredientUiState -> _ingredientUiStates.value = _ingredientUiStates.value - uiState
+      }
    }
 
    fun saveRecipe() {
@@ -98,7 +99,7 @@ class RecipeEntryViewModel @Inject constructor(
          }
 
          _instructionUiStates.value.forEach {
-            addInstructionUseCase(it.toDomain(it.id), recipeId = recipeId)
+            addInstructionUseCase(it.toDomain(it.stepNumber), recipeId = recipeId)
          }
 
          _recipeUiState.value = _recipeUiState.value.copy(
@@ -107,4 +108,35 @@ class RecipeEntryViewModel @Inject constructor(
          )
       }
    }
+
+   fun onTitleChange(title: String) {
+      _recipeUiState.value = _recipeUiState.value.copy(
+         title = title
+      )
+   }
+
+   fun onBriefChange(brief: String) {
+      _recipeUiState.value = _recipeUiState.value.copy(
+         brief = brief
+      )
+   }
+
+   fun onServingChange(serving: String) {
+      _recipeUiState.value = _recipeUiState.value.copy(
+         servings = serving
+      )
+   }
+
+   fun onHourChange(hour: String) {
+      _recipeUiState.value = _recipeUiState.value.copy(
+         cookTimeHours = hour
+      )
+   }
+
+   fun onMinuteChange(minute: String) {
+      _recipeUiState.value = _recipeUiState.value.copy(
+         cookTimeMinutes = minute
+      )
+   }
+
 }
