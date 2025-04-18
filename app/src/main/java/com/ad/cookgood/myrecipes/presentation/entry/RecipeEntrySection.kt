@@ -35,6 +35,7 @@ import com.ad.cookgood.R
 import com.ad.cookgood.myrecipes.presentation.state.CommonUiState
 import com.ad.cookgood.myrecipes.presentation.state.IngredientUiState
 
+@Preview
 @Composable
 fun RecipeEntrySection1(
    modifier: Modifier = Modifier,
@@ -66,6 +67,7 @@ fun RecipeEntrySection1(
 
 }
 
+@Preview
 @Composable
 fun RecipeEntrySection2(
    modifier: Modifier = Modifier,
@@ -130,10 +132,15 @@ fun RecipeEntrySection3(
    addCommonUiState: () -> Unit = {},
    removeCommonUiState: (CommonUiState) -> Unit = {},
    updateCommonUiState: (CommonUiState, String) -> Unit = { _, _ -> },
-   commonUiStates: List<CommonUiState> = listOf<IngredientUiState>(),
+   commonUiStates: List<CommonUiState> = listOf<IngredientUiState>(
+      IngredientUiState(
+         id = 1,
+         name = "hello",
+      )
+   ),
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
-   composable: @Composable (String) -> Unit = {},
+   stepNumber: @Composable (String) -> Unit = {},
 ) {
    Column(modifier) {
 
@@ -143,12 +150,12 @@ fun RecipeEntrySection3(
       commonUiStates.forEach {
          key(it.id) {
             CommonEntry(
-               onNameChange = { name ->
+               onValueChange = { name ->
                   updateCommonUiState(it, name)
                },
                onRemove = { removeCommonUiState(it) },
-               composable = { ->
-                  composable("${it.stepNumber}")
+               stepNumber = {
+                  stepNumber("${it.stepNumber}")
                },
                label = label,
                placeHolder = placeHolder
@@ -169,9 +176,9 @@ fun RecipeEntrySection3(
 @Composable
 fun CommonEntry(
    modifier: Modifier = Modifier,
-   onNameChange: (String) -> Unit = {},
+   onValueChange: (String) -> Unit = {},
    onRemove: () -> Unit = {},
-   composable: @Composable () -> Unit = { CircularText("1") },
+   stepNumber: @Composable () -> Unit = { CircularText("1") },
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
 ) {
@@ -179,9 +186,9 @@ fun CommonEntry(
       modifier,
       verticalAlignment = Alignment.CenterVertically
    ) {
-      composable()
+      stepNumber()
       RecipeEntryInput(
-         onValueChange = onNameChange,
+         onValueChange = onValueChange,
          label = label,
          placeHolder = placeHolder,
       )
@@ -192,6 +199,7 @@ fun CommonEntry(
    }
 }
 
+@Preview
 @Composable
 fun RecipeEntryInput(
    modifier: Modifier = Modifier,
@@ -214,6 +222,7 @@ fun RecipeEntryInput(
    )
 }
 
+@Preview
 @Composable
 fun CircularText(text: String = "1") {
    Box(

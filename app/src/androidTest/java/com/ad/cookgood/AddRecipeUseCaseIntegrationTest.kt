@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ad.cookgood.myrecipes.data.local.CookGookDb
 import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
-import com.ad.cookgood.myrecipes.data.local.recipe.RecipeDao
 import com.ad.cookgood.myrecipes.domain.model.Recipe
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
 import com.ad.cookgood.myrecipes.toLocal
@@ -24,8 +23,6 @@ import org.junit.runner.RunWith
 class AddRecipeUseCaseIntegrationTest {
 
    private lateinit var addRecipeUseCase: AddRecipeUseCase
-   private lateinit var recipeRepository: RecipeRepositoryImpl
-   private lateinit var recipeDao: RecipeDao
    private lateinit var db: CookGookDb
 
    @Before
@@ -37,9 +34,9 @@ class AddRecipeUseCaseIntegrationTest {
             .allowMainThreadQueries()
             .build()
 
-         recipeDao = db.recipeDao
-         recipeRepository = RecipeRepositoryImpl(recipeDao, db.ingredientDao, db.instructionDao)
-         addRecipeUseCase = AddRecipeUseCase(recipeRepository)
+         RecipeRepositoryImpl(db.recipeDao, db.ingredientDao, db.instructionDao).run {
+            addRecipeUseCase = AddRecipeUseCase(this)
+         }
       }
 
    @After
@@ -60,7 +57,7 @@ class AddRecipeUseCaseIntegrationTest {
 
       assert(recipeId > 0)
 
-      val retrievedRecipe = recipeDao.getRecipeById(recipeId)
+      val retrievedRecipe = db.recipeDao.getRecipeById(recipeId)
       val localRecipe = recipe.toLocal()
 
       assertEquals(localRecipe.title, retrievedRecipe?.title)

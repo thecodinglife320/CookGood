@@ -1,7 +1,7 @@
 package com.ad.cookgood.myrecipes.di
 
 import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
-import com.ad.cookgood.myrecipes.domain.usecase.RecipeRepository
+import com.ad.cookgood.myrecipes.domain.RecipeRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

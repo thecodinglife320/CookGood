@@ -1,5 +1,6 @@
 package com.ad.cookgood.myrecipes.presentation.entry
 
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Save
@@ -11,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -24,7 +26,7 @@ fun RecipeEntryToolBar(
    val keyboardController = LocalSoftwareKeyboardController.current
 
    TopAppBar(
-      modifier = modifier,
+      modifier = modifier.heightIn(max = 65.dp),
       navigationIcon = {
          IconButton(
             onClick = navigateUp

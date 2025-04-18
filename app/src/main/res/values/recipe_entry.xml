@@ -8,7 +8,7 @@
     <string name="recipe_entry_info_placeholder">Mô tả ngắn của món ăn</string>
 
     <string name="recipe_entry_serving_labelTruoc">Khẩu phần</string>
-    <string name="recipe_entry_serving_labelSau">người</string>
+    <string name="recipe_entry_serving_labelSau">🧒</string>
 
     <string name="recipe_entry_cook_time_label">Thời gian nấu</string>
     <string name="minute_label">phút</string>

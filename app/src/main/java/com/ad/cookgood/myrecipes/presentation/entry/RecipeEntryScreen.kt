@@ -133,7 +133,7 @@ fun RecipeEntryScreen(
             buttonTextRes = R.string.them_nguyen_lieu,
             label = R.string.ingredient_entry_label,
             placeHolder = R.string.ingredient_entry_place_holder,
-            composable = {}
+            stepNumber = {}
          )
 
          //nhap buoc lam
@@ -152,8 +152,8 @@ fun RecipeEntryScreen(
             commonUiStates = vm.instructionUiStates,
             label = R.string.instruction_entry_label,
             placeHolder = R.string.instruction_entry_placeholder,
-            composable = {
-               CircularText(it)
+            stepNumber = { stepNumber ->
+               CircularText(stepNumber)
             }
          )
       }

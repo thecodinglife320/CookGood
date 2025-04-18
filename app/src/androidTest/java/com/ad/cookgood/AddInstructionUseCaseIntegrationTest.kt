@@ -11,14 +11,14 @@ import com.ad.cookgood.myrecipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
 import kotlinx.coroutines.test.runTest
 import org.junit.After
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
 class AddInstructionUseCaseIntegrationTest {
+
    private lateinit var addRecipeUseCase: AddRecipeUseCase
    private lateinit var addInstructionUseCase: AddInstructionUseCase
-   private lateinit var recipeRepository: RecipeRepositoryImpl
    private lateinit var db: CookGookDb
 
    @Before
@@ -30,9 +30,10 @@ class AddInstructionUseCaseIntegrationTest {
             .allowMainThreadQueries()
             .build()
 
-         recipeRepository = RecipeRepositoryImpl(db.recipeDao, db.ingredientDao, db.instructionDao)
-         addRecipeUseCase = AddRecipeUseCase(recipeRepository)
-         addInstructionUseCase = AddInstructionUseCase(recipeRepository)
+         RecipeRepositoryImpl(db.recipeDao, db.ingredientDao, db.instructionDao).let {
+            addRecipeUseCase = AddRecipeUseCase(it)
+            addInstructionUseCase = AddInstructionUseCase(it)
+         }
       }
 
    @After
@@ -55,7 +56,7 @@ class AddInstructionUseCaseIntegrationTest {
       // Kiểm tra xem instruction đã được insert vào database và liên kết với recipeId hay chưa
       db.instructionDao.getAllInstruction().also {
          it.forEach {
-            Assert.assertEquals(recipeId, it.recipeId)
+            assertEquals(recipeId, it.recipeId)
          }
       }
    }

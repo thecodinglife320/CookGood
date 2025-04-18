@@ -3,10 +3,10 @@ package com.ad.cookgood.myrecipes.data.local
 import com.ad.cookgood.myrecipes.data.local.ingredient.IngredientDao
 import com.ad.cookgood.myrecipes.data.local.instruction.InstructionDao
 import com.ad.cookgood.myrecipes.data.local.recipe.RecipeDao
+import com.ad.cookgood.myrecipes.domain.RecipeRepository
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Instruction
 import com.ad.cookgood.myrecipes.domain.model.Recipe
-import com.ad.cookgood.myrecipes.domain.usecase.RecipeRepository
 import com.ad.cookgood.myrecipes.toLocal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

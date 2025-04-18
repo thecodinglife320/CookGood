@@ -1,4 +1,4 @@
-package com.ad.cookgood.myrecipes.domain.usecase
+package com.ad.cookgood.myrecipes.domain
 
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import com.ad.cookgood.myrecipes.domain.model.Instruction

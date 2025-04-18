@@ -1,5 +1,6 @@
 package com.ad.cookgood.myrecipes.domain.usecase
 
+import com.ad.cookgood.myrecipes.domain.RecipeRepository
 import com.ad.cookgood.myrecipes.domain.model.Ingredient
 import kotlinx.coroutines.test.runTest
 import org.junit.Before

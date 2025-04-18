@@ -46,7 +46,6 @@ class RecipeEntryViewModel @Inject constructor(
    //coroutine exception handle
    private val coroutineExceptionHandler =
       CoroutineExceptionHandler { _, ex ->
-         ex.printStackTrace()
          _recipeUiState.value = _recipeUiState.value.copy(
             error = ex.message
          )
@@ -99,7 +98,7 @@ class RecipeEntryViewModel @Inject constructor(
          }
 
          _instructionUiStates.value.forEach {
-            addInstructionUseCase(it.toDomain(it.stepNumber), recipeId = recipeId)
+            addInstructionUseCase(it.toDomain(), recipeId = recipeId)
          }
 
          _recipeUiState.value = _recipeUiState.value.copy(

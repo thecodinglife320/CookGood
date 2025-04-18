@@ -43,7 +43,7 @@ fun RecipeUiState.toDomain() =
 
 fun Ingredient.toLocal(recipeId: Long) =
    LocalIngredient(
-      name = this.name,
+      name = name,
       recipeId = recipeId
    )
 
@@ -57,7 +57,7 @@ fun Instruction.toLocal(recipeId: Long) =
       recipeId = recipeId
    )
 
-fun InstructionUiState.toDomain(stepNumber: Int) =
+fun InstructionUiState.toDomain() =
    Instruction(
       stepNumber = stepNumber,
       name = name
