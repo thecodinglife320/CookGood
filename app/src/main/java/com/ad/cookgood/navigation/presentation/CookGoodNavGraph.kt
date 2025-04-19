@@ -65,8 +65,6 @@ fun CookGoodNavHost(
          RecipeEntryScreen(
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
-            successMessage = vm.recipeUiState.successMessage,
-            error = vm.recipeUiState.error,
             vm = vm,
          )
       }

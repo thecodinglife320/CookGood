@@ -1,5 +1,7 @@
 package com.ad.cookgood.myrecipes.presentation.entry
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -36,19 +38,27 @@ class RecipeEntryViewModel @Inject constructor(
       listOf<InstructionUiState>()
    )
 
+   private val _successMessage: MutableState<String?> = mutableStateOf(
+      null
+   )
+
+   private val _error: MutableState<String?> = mutableStateOf(
+      null
+   )
+
    //expose state
-   val recipeUiState get() = _recipeUiState.value
+   val ingredientUiStates: State<List<IngredientUiState>> get() = _ingredientUiStates
 
-   val ingredientUiStates: List<IngredientUiState> get() = _ingredientUiStates.value
+   val instructionUiStates: State<List<InstructionUiState>> get() = _instructionUiStates
 
-   val instructionUiStates: List<InstructionUiState> get() = _instructionUiStates.value
+   val successMessage: State<String?> = _successMessage
+
+   val error: State<String?> = _error
 
    //coroutine exception handle
    private val coroutineExceptionHandler =
       CoroutineExceptionHandler { _, ex ->
-         _recipeUiState.value = _recipeUiState.value.copy(
-            error = ex.message
-         )
+         _error.value = ex.message
       }
 
    fun addCommonUiState(uiState: CommonUiState) {
@@ -101,10 +111,7 @@ class RecipeEntryViewModel @Inject constructor(
             addInstructionUseCase(it.toDomain(), recipeId = recipeId)
          }
 
-         _recipeUiState.value = _recipeUiState.value.copy(
-            addedRecipeId = recipeId,
-            successMessage = "da luu"
-         )
+         _successMessage.value = "da luu"
       }
    }
 

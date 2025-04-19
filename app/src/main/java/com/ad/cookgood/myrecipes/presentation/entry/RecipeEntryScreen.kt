@@ -3,9 +3,7 @@ package com.ad.cookgood.myrecipes.presentation.entry
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -39,8 +37,6 @@ fun RecipeEntryScreen(
    modifier: Modifier = Modifier,
    navigateUp: () -> Unit = {},
    navigateBack: () -> Unit = {},
-   successMessage: String? = null,
-   error: String? = null,
    vm: RecipeEntryViewModel = hiltViewModel(),
 ) {
    val snackBarHostState = remember { SnackbarHostState() }
@@ -48,7 +44,7 @@ fun RecipeEntryScreen(
 
    Scaffold(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-      modifier = modifier.imePadding(),
+      modifier = modifier,
       topBar = {
          RecipeEntryToolBar(
             navigateUp = navigateUp,
@@ -59,7 +55,6 @@ fun RecipeEntryScreen(
 
       Column(
          modifier = Modifier
-            .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(it)
       ) {
@@ -106,7 +101,7 @@ fun RecipeEntryScreen(
             updateCommonUiState = { a, b ->
                vm.updateCommonUiState(a, b)
             },
-            commonUiStates = vm.ingredientUiStates,
+            commonUiStates = vm.ingredientUiStates.value,
             textRes = R.string.nguyen_lieu,
             buttonTextRes = R.string.them_nguyen_lieu,
             label = R.string.ingredient_entry_label,
@@ -126,14 +121,14 @@ fun RecipeEntryScreen(
             updateCommonUiState = { a, b ->
                vm.updateCommonUiState(a, b)
             },
-            commonUiStates = vm.instructionUiStates,
+            commonUiStates = vm.instructionUiStates.value,
             label = R.string.instruction_entry_label,
             placeHolder = R.string.instruction_entry_placeholder,
          )
       }
    }
 
-   successMessage?.let {
+   vm.successMessage.value?.let {
       scope.launch {
          val result = snackBarHostState.showSnackbar(
             message = it,
@@ -147,7 +142,7 @@ fun RecipeEntryScreen(
       }
    }
 
-   error?.let {
+   vm.error.value?.let {
       scope.launch {
          snackBarHostState.showSnackbar(
             message = it,

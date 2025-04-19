@@ -6,7 +6,4 @@ data class RecipeUiState(
    val servings: String = "",
    val cookTimeMinutes: String = "",
    val cookTimeHours: String = "",
-   val error: String? = null,
-   val successMessage: String? = null,
-   val addedRecipeId: Long? = null,
 )
