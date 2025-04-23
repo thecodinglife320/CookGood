@@ -1,6 +1,5 @@
 package com.ad.cookgood.navigation.presentation
 
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,11 +12,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.ad.cookgood.R
 import com.ad.cookgood.mycookbook.presentaion.MyCookBookScreen
-import com.ad.cookgood.myrecipes.presentation.entry.RecipeEntryScreen
-import com.ad.cookgood.myrecipes.presentation.entry.RecipeEntryViewModel
+import com.ad.cookgood.mycookbook.presentaion.MyCookBookViewModel
 import com.ad.cookgood.navigation.data.MyCookBookScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
+import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
+import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,8 +45,12 @@ fun CookGoodNavHost(
       //my cook book screen
       composable(route = MyCookBookScreen.route) {
          val navBackStackEntry by navController.currentBackStackEntryAsState()
+
          val titleAppBar =
             if (navBackStackEntry?.destination?.route == MyCookBookScreen.route) MyCookBookScreen.title else R.string.empty
+
+         val vm: MyCookBookViewModel = hiltViewModel(it)
+
          MyCookBookScreen(
             titleAppBar = titleAppBar,
             navigateToRecipeEntryScreen = {
@@ -54,7 +58,7 @@ fun CookGoodNavHost(
                   launchSingleTop = true
                }
             },
-            modifier = Modifier.fillMaxSize()
+            vm = vm,
          )
       }
 

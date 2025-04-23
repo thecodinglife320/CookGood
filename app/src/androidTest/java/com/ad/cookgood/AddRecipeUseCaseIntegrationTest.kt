@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ad.cookgood.myrecipes.data.local.CookGookDb
-import com.ad.cookgood.myrecipes.data.local.RecipeRepositoryImpl
-import com.ad.cookgood.myrecipes.domain.model.Recipe
-import com.ad.cookgood.myrecipes.domain.usecase.AddRecipeUseCase
-import com.ad.cookgood.myrecipes.toLocal
+import com.ad.cookgood.recipes.data.local.CookGookDb
+import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
+import com.ad.cookgood.recipes.domain.model.Recipe
+import com.ad.cookgood.recipes.domain.model.toLocal
+import com.ad.cookgood.recipes.domain.usecase.AddRecipeUseCase
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
