@@ -10,4 +10,3 @@ class AddRecipeUseCase @Inject constructor(
 
    suspend operator fun invoke(recipe: Recipe) = recipeRepository.insertRecipe(recipe)
 }
-
