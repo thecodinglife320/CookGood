@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CookGood"
 include(":app")
- 
+include(":cameraxapp")
