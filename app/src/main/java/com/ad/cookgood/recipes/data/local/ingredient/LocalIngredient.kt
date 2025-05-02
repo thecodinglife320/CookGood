@@ -6,6 +6,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.ad.cookgood.recipes.data.local.recipe.LocalRecipe
+import com.ad.cookgood.recipes.domain.model.Ingredient
 
 @Entity(
    tableName = "ingredients",
@@ -24,3 +25,8 @@ data class LocalIngredient(
    val name: String,
    @ColumnInfo(name = "recipe_id") val recipeId: Long,
 )
+
+fun LocalIngredient.toDomain() =
+   Ingredient(
+      name = name
+   )

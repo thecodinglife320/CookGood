@@ -1,4 +1,4 @@
-package com.ad.cookgood.mycookbook.presentaion
+package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -25,6 +25,7 @@ fun MyCookBookScreen(
    titleAppBar: Int = R.string.mycookbook,
    navigateToRecipeEntryScreen: () -> Unit = {},
    vm: MyCookBookViewModel = hiltViewModel(),
+   onMyRecipeClick: (Long) -> Unit = {},
 ) {
 
    Scaffold(
@@ -48,7 +49,8 @@ fun MyCookBookScreen(
          ) {
             MyRecipeListSection(
                Modifier.padding(top = dimensionResource(R.dimen.padding_medium)),
-               myRecipeUiStates = vm.myCookBookUiState.value.myRecipeUiStates
+               myRecipeUiStates = vm.myCookBookUiState.value.myRecipeUiStates,
+               onMyRecipeClick = onMyRecipeClick,
             )
          }
       }

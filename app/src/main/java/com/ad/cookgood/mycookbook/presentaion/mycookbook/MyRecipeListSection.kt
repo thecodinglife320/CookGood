@@ -1,4 +1,4 @@
-package com.ad.cookgood.mycookbook.presentaion
+package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -27,17 +27,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ad.cookgood.R
 import com.ad.cookgood.mycookbook.presentaion.state.MyRecipeUiState
+import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 
 @Preview
 @Composable
 fun MyRecipeListSection(
    modifier: Modifier = Modifier,
    myRecipeUiStates: List<MyRecipeUiState> = listOf(
-      MyRecipeUiState(title = "Chao ngao"),
-      MyRecipeUiState(title = "Chao ngao"),
-      MyRecipeUiState(title = "Chao ngao"),
-      MyRecipeUiState(title = "Chao ngao"),
+      MyRecipeUiState(recipeUiState = RecipeUiState("Chao ngao")),
+      MyRecipeUiState(recipeUiState = RecipeUiState("Chao ngao")),
+      MyRecipeUiState(recipeUiState = RecipeUiState("Chao ngao")),
    ),
+   onMyRecipeClick: (Long) -> Unit = {}
 ) {
    Column(modifier) {
       Text(
@@ -57,7 +58,7 @@ fun MyRecipeListSection(
          items(
             items = myRecipeUiStates
          ) {
-            RecipeCard(myRecipeUiState = it)
+            RecipeCard(myRecipeUiState = it, onMyRecipeClick = onMyRecipeClick)
          }
       }
    }
@@ -68,11 +69,12 @@ fun MyRecipeListSection(
 @Composable
 fun RecipeCard(
    modifier: Modifier = Modifier,
-   myRecipeUiState: MyRecipeUiState = MyRecipeUiState(0, ""),
+   myRecipeUiState: MyRecipeUiState = MyRecipeUiState(0, RecipeUiState()),
+   onMyRecipeClick: (Long) -> Unit = {},
 ) {
    Card(
       onClick = {
-         println(myRecipeUiState.id)
+         onMyRecipeClick(myRecipeUiState.id)
       },
       modifier = modifier,
    ) {
@@ -89,7 +91,7 @@ fun RecipeCard(
          )
          Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
          Text(
-            text = myRecipeUiState.title,
+            text = myRecipeUiState.recipeUiState.title,
             style = MaterialTheme.typography.titleMedium
          )
       }

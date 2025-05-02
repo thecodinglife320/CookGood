@@ -8,3 +8,4 @@ class GetMyCookBookUseCase @Inject constructor(
 ) {
    suspend operator fun invoke() = myCookBookRepository.getMyCookBook()
 }
+

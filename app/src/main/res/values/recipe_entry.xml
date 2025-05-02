@@ -4,8 +4,8 @@
     <string name="recipe_entry_name_label">Tên món</string>
     <string name="recipe_entry_name_placeholder">Đặc sản Tây Bắc</string>
 
-    <string name="recipe_entry_info_label">Mô tả ngắn</string>
-    <string name="recipe_entry_info_placeholder">Mô tả ngắn của món ăn</string>
+    <string name="recipe_entry_info_label">Mô tả</string>
+    <string name="recipe_entry_info_placeholder">Mô tả của món ăn</string>
 
     <string name="recipe_entry_serving_labelTruoc">Khẩu phần</string>
     <string name="recipe_entry_serving_labelSau">🧒</string>

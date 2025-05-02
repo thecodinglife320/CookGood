@@ -1,10 +1,10 @@
-package com.ad.cookgood.mycookbook.presentaion
+package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.mycookbook.domain.model.toUiState
+import com.ad.cookgood.mycookbook.domain.model.toMyRecipeUiState
 import com.ad.cookgood.mycookbook.domain.usecase.GetMyCookBookUseCase
 import com.ad.cookgood.mycookbook.presentaion.state.MyCookBookUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +31,7 @@ class MyCookBookViewModel @Inject constructor(
       viewModelScope.launch {
          _myCookBookUiState.value = _myCookBookUiState.value.copy(
             myRecipeUiStates = getMyCookBookUseCase().myRecipes.map {
-               it.toUiState()
+               it.toMyRecipeUiState()
             },
             isLoading = false
          )

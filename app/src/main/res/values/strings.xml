@@ -3,4 +3,5 @@
     <string name="search">Tìm kiếm</string>
     <string name="mycookbook">Sách nấu ăn của tôi</string>
     <string name="empty">""</string>
+    <string name="camera_permission">Camera permission is required for this\nfeature to be available. Please grant\nthe permission.</string>
 </resources>

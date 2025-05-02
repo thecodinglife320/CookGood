@@ -10,6 +10,7 @@ import javax.inject.Inject
 class MyCookBookRepositoryImpl @Inject constructor(
    private val recipeDao: RecipeDao,
 ) : MyCookBookRepository {
+
    override suspend fun getMyCookBook() =
       run {
          recipeDao.getAllRecipe().map {
@@ -17,10 +18,7 @@ class MyCookBookRepositoryImpl @Inject constructor(
                .run {
                   MyRecipe(
                      id = it.id,
-                     title = title,
-                     brief = brief,
-                     serving = serving,
-                     cookTime = cookTime
+                     recipe = this
                   )
                }
          }.let {

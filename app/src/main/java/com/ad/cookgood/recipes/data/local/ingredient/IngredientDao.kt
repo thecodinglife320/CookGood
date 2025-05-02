@@ -15,4 +15,7 @@ interface IngredientDao {
 
    @Query("select * from ingredients")
    suspend fun getAllIngredient(): List<LocalIngredient>
+
+   @Query("select * from ingredients where recipe_id=:recipeId")
+   fun getIngredientsByRecipeId(recipeId: Long): List<LocalIngredient>
 }

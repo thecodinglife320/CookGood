@@ -6,14 +6,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ad.cookgood.R
-import com.ad.cookgood.mycookbook.presentaion.MyCookBookScreen
-import com.ad.cookgood.mycookbook.presentaion.MyCookBookViewModel
+import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
+import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
+import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
+import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeViewModel
 import com.ad.cookgood.navigation.data.MyCookBookScreen
+import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
@@ -59,6 +64,27 @@ fun CookGoodNavHost(
                }
             },
             vm = vm,
+            onMyRecipeClick = { recipeId ->
+               navController.navigate("${MyCookBookScreen.route}/$recipeId")
+            },
+         )
+      }
+
+      //my recipe detail screen
+      composable(
+         route = MyRecipeDetailScreen.route,
+         arguments = listOf(
+            navArgument(MyRecipeDetailScreen.recipeIdArg) {
+               type = NavType.LongType
+            }
+         ),
+      ) {
+
+         val vm = hiltViewModel<MyRecipeViewModel>(it)
+
+         MyRecipeDetailScreen(
+            vm = vm,
+            navigateUp = { navController.navigateUp() },
          )
       }
 

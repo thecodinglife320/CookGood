@@ -14,4 +14,7 @@ interface InstructionDao {
 
    @Query("select * from instructions")
    suspend fun getAllInstruction(): List<LocalInstruction>
+
+   @Query("select * from instructions where recipe_id=:recipeId")
+   fun getInstructionsByRecipeId(recipeId: Long): List<LocalInstruction>
 }

@@ -1,7 +1,9 @@
 package com.ad.cookgood.di
 
 import com.ad.cookgood.mycookbook.data.MyCookBookRepositoryImpl
+import com.ad.cookgood.mycookbook.data.MyRecipeRepositoryImpl
 import com.ad.cookgood.mycookbook.domain.MyCookBookRepository
+import com.ad.cookgood.mycookbook.domain.MyRecipeRepository
 import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
 import com.ad.cookgood.recipes.domain.RecipeRepository
 import dagger.Binds
@@ -22,4 +24,9 @@ abstract class RepositoryModule {
    abstract fun bindMyCookBookRepository(
       myCookBookRepositoryImpl: MyCookBookRepositoryImpl,
    ): MyCookBookRepository
+
+   @Binds
+   abstract fun bindMyRecipeRepository(
+      impl: MyRecipeRepositoryImpl
+   ): MyRecipeRepository
 }

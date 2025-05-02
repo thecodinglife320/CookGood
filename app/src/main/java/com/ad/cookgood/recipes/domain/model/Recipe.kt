@@ -1,6 +1,7 @@
 package com.ad.cookgood.recipes.domain.model
 
 import com.ad.cookgood.recipes.data.local.recipe.LocalRecipe
+import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 
 class Recipe(
    val title: String = "",
@@ -15,4 +16,13 @@ fun Recipe.toLocal() =
       brief = brief,
       servings = serving,
       cookTime = cookTime
+   )
+
+fun Recipe.toRecipeUiState() =
+   RecipeUiState(
+      title = title,
+      brief = brief,
+      servings = "$serving người",
+      cookTimeMinutes = "${cookTime % 60} phút",
+      cookTimeHours = "${cookTime / 60} tiếng"
    )
