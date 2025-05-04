@@ -64,6 +64,7 @@ dependencies {
    implementation(libs.androidx.camera.extensions)
    implementation(libs.accompanist.permissions)
    implementation(libs.androidx.camera.lifecycle)
+   implementation(libs.coil.compose)
    testImplementation(libs.mockito.core)
    androidTestImplementation(libs.core.ktx)
    ksp(libs.androidx.room.compiler)

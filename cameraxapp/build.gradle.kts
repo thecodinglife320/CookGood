@@ -1,6 +1,8 @@
 plugins {
    alias(libs.plugins.android.application)
    alias(libs.plugins.kotlin.android)
+   alias(libs.plugins.google.hilt)
+   alias(libs.plugins.google.ksp)
 }
 
 android {
@@ -40,9 +42,13 @@ android {
 
 dependencies {
 
+   implementation(libs.androidx.activity.compose)
+   implementation(platform(libs.androidx.compose.bom))
+   implementation(libs.androidx.hilt.navigation.compose)
    implementation(libs.androidx.core.ktx)
    implementation(libs.androidx.appcompat)
    implementation(libs.material)
+   implementation(libs.androidx.material3)
    implementation(libs.androidx.activity)
    implementation(libs.androidx.constraintlayout)
    testImplementation(libs.junit)
@@ -54,4 +60,9 @@ dependencies {
    implementation(libs.androidx.camera.extensions)
    implementation(libs.accompanist.permissions)
    implementation(libs.androidx.camera.lifecycle)
+   implementation(libs.coil.compose)
+
+   //hilt
+   implementation(libs.hilt.android)
+   ksp(libs.hilt.android.compiler)
 }
