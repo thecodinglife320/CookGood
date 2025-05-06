@@ -59,8 +59,8 @@ class GetInstructionsOfMyRecipeUseCaseIntegrateTest {
 
       //arrange
       val recipe = Recipe()
-      val instruction1 = Instruction()
-      val instruction2 = Instruction()
+      val instruction1 = Instruction(uri = null)
+      val instruction2 = Instruction(uri = null)
 
       //act
       val recipeId = addRecipeUseCase(recipe)

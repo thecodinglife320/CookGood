@@ -23,8 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus.Denied
 import com.google.accompanist.permissions.rememberPermissionState
@@ -36,7 +34,6 @@ fun CameraPreview(
    stopCamera: () -> Unit,
    startCamera: (LifecycleOwner, Preview.SurfaceProvider) -> Unit,
    takePhoto: () -> Unit,
-   uri: Uri?
 ) {
 
    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -84,15 +81,15 @@ fun CameraPreview(
             ) {}
          }
 
-         uri?.let {
-            AsyncImage(
-               model = ImageRequest.Builder(context)
-                  .data(uri)
-                  .crossfade(true)
-                  .build(),
-               contentDescription = "Ảnh vừa chụp",
-            )
-         }
+//         uri?.let {
+//            AsyncImage(
+//               model = ImageRequest.Builder(context)
+//                  .data(uri)
+//                  .crossfade(true)
+//                  .build(),
+//               contentDescription = "Ảnh vừa chụp",
+//            )
+//         }
       }
    }
 }

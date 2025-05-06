@@ -1,5 +1,6 @@
 package com.ad.cookgood.recipes.presentation.state
 
+import android.net.Uri
 import com.ad.cookgood.recipes.domain.model.Recipe
 
 data class RecipeUiState(
@@ -8,6 +9,7 @@ data class RecipeUiState(
    val servings: String = "",
    val cookTimeMinutes: String = "",
    val cookTimeHours: String = "",
+   var uri: Uri? = null
 )
 
 fun RecipeUiState.toDomain() =
@@ -21,6 +23,7 @@ fun RecipeUiState.toDomain() =
          title = title,
          brief = brief,
          serving = servingsInt,
-         cookTime = hoursInt * 60 + minutesInt
+         cookTime = hoursInt * 60 + minutesInt,
+         uri = uri
       )
    }

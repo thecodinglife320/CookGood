@@ -49,8 +49,8 @@ class AddInstructionUseCaseIntegrationTest {
       val recipeId = addRecipeUseCase.invoke(recipe)
 
       // Act
-      addInstructionUseCase.invoke(Instruction(1, "b1"), recipeId)
-      addInstructionUseCase.invoke(Instruction(2, "b2"), recipeId)
+      addInstructionUseCase.invoke(Instruction(1, "b1", null), recipeId)
+      addInstructionUseCase.invoke(Instruction(2, "b2", null), recipeId)
 
       // Assert
       // Kiểm tra xem instruction đã được insert vào database và liên kết với recipeId hay chưa

@@ -1,5 +1,6 @@
 package com.ad.cookgood.recipes.domain.model
 
+import android.net.Uri
 import com.ad.cookgood.recipes.data.local.recipe.LocalRecipe
 import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 
@@ -8,6 +9,7 @@ class Recipe(
    val brief: String = "",
    val serving: Int = 0,
    val cookTime: Int = 0,
+   val uri: Uri?
 )
 
 fun Recipe.toLocal() =
@@ -15,7 +17,8 @@ fun Recipe.toLocal() =
       title = title,
       brief = brief,
       servings = serving,
-      cookTime = cookTime
+      cookTime = cookTime,
+      uri = uri
    )
 
 fun Recipe.toRecipeUiState() =

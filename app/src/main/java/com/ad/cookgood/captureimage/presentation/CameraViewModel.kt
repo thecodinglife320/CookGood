@@ -19,7 +19,7 @@ import javax.inject.Inject
 class CameraViewModel @Inject constructor(
    private val startCameraUseCase: StartCameraUseCase,
    private val stopCameraUseCase: StopCameraUseCase,
-   private val takePhotoUseCase: TakePhotoUseCase
+   private val takePhotoUseCase: TakePhotoUseCase,
 ) : ViewModel() {
 
    private val _uri: MutableState<Uri?> = mutableStateOf(

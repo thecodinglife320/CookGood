@@ -5,9 +5,7 @@ import android.util.Log
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.LifecycleCameraController
-import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.example.cameraxapp.domain.CameraRepository
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow
@@ -18,20 +16,7 @@ class CameraRepositoryImpl @Inject constructor(
    private val application: Application
 ) : CameraRepository {
 
-   private lateinit var cameraController: LifecycleCameraController
-
-   override fun startCamera(lifecycleOwner: LifecycleOwner, previewView: PreviewView) {
-      cameraController = LifecycleCameraController(application).apply {
-         bindToLifecycle(lifecycleOwner)
-         previewView.controller = this
-      }
-   }
-
-   override fun stopCamera() {
-      cameraController.unbind()
-   }
-
-   override suspend fun takePhoto() = callbackFlow {
+   override suspend fun takePhoto(cameraController: LifecycleCameraController) = callbackFlow {
 
       awaitClose {
          Log.d(TAG, "Flow cancelled or closed. Unbinding CameraController.")

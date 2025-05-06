@@ -21,7 +21,8 @@ object DatabaseModule {
          context = context.applicationContext,
          klass = CookGookDb::class.java,
          name = "cook_good_db"
-      ).build()
+      ).fallbackToDestructiveMigration(true)
+         .build()
 
    @Provides
    fun provideRecipeDao(database: CookGookDb) = database.recipeDao

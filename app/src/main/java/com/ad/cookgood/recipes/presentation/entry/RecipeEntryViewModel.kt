@@ -1,10 +1,15 @@
 package com.ad.cookgood.recipes.presentation.entry
 
+import androidx.camera.core.Preview
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.captureimage.domain.StartCameraUseCase
+import com.ad.cookgood.captureimage.domain.StopCameraUseCase
+import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddRecipeUseCase
@@ -23,6 +28,9 @@ class RecipeEntryViewModel @Inject constructor(
    private val addRecipeUseCase: AddRecipeUseCase,
    private val addIngredientUseCase: AddIngredientUseCase,
    private val addInstructionUseCase: AddInstructionUseCase,
+   private val startCameraUseCase: StartCameraUseCase,
+   private val stopCameraUseCase: StopCameraUseCase,
+   private val takePhotoUseCase: TakePhotoUseCase,
 ) : ViewModel() {
 
    //prepare state
@@ -46,6 +54,14 @@ class RecipeEntryViewModel @Inject constructor(
       null
    )
 
+   private val _showPopUp = mutableStateOf(false)
+   val showPopUp: State<Boolean> get() = _showPopUp
+
+   private val _showPopUp1 = mutableStateOf(false)
+   val showPopUp1: State<Boolean> get() = _showPopUp1
+
+   private var instructionNeedTakePhoto: Int = 0
+
    //expose state
    val ingredientUiStates: State<List<IngredientUiState>> get() = _ingredientUiStates
 
@@ -54,6 +70,8 @@ class RecipeEntryViewModel @Inject constructor(
    val successMessage: State<String?> = _successMessage
 
    val error: State<String?> = _error
+
+   val uriRecipePhoto get() = _recipeUiState.value.uri
 
    //coroutine exception handle
    private val coroutineExceptionHandler =
@@ -145,4 +163,41 @@ class RecipeEntryViewModel @Inject constructor(
       )
    }
 
+   fun startCamera(lifecycleOwner: LifecycleOwner, surfaceProvider: Preview.SurfaceProvider) =
+      startCameraUseCase(lifecycleOwner, surfaceProvider)
+
+   fun stopCamera() = stopCameraUseCase()
+
+   fun takePhoto() {
+      viewModelScope.launch {
+         _instructionUiStates.value = _instructionUiStates.value.map {
+            if (it.id == instructionNeedTakePhoto) it.copy(
+               uri = takePhotoUseCase()
+            ) else it
+         }
+         _showPopUp.value = false
+      }
+   }
+
+   fun onOpenCamera() {
+      _showPopUp1.value = true
+   }
+
+   fun onTakePhotoRecipe() {
+      viewModelScope.launch {
+         _recipeUiState.value = _recipeUiState.value.copy(
+            uri = takePhotoUseCase()
+         )
+         _showPopUp1.value = false
+      }
+   }
+
+   fun takePhotoForInstruction(id: Int) {
+      _showPopUp.value = true
+      instructionNeedTakePhoto = id
+   }
+
+   private companion object {
+      const val TAG = "RecipeEntryViewModel"
+   }
 }

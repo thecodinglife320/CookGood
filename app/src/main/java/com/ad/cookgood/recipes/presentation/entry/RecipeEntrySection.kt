@@ -1,5 +1,6 @@
 package com.ad.cookgood.recipes.presentation.entry
 
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -35,6 +36,7 @@ import com.ad.cookgood.R
 import com.ad.cookgood.recipes.presentation.state.CommonUiState
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
 import com.ad.cookgood.recipes.presentation.state.InstructionUiState
+import com.ad.cookgood.shared.CoilImage
 
 @Preview
 @Composable
@@ -141,6 +143,7 @@ fun RecipeEntrySection3(
    ),
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
+   takePhotoForInstruction: (Int) -> Unit = {}
 ) {
    Column(modifier) {
 
@@ -155,7 +158,11 @@ fun RecipeEntrySection3(
                onRemove = { removeCommonUiState(uiState) },
                stepNumber = if (uiState is InstructionUiState) uiState.stepNumber else null,
                label = label,
-               placeHolder = placeHolder
+               placeHolder = placeHolder,
+               takePhotoForInstruction = {
+                  takePhotoForInstruction(uiState.id)
+               },
+               uri = if (uiState is InstructionUiState) uiState.uri else null,
             )
          }
       }
@@ -175,25 +182,41 @@ fun CommonEntry(
    modifier: Modifier = Modifier,
    onValueChange: (String) -> Unit = {},
    onRemove: () -> Unit = {},
-   stepNumber: Int? = null,
+   stepNumber: Int? = 1,
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
+   takePhotoForInstruction: () -> Unit = {},
+   uri: Uri? = null
 ) {
-   Row(
-      modifier,
-      verticalAlignment = Alignment.CenterVertically
-   ) {
-      stepNumber?.let {
-         CircularText("$it")
-      }
-      RecipeEntryInput(
-         onValueChange = onValueChange,
-         label = label,
-         placeHolder = placeHolder,
-      )
+   Column(modifier) {
+      Row(
+         verticalAlignment = Alignment.CenterVertically
+      ) {
+         stepNumber?.let {
+            CircularText("$it")
+         }
+         RecipeEntryInput(
+            onValueChange = onValueChange,
+            label = label,
+            placeHolder = placeHolder,
+         )
 
-      IconButton(onClick = onRemove) {
-         Icon(Icons.Default.Delete, contentDescription = null)
+         IconButton(onClick = onRemove) {
+            Icon(Icons.Default.Delete, contentDescription = null)
+         }
+      }
+      stepNumber?.let {
+         Row {
+            OutlinedButton(onClick = takePhotoForInstruction) {
+               Text("📷")
+            }
+            CoilImage(
+               uri = uri,
+               modifier = Modifier
+                  .height(150.dp)
+                  .width(200.dp)
+            )
+         }
       }
    }
 }
