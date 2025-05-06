@@ -1,6 +1,5 @@
 package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,15 +18,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ad.cookgood.R
 import com.ad.cookgood.mycookbook.presentaion.state.MyRecipeUiState
 import com.ad.cookgood.recipes.presentation.state.RecipeUiState
+import com.ad.cookgood.shared.CoilImage
 
 @Preview
 @Composable
@@ -82,12 +80,9 @@ fun RecipeCard(
          verticalAlignment = Alignment.CenterVertically,
          modifier = Modifier.width(200.dp)
       ) {
-         Image(
-            painter = painterResource(R.drawable.placeholder_recipe),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-               .size(80.dp)
+         CoilImage(
+            uri = myRecipeUiState.recipeUiState.uri,
+            modifier = Modifier.size(80.dp)
          )
          Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
          Text(

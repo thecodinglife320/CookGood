@@ -8,6 +8,7 @@ import com.ad.cookgood.recipes.data.local.instruction.InstructionDao
 import com.ad.cookgood.recipes.data.local.instruction.toDomain
 import com.ad.cookgood.recipes.data.local.recipe.RecipeDao
 import com.ad.cookgood.recipes.data.local.recipe.toDomain
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class MyRecipeRepositoryImpl @Inject constructor(
@@ -33,6 +34,16 @@ class MyRecipeRepositoryImpl @Inject constructor(
       run {
          ingredientDao.getIngredientsByRecipeId(recipeId).map {
             it.toDomain()
+         }
+      }
+
+   override fun getMyRecipes() =
+      recipeDao.getAllRecipe().map {
+         it.map {
+            MyRecipe(
+               id = it.id,
+               recipe = it.toDomain()
+            )
          }
       }
 }

@@ -1,41 +1,36 @@
 package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.mycookbook.domain.model.toMyRecipeUiState
-import com.ad.cookgood.mycookbook.domain.usecase.GetMyCookBookUseCase
+import com.ad.cookgood.mycookbook.domain.usecase.GetMyRecipesUseCase
 import com.ad.cookgood.mycookbook.presentaion.state.MyCookBookUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 class MyCookBookViewModel @Inject constructor(
-   private val getMyCookBookUseCase: GetMyCookBookUseCase,
+   private val useCase: GetMyRecipesUseCase,
 ) : ViewModel() {
 
    //prepare uiState
-   private val _myCookBookUiState = mutableStateOf(
-      MyCookBookUiState(
-         myRecipeUiStates = listOf(),
-         isLoading = true
-      )
-   )
-
-   //expose uiState
-   val myCookBookUiState: State<MyCookBookUiState> get() = _myCookBookUiState
-
-   init {
-      viewModelScope.launch {
-         _myCookBookUiState.value = _myCookBookUiState.value.copy(
-            myRecipeUiStates = getMyCookBookUseCase().myRecipes.map {
+   val myCookBookUiState =
+      useCase()
+         .map {
+            MyCookBookUiState(it.map {
                it.toMyRecipeUiState()
-            },
-            isLoading = false
+            })
+         }
+         .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+            initialValue = MyCookBookUiState(listOf())
          )
-         _myCookBookUiState.value.myRecipeUiStates
-      }
+
+   private companion object {
+      private const val TIMEOUT_MILLIS = 5_000L
    }
 }

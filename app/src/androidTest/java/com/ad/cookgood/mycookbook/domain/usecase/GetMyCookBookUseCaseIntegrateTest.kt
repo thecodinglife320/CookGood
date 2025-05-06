@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ad.cookgood.mycookbook.data.MyCookBookRepositoryImpl
 import com.ad.cookgood.recipes.data.local.CookGookDb
 import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
 import com.ad.cookgood.recipes.domain.model.Recipe
