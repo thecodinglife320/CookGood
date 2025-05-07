@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="camera_permission_rationale">The camera and record audio are\nimportant for this app. Please grant\nthe permissions.</string>
-</resources>

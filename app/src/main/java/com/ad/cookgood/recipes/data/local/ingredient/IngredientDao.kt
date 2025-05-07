@@ -3,6 +3,7 @@ package com.ad.cookgood.recipes.data.local.ingredient
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientDao {
@@ -17,5 +18,5 @@ interface IngredientDao {
    suspend fun getAllIngredient(): List<LocalIngredient>
 
    @Query("select * from ingredients where recipe_id=:recipeId")
-   fun getIngredientsByRecipeId(recipeId: Long): List<LocalIngredient>
+   fun getIngredientsByRecipeId(recipeId: Long): Flow<List<LocalIngredient>>
 }

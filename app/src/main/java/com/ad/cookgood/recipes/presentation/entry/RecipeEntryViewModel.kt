@@ -168,7 +168,7 @@ class RecipeEntryViewModel @Inject constructor(
 
    fun stopCamera() = stopCameraUseCase()
 
-   fun takePhoto() {
+   fun onTakePhotoInstruction() {
       viewModelScope.launch {
          _instructionUiStates.value = _instructionUiStates.value.map {
             if (it.id == instructionNeedTakePhoto) it.copy(
@@ -179,8 +179,13 @@ class RecipeEntryViewModel @Inject constructor(
       }
    }
 
-   fun onOpenCamera() {
+   fun onPrepareTakePhotoRecipe() {
       _showPopUp1.value = true
+   }
+
+   fun onPrepareTakePhotoInstruction(id: Int) {
+      _showPopUp.value = true
+      instructionNeedTakePhoto = id
    }
 
    fun onTakePhotoRecipe() {
@@ -190,11 +195,6 @@ class RecipeEntryViewModel @Inject constructor(
          )
          _showPopUp1.value = false
       }
-   }
-
-   fun takePhotoForInstruction(id: Int) {
-      _showPopUp.value = true
-      instructionNeedTakePhoto = id
    }
 
    private companion object {

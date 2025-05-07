@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MyCookBookViewModel @Inject constructor(
-   private val useCase: GetMyRecipesUseCase,
+   useCase: GetMyRecipesUseCase,
 ) : ViewModel() {
 
    //prepare uiState

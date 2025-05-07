@@ -6,8 +6,9 @@ import com.ad.cookgood.recipes.domain.model.Instruction
 import kotlinx.coroutines.flow.Flow
 
 interface MyRecipeRepository {
-   suspend fun getMyRecipeById(recipeId: Long): MyRecipe?
-   suspend fun getInstructionsByRecipeId(recipeId: Long): List<Instruction>
-   suspend fun getIngredientsByRecipeId(recipeId: Long): List<Ingredient>
+   fun getMyRecipeById(recipeId: Long): Flow<MyRecipe?>
+   fun getInstructionsByRecipeId(recipeId: Long): Flow<List<Instruction>>
+   fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>>
    fun getMyRecipes(): Flow<List<MyRecipe>>
+   suspend fun deleteMyRecipe(myRecipe: MyRecipe): Int
 }

@@ -45,7 +45,7 @@ class AddInstructionUseCaseIntegrationTest {
    fun insert_instruction_after_insert_recipe() = runTest {
 
       // Arrange
-      val recipe = Recipe()
+      val recipe = Recipe(uri = null)
       val recipeId = addRecipeUseCase.invoke(recipe)
 
       // Act

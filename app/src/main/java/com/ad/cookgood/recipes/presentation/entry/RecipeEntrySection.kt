@@ -143,7 +143,7 @@ fun RecipeEntrySection3(
    ),
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
-   takePhotoForInstruction: (Int) -> Unit = {}
+   onPrepareTakePhotoInstruction: (Int) -> Unit = {}
 ) {
    Column(modifier) {
 
@@ -159,8 +159,8 @@ fun RecipeEntrySection3(
                stepNumber = if (uiState is InstructionUiState) uiState.stepNumber else null,
                label = label,
                placeHolder = placeHolder,
-               takePhotoForInstruction = {
-                  takePhotoForInstruction(uiState.id)
+               onPrepareTakePhotoInstruction = {
+                  onPrepareTakePhotoInstruction(uiState.id)
                },
                uri = if (uiState is InstructionUiState) uiState.uri else null,
             )
@@ -185,7 +185,7 @@ fun CommonEntry(
    stepNumber: Int? = 1,
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
-   takePhotoForInstruction: () -> Unit = {},
+   onPrepareTakePhotoInstruction: () -> Unit = {},
    uri: Uri? = null
 ) {
    Column(modifier) {
@@ -207,7 +207,7 @@ fun CommonEntry(
       }
       stepNumber?.let {
          Row {
-            OutlinedButton(onClick = takePhotoForInstruction) {
+            OutlinedButton(onClick = onPrepareTakePhotoInstruction) {
                Text("📷")
             }
             CoilImage(

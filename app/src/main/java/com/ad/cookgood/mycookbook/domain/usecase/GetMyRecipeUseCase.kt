@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetMyRecipeUseCase @Inject constructor(
    private val repository: MyRecipeRepository
 ) {
-   suspend operator fun invoke(recipeId: Long) = repository.getMyRecipeById(recipeId)
+   operator fun invoke(recipeId: Long) = repository.getMyRecipeById(recipeId)
 }

@@ -85,6 +85,7 @@ fun CookGoodNavHost(
          MyRecipeDetailScreen(
             vm = vm,
             navigateUp = { navController.navigateUp() },
+            navigateBack = { navController.popBackStack() },
          )
       }
 

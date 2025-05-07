@@ -10,6 +10,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -17,11 +23,13 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LifecycleOwner
 import com.ad.cookgood.R
 import com.ad.cookgood.captureimage.presentation.CameraPreview
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
@@ -37,16 +44,18 @@ import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 import com.ad.cookgood.shared.CoilImage
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RecipeEntryScreen(
    modifier: Modifier = Modifier,
    navigateUp: () -> Unit = {},
    navigateBack: () -> Unit = {},
-   vm: RecipeEntryViewModel = hiltViewModel(),
+   vm: RecipeEntryViewModel = hiltViewModel()
+) {
 
-   ) {
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
+   val keyboardController = LocalSoftwareKeyboardController.current
 
    if (vm.showPopUp.value) {
       Popup(
@@ -56,7 +65,20 @@ fun RecipeEntryScreen(
             modifier = Modifier.height(300.dp),
             stopCamera = vm::stopCamera,
             startCamera = { a, b -> vm.startCamera(a, b) },
-            takePhoto = vm::takePhoto,
+            takePhoto = vm::onTakePhotoInstruction,
+         )
+      }
+   }
+
+   if (vm.showPopUp1.value) {
+      Popup(
+         properties = PopupProperties(focusable = true)
+      ) {
+         CameraPreview(
+            modifier = Modifier.height(300.dp),
+            stopCamera = vm::stopCamera,
+            startCamera = { a, b -> vm.startCamera(a, b) },
+            takePhoto = vm::onTakePhotoRecipe,
          )
       }
    }
@@ -65,9 +87,29 @@ fun RecipeEntryScreen(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
       modifier = modifier,
       topBar = {
-         RecipeEntryToolBar(
-            navigateUp = navigateUp,
-            saveRecipe = vm::saveRecipe
+         TopAppBar(
+            title = {},
+            navigationIcon = {
+               IconButton(onClick = navigateUp) {
+                  Icon(
+                     imageVector = Icons.Default.Close,
+                     contentDescription = "Close"
+                  )
+               }
+            },
+            actions = {
+               IconButton(
+                  onClick = {
+                     keyboardController?.hide()
+                     vm.saveRecipe()
+                  }
+               ) {
+                  Icon(
+                     imageVector = Icons.Default.Save,
+                     contentDescription = "Save"
+                  )
+               }
+            },
          )
       }
    ) {
@@ -79,11 +121,7 @@ fun RecipeEntryScreen(
       ) {
 
          RecipePhoto(
-            showPopUp1 = vm.showPopUp1.value,
-            onTakePhotoRecipe = vm::onTakePhotoRecipe,
-            startCamera = { a, b -> vm.startCamera(a, b) },
-            stopCamera = vm::stopCamera,
-            onOpenCamera = vm::onOpenCamera,
+            onPrepareTakePhotoRecipe = vm::onPrepareTakePhotoRecipe,
             uri = vm.uriRecipePhoto
          )
 
@@ -140,8 +178,8 @@ fun RecipeEntryScreen(
             commonUiStates = vm.instructionUiStates.value,
             label = R.string.instruction_entry_label,
             placeHolder = R.string.instruction_entry_placeholder,
-            takePhotoForInstruction = {
-               vm.takePhotoForInstruction(it)
+            onPrepareTakePhotoInstruction = {
+               vm.onPrepareTakePhotoInstruction(it)
             },
          )
       }
@@ -175,26 +213,10 @@ fun RecipeEntryScreen(
 @Composable
 fun RecipePhoto(
    modifier: Modifier = Modifier,
-   showPopUp1: Boolean = false,
-   onTakePhotoRecipe: () -> Unit,
-   startCamera: (LifecycleOwner, androidx.camera.core.Preview.SurfaceProvider) -> Unit,
-   stopCamera: () -> Unit,
-   onOpenCamera: () -> Unit,
+   onPrepareTakePhotoRecipe: () -> Unit,
    uri: Uri?
 ) {
-   Box(modifier.clickable(onClick = onOpenCamera)) {
-      if (showPopUp1) {
-         Popup(
-            properties = PopupProperties(focusable = true)
-         ) {
-            CameraPreview(
-               modifier = Modifier.height(300.dp),
-               stopCamera = stopCamera,
-               startCamera = { a, b -> startCamera(a, b) },
-               takePhoto = onTakePhotoRecipe,
-            )
-         }
-      }
+   Box(modifier.clickable(onClick = onPrepareTakePhotoRecipe)) {
       CoilImage(
          uri = uri,
          modifier = Modifier

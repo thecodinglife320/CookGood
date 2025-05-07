@@ -9,7 +9,7 @@ data class RecipeUiState(
    val servings: String = "",
    val cookTimeMinutes: String = "",
    val cookTimeHours: String = "",
-   var uri: Uri? = null
+   val uri: Uri? = null
 )
 
 fun RecipeUiState.toDomain() =

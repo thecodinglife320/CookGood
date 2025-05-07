@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="step_number">Bước %d</string>
+    <string name="attention">Thông báo</string>
+    <string name="delete_question">Bạn có muốn xóa công thức này</string>
+    <string name="no">Không</string>
+    <string name="yes">Có</string>
+</resources>
