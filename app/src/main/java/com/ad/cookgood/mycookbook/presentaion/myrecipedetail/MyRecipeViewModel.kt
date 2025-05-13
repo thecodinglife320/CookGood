@@ -3,7 +3,6 @@ package com.ad.cookgood.mycookbook.presentaion.myrecipedetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.mycookbook.domain.model.toMyRecipeUiState
 import com.ad.cookgood.mycookbook.domain.usecase.DeleteMyRecipeUseCase
 import com.ad.cookgood.mycookbook.domain.usecase.GetIngredientsOfMyRecipeUseCase
 import com.ad.cookgood.mycookbook.domain.usecase.GetInstructionsOfMyRecipeUseCase
@@ -11,6 +10,7 @@ import com.ad.cookgood.mycookbook.domain.usecase.GetMyRecipeUseCase
 import com.ad.cookgood.mycookbook.presentaion.state.MyRecipeUiState
 import com.ad.cookgood.mycookbook.presentaion.state.toDomain
 import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
+import com.ad.cookgood.recipes.domain.model.toRecipeUiState
 import com.ad.cookgood.recipes.domain.model.toUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,7 +34,16 @@ class MyRecipeViewModel @Inject constructor(
    val myRecipeUiState =
       getMyRecipeUseCase(id)
          .map {
-            it?.toMyRecipeUiState()
+            it?.let {
+               MyRecipeUiState(
+                  id = it.id,
+                  recipeUiState = it.recipe.toRecipeUiState().copy(
+                     cookTimeMinutes = "${it.recipe.cookTime % 60} phút",
+                     cookTimeHours = "${it.recipe.cookTime / 60} tiếng",
+                     servings = "${it.recipe.serving} người"
+                  )
+               )
+            }
          }
          .stateIn(viewModelScope, SharingStarted.WhileSubscribed(TIMEOUT_MILLIS), MyRecipeUiState())
 

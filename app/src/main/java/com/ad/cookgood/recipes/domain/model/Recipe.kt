@@ -4,7 +4,7 @@ import android.net.Uri
 import com.ad.cookgood.recipes.data.local.recipe.LocalRecipe
 import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 
-class Recipe(
+data class Recipe(
    val title: String = "",
    val brief: String = "",
    val serving: Int = 0,

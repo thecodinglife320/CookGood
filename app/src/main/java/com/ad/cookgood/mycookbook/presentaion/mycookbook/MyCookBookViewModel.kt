@@ -2,9 +2,10 @@ package com.ad.cookgood.mycookbook.presentaion.mycookbook
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.mycookbook.domain.model.toMyRecipeUiState
 import com.ad.cookgood.mycookbook.domain.usecase.GetMyRecipesUseCase
 import com.ad.cookgood.mycookbook.presentaion.state.MyCookBookUiState
+import com.ad.cookgood.mycookbook.presentaion.state.MyRecipeUiState
+import com.ad.cookgood.recipes.domain.model.toRecipeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -21,7 +22,7 @@ class MyCookBookViewModel @Inject constructor(
       useCase()
          .map {
             MyCookBookUiState(it.map {
-               it.toMyRecipeUiState()
+               MyRecipeUiState(it.id, it.recipe.toRecipeUiState())
             })
          }
          .stateIn(
