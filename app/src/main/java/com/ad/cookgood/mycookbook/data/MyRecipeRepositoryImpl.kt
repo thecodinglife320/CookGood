@@ -51,4 +51,9 @@ class MyRecipeRepositoryImpl @Inject constructor(
 
    override suspend fun deleteMyRecipe(myRecipe: MyRecipe) =
       recipeDao.delete(myRecipe.toLocal())
+
+   override suspend fun updateMyRecipe(myRecipe: MyRecipe) {
+      recipeDao.update(myRecipe.toLocal())
+   }
+
 }

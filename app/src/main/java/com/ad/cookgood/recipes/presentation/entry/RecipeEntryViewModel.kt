@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RecipeEntryViewModel @Inject constructor(
+open class RecipeEntryViewModel @Inject constructor(
    private val addRecipeUseCase: AddRecipeUseCase,
    private val addIngredientUseCase: AddIngredientUseCase,
    private val addInstructionUseCase: AddInstructionUseCase,
@@ -34,7 +34,7 @@ class RecipeEntryViewModel @Inject constructor(
 ) : ViewModel() {
 
    //prepare state
-   private val _recipeUiState = mutableStateOf(
+   internal val _recipeUiState = mutableStateOf(
       RecipeUiState()
    )
 
@@ -46,7 +46,7 @@ class RecipeEntryViewModel @Inject constructor(
       listOf<InstructionUiState>()
    )
 
-   private val _successMessage: MutableState<String?> = mutableStateOf(
+   internal val _successMessage: MutableState<String?> = mutableStateOf(
       null
    )
 
@@ -67,6 +67,8 @@ class RecipeEntryViewModel @Inject constructor(
 
    val instructionUiStates: State<List<InstructionUiState>> get() = _instructionUiStates
 
+   val recipeUiState: State<RecipeUiState> = _recipeUiState
+
    val successMessage: State<String?> = _successMessage
 
    val error: State<String?> = _error
@@ -74,7 +76,7 @@ class RecipeEntryViewModel @Inject constructor(
    val uriRecipePhoto get() = _recipeUiState.value.uri
 
    //coroutine exception handle
-   private val coroutineExceptionHandler =
+   internal val coroutineExceptionHandler =
       CoroutineExceptionHandler { _, ex ->
          _error.value = ex.message
       }
@@ -117,7 +119,7 @@ class RecipeEntryViewModel @Inject constructor(
       }
    }
 
-   fun saveRecipe() {
+   open fun saveRecipe() {
       viewModelScope.launch(coroutineExceptionHandler) {
          val recipeId = addRecipeUseCase(_recipeUiState.value.toDomain())
 

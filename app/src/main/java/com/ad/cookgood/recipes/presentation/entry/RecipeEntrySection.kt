@@ -20,11 +20,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,6 +41,8 @@ fun RecipeEntrySection1(
    onTitleChange: (String) -> Unit = {},
    onBriefChange: (String) -> Unit = {},
    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+   title: String = "",
+   brief: String = ""
 ) {
 
    Column(
@@ -55,7 +53,8 @@ fun RecipeEntrySection1(
          label = R.string.recipe_entry_name_label,
          placeHolder = R.string.recipe_entry_name_placeholder,
          onValueChange = onTitleChange,
-         keyboardOptions = keyboardOptions
+         keyboardOptions = keyboardOptions,
+         value = title
       )
 
       //nhap mo ta ngan
@@ -64,7 +63,8 @@ fun RecipeEntrySection1(
          placeHolder = R.string.recipe_entry_info_placeholder,
          modifier = Modifier.height(150.dp),
          onValueChange = onBriefChange,
-         keyboardOptions = keyboardOptions
+         keyboardOptions = keyboardOptions,
+         value = brief
       )
    }
 
@@ -78,6 +78,9 @@ fun RecipeEntrySection2(
    onHourChange: (String) -> Unit = {},
    onMinuteChange: (String) -> Unit = {},
    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+   serving: String = "",
+   hour: String = "",
+   minute: String = ""
 ) {
 
    Column(modifier) {
@@ -96,7 +99,8 @@ fun RecipeEntrySection2(
             label = R.string.recipe_entry_serving_labelSau,
             placeHolder = R.string.default00,
             onValueChange = onServingChange,
-            keyboardOptions = keyboardOptions
+            keyboardOptions = keyboardOptions,
+            value = serving
          )
       }
 
@@ -113,14 +117,16 @@ fun RecipeEntrySection2(
             label = R.string.hour_label,
             placeHolder = R.string.default00,
             onValueChange = onHourChange,
-            keyboardOptions = keyboardOptions
+            keyboardOptions = keyboardOptions,
+            value = hour
          )
          RecipeEntryInput(
             modifier = Modifier.width(75.dp),
             label = R.string.minute_label,
             placeHolder = R.string.default00,
             onValueChange = onMinuteChange,
-            keyboardOptions = keyboardOptions
+            keyboardOptions = keyboardOptions,
+            value = minute
          )
       }
    }
@@ -163,6 +169,7 @@ fun RecipeEntrySection3(
                   onPrepareTakePhotoInstruction(uiState.id)
                },
                uri = if (uiState is InstructionUiState) uiState.uri else null,
+               str = uiState.name
             )
          }
       }
@@ -186,7 +193,8 @@ fun CommonEntry(
    @StringRes label: Int = R.string.ingredient_entry_label,
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
    onPrepareTakePhotoInstruction: () -> Unit = {},
-   uri: Uri? = null
+   uri: Uri? = null,
+   str: String = ""
 ) {
    Column(modifier) {
       Row(
@@ -199,6 +207,7 @@ fun CommonEntry(
             onValueChange = onValueChange,
             label = label,
             placeHolder = placeHolder,
+            value = str
          )
 
          IconButton(onClick = onRemove) {
@@ -225,16 +234,16 @@ fun CommonEntry(
 @Composable
 fun RecipeEntryInput(
    modifier: Modifier = Modifier,
+   value: String = "",
    @StringRes label: Int = R.string.recipe_entry_name_label,
    @StringRes placeHolder: Int = R.string.recipe_entry_name_placeholder,
    onValueChange: (String) -> Unit = {},
    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
-   var text by rememberSaveable { mutableStateOf("") }
+
    OutlinedTextField(
-      value = text,
+      value = value,
       onValueChange = {
-         text = it
          onValueChange(it)
       },
       label = { Text(stringResource(label)) },

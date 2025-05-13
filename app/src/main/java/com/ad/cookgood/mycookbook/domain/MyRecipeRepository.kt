@@ -11,4 +11,7 @@ interface MyRecipeRepository {
    fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>>
    fun getMyRecipes(): Flow<List<MyRecipe>>
    suspend fun deleteMyRecipe(myRecipe: MyRecipe): Int
+   suspend fun updateMyRecipe(myRecipe: MyRecipe)
+//   suspend fun updateIngredient(editedIngredient: EditedIngredient)
+//   //suspend fun updateInstruction(instruction: Instruction,recipeId: Long)
 }

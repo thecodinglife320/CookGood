@@ -131,7 +131,9 @@ fun RecipeEntryScreen(
             keyboardOptions = KeyboardOptions.Default.copy(
                imeAction = ImeAction.Next,
                keyboardType = KeyboardType.Text
-            )
+            ),
+            title = vm.recipeUiState.value.title,
+            brief = vm.recipeUiState.value.brief
          )
 
          RecipeEntrySection2(
@@ -141,7 +143,10 @@ fun RecipeEntryScreen(
             keyboardOptions = KeyboardOptions.Default.copy(
                imeAction = ImeAction.Next,
                keyboardType = KeyboardType.Number
-            )
+            ),
+            serving = vm.recipeUiState.value.servings,
+            hour = vm.recipeUiState.value.cookTimeHours,
+            minute = vm.recipeUiState.value.cookTimeMinutes,
          )
 
          //nhap nguyen lieu

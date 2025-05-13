@@ -25,8 +25,8 @@ fun Recipe.toRecipeUiState() =
    RecipeUiState(
       title = title,
       brief = brief,
-      servings = "$serving người",
-      cookTimeMinutes = "${cookTime % 60} phút",
-      cookTimeHours = "${cookTime / 60} tiếng",
+      servings = "$serving",
+      cookTimeMinutes = "${cookTime % 60}",
+      cookTimeHours = "${cookTime / 60}",
       uri = uri
    )

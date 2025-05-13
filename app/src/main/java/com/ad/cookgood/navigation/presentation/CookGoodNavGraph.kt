@@ -17,6 +17,8 @@ import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeViewModel
+import com.ad.cookgood.mycookbook.presentaion.myrecipeedit.EditMyRecipeViewModel
+import com.ad.cookgood.navigation.data.EditMyRecipeScreen
 import com.ad.cookgood.navigation.data.MyCookBookScreen
 import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
@@ -65,7 +67,12 @@ fun CookGoodNavHost(
             },
             vm = vm,
             onMyRecipeClick = { recipeId ->
-               navController.navigate("${MyCookBookScreen.route}/$recipeId")
+               navController.navigate(
+                  MyRecipeDetailScreen.route.replace(
+                     "{${MyRecipeDetailScreen.recipeIdArg}}",
+                     "$recipeId"
+                  )
+               )
             },
          )
       }
@@ -86,6 +93,30 @@ fun CookGoodNavHost(
             vm = vm,
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
+            navigateToEditScreen = {
+               val route =
+                  EditMyRecipeScreen.route.replace("{${MyRecipeDetailScreen.recipeIdArg}}", "$it")
+               navController.navigate(route)
+            },
+         )
+      }
+
+      //my recipe edit screen
+      composable(
+         route = EditMyRecipeScreen.route,
+         arguments = listOf(
+            navArgument(MyRecipeDetailScreen.recipeIdArg) {
+               type = NavType.LongType
+            }
+         )
+      ) {
+
+         val vm = hiltViewModel<EditMyRecipeViewModel>()
+
+         RecipeEntryScreen(
+            vm = vm,
+            navigateBack = { navController.popBackStack() },
+            navigateUp = { navController.navigateUp() }
          )
       }
 

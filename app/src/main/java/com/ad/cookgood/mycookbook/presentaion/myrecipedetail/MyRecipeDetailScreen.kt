@@ -39,7 +39,8 @@ fun MyRecipeDetailScreen(
    modifier: Modifier = Modifier,
    vm: MyRecipeViewModel,
    navigateUp: () -> Unit,
-   navigateBack: () -> Unit
+   navigateBack: () -> Unit,
+   navigateToEditScreen: (Long) -> Unit
 ) {
 
    val myRecipeUiState by vm.myRecipeUiState.collectAsState()
@@ -72,7 +73,9 @@ fun MyRecipeDetailScreen(
                         contentDescription = null
                      )
                   }
-                  IconButton(onClick = {}) {
+                  IconButton(onClick = {
+                     navigateToEditScreen(myRecipeUiState.id)
+                  }) {
                      Icon(
                         Icons.Rounded.Edit,
                         contentDescription = null
