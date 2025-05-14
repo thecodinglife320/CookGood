@@ -26,27 +26,27 @@ import javax.inject.Inject
 @HiltViewModel
 open class RecipeEntryViewModel @Inject constructor(
    private val addRecipeUseCase: AddRecipeUseCase,
-   private val addIngredientUseCase: AddIngredientUseCase,
-   private val addInstructionUseCase: AddInstructionUseCase,
+   protected val addIngredientUseCase: AddIngredientUseCase,
+   protected val addInstructionUseCase: AddInstructionUseCase,
    private val startCameraUseCase: StartCameraUseCase,
    private val stopCameraUseCase: StopCameraUseCase,
    private val takePhotoUseCase: TakePhotoUseCase,
 ) : ViewModel() {
 
    //prepare state
-   internal val _recipeUiState = mutableStateOf(
+   protected val _recipeUiState = mutableStateOf(
       RecipeUiState()
    )
 
-   private val _ingredientUiStates = mutableStateOf(
+   protected val _ingredientUiStates = mutableStateOf(
       listOf<IngredientUiState>()
    )
 
-   private val _instructionUiStates = mutableStateOf(
+   protected val _instructionUiStates = mutableStateOf(
       listOf<InstructionUiState>()
    )
 
-   internal val _successMessage: MutableState<String?> = mutableStateOf(
+   protected val _successMessage: MutableState<String?> = mutableStateOf(
       null
    )
 

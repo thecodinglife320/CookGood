@@ -1,9 +1,9 @@
 package com.ad.cookgood.recipes.data.local.instruction
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -20,6 +20,6 @@ interface InstructionDao {
    @Query("select * from instructions where recipe_id=:recipeId")
    fun getInstructionsByRecipeId(recipeId: Long): Flow<List<LocalInstruction>>
 
-   @Update
-   suspend fun update(localInstruction: LocalInstruction)
+   @Delete
+   suspend fun deleteInstruction(instruction: LocalInstruction)
 }
