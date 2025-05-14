@@ -6,11 +6,11 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxCoroutinesTest = "1.10.2"
-lifecycleRuntimeKtx = "2.8.7"
+lifecycleRuntimeKtx = "2.9.0"
 activityCompose = "1.10.1"
-composeBom = "2025.04.01"
-material3 = "1.4.0-alpha13"
-navigationCompose = "2.8.9"
+composeBom = "2025.05.00"
+material3 = "1.4.0-alpha14"
+navigationCompose = "2.9.0"
 material-icons-extended = "1.7.8"
 constraintlayoutCompose = "1.1.1"
 roomKtx = "2.7.1"
@@ -18,7 +18,7 @@ roomRuntime = "2.7.1"
 roomCompiler = "2.7.1"
 hiltAndroid = "2.56.2"
 hiltAndroidCompiler = "2.56.2"
-googleHilt = "2.56.1"
+googleHilt = "2.56.2"
 googleKotlinKsp = "2.1.0-1.0.29"
 hiltNavigationCompose = "1.2.0"
 mockitoCore = "5.17.0"
@@ -26,16 +26,12 @@ roomTesting = "2.7.1"
 rules = "1.6.1"
 runner = "1.6.2"
 coreKtxVersion = "1.7.0-alpha03"
-cameraCore = "1.5.0-alpha06"
-cameraCamera2 = "1.5.0-alpha06"
-cameraView = "1.5.0-alpha06"
-cameraExtensions = "1.5.0-alpha06"
+cameraCore = "1.5.0-beta01"
+cameraCamera2 = "1.5.0-beta01"
+cameraView = "1.5.0-beta01"
+cameraExtensions = "1.5.0-beta01"
 accompanistPermissions = "0.37.3"
-cameraLifecycle = "1.5.0-alpha06"
-appcompat = "1.7.0"
-material = "1.12.0"
-activity = "1.10.1"
-constraintlayout = "2.2.1"
+cameraLifecycle = "1.5.0-beta01"
 coilCompose = "2.7.0"
 
 [libraries]
@@ -75,12 +71,7 @@ androidx-camera-view = { group = "androidx.camera", name = "camera-view", versio
 androidx-camera-extensions = { group = "androidx.camera", name = "camera-extensions", version.ref = "cameraExtensions" }
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanistPermissions" }
 androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraLifecycle" }
-androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coilCompose" }
-androidx-camera-compose = { group = "androidx.camera", name = "camera-compose", version = "1.5.0-alpha06" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
