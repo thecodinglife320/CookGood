@@ -1,14 +1,19 @@
 package com.ad.cookgood.recipes.presentation.entry
 
-import androidx.camera.core.Preview
+import android.annotation.SuppressLint
+import android.content.Context
+import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
+import androidx.camera.core.SurfaceRequest
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.lifecycle.awaitInstance
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.captureimage.domain.StartCameraUseCase
-import com.ad.cookgood.captureimage.domain.StopCameraUseCase
+import com.ad.cookgood.captureimage.domain.GetCaptureUseCase
+import com.ad.cookgood.captureimage.domain.GetPreviewUseCase
 import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddInstructionUseCase
@@ -20,16 +25,21 @@ import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 import com.ad.cookgood.recipes.presentation.state.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.awaitCancellation
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@Suppress("PropertyName")
 @HiltViewModel
 open class RecipeEntryViewModel @Inject constructor(
    private val addRecipeUseCase: AddRecipeUseCase,
    protected val addIngredientUseCase: AddIngredientUseCase,
    protected val addInstructionUseCase: AddInstructionUseCase,
-   private val startCameraUseCase: StartCameraUseCase,
-   private val stopCameraUseCase: StopCameraUseCase,
+   getPreviewUseCase: GetPreviewUseCase,
+   getCaptureUseCase: GetCaptureUseCase,
    private val takePhotoUseCase: TakePhotoUseCase,
 ) : ViewModel() {
 
@@ -61,6 +71,13 @@ open class RecipeEntryViewModel @Inject constructor(
    val showPopUp1: State<Boolean> get() = _showPopUp1
 
    private var instructionNeedTakePhoto: Int = 0
+
+   private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
+   val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
+
+   private val cameraPreviewUseCase = getPreviewUseCase()
+
+   private val cameraCaptureUseCase = getCaptureUseCase()
 
    //expose state
    val ingredientUiStates: State<List<IngredientUiState>> get() = _ingredientUiStates
@@ -165,10 +182,29 @@ open class RecipeEntryViewModel @Inject constructor(
       )
    }
 
-   fun startCamera(lifecycleOwner: LifecycleOwner, surfaceProvider: Preview.SurfaceProvider) =
-      startCameraUseCase(lifecycleOwner, surfaceProvider)
+   fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
+      viewModelScope.launch {
+         cameraPreviewUseCase.setSurfaceProvider { newSurfaceRequest ->
+            _surfaceRequest.update { newSurfaceRequest }
+         }
 
-   fun stopCamera() = stopCameraUseCase()
+         val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
+
+         processCameraProvider.bindToLifecycle(
+            lifecycleOwner,
+            DEFAULT_BACK_CAMERA,
+            cameraPreviewUseCase,
+            cameraCaptureUseCase
+         )
+
+         // Keep bound until cancellation
+         try {
+            awaitCancellation()
+         } finally {
+            processCameraProvider.unbindAll()
+         }
+      }
+   }
 
    fun onTakePhotoInstruction() {
       viewModelScope.launch {
@@ -190,7 +226,9 @@ open class RecipeEntryViewModel @Inject constructor(
       instructionNeedTakePhoto = id
    }
 
+   @SuppressLint("RestrictedApi")
    fun onTakePhotoRecipe() {
+      cameraCaptureUseCase
       viewModelScope.launch {
          _recipeUiState.value = _recipeUiState.value.copy(
             uri = takePhotoUseCase()

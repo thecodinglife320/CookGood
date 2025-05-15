@@ -2,13 +2,10 @@ package com.ad.cookgood.captureimage.data
 
 import android.app.Application
 import android.util.Log
-import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.LifecycleOwner
 import com.ad.cookgood.captureimage.domain.CameraRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,60 +19,24 @@ class CameraRepositoryImpl @Inject constructor(
    private val application: Application
 ) : CameraRepository {
 
-   private lateinit var cameraProvider: ProcessCameraProvider
-   private lateinit var previewUseCase: Preview
-   private lateinit var imageCapture: ImageCapture
+   private val preview = Preview.Builder().build()
 
-   override fun startCamera(
-      lifecycleOwner: LifecycleOwner,
-      surfaceProvider: Preview.SurfaceProvider
-   ) {
-      ProcessCameraProvider.getInstance(application).let {
-         it.addListener(
-            {
-               cameraProvider = it.get()
+   private val capture = ImageCapture.Builder()
+      .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
+      .setJpegQuality(IMAGE_QUALITY)
+      .build()
 
-               previewUseCase = Preview.Builder().build().also {
-                  it.surfaceProvider = surfaceProvider
-               }
+   override fun getPreviewUseCase() = preview
 
-               //image capture use case
-               imageCapture = ImageCapture.Builder()
-                  .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY) // hoặc MAXIMIZE_QUALITY
-                  .setJpegQuality(IMAGE_QUALITY) // <-- Đặt chất lượng JPEG ở đây (ví dụ: 80)
-                  .build()
+   override fun getCaptureUseCase() = capture
 
-               Log.d(TAG, imageCapture.toString())
-
-               // Unbind use cases before rebinding
-               cameraProvider.unbindAll()
-
-               // Bind use cases to camera
-               cameraProvider.bindToLifecycle(
-                  lifecycleOwner,
-                  CameraSelector.DEFAULT_BACK_CAMERA,
-                  previewUseCase,
-                  imageCapture
-               )
-               Log.d(TAG, "Camera bind successful")
-            },
-            ContextCompat.getMainExecutor(application)
-         )
-      }
-   }
-
-   override fun stopCamera() {
-      cameraProvider.unbindAll()
-      Log.d(TAG, "Camera unbound")
-   }
-
-   @kotlin.OptIn(ExperimentalCoroutinesApi::class)
+   @OptIn(ExperimentalCoroutinesApi::class)
    override suspend fun takePhoto() =
       withContext(Dispatchers.IO) {
          suspendCancellableCoroutine {
             val photoFile = File(application.filesDir, "${System.currentTimeMillis()}.jpg")
             val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
-            imageCapture.takePicture(
+            capture.takePicture(
                outputOptions,
                ContextCompat.getMainExecutor(application),
                object : ImageCapture.OnImageSavedCallback {
@@ -90,7 +51,6 @@ class CameraRepositoryImpl @Inject constructor(
             )
          }
       }
-
 
    private companion object {
       const val TAG = "CameraRepoImpl"

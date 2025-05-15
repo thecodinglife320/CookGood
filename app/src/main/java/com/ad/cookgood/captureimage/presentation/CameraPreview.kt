@@ -1,12 +1,12 @@
 package com.ad.cookgood.captureimage.presentation
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import androidx.camera.core.Preview
-import androidx.camera.view.PreviewView
+import androidx.camera.compose.CameraXViewfinder
+import androidx.camera.core.SurfaceRequest
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -14,13 +14,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -31,8 +29,8 @@ import com.google.accompanist.permissions.rememberPermissionState
 @Composable
 fun CameraPreview(
    modifier: Modifier = Modifier,
-   stopCamera: () -> Unit,
-   startCamera: (LifecycleOwner, Preview.SurfaceProvider) -> Unit,
+   bindToCamera: (Context, LifecycleOwner) -> Unit,
+   surfaceRequest: SurfaceRequest?,
    takePhoto: () -> Unit,
 ) {
 
@@ -53,43 +51,32 @@ fun CameraPreview(
          Button(onClick = cameraPermissionState::launchPermissionRequest) { Text("cap quyen") }
       }//hoi cap quyen
    } else {
+
       val context = LocalContext.current
       val lifecycleOwner = LocalLifecycleOwner.current
-      val previewView = remember { PreviewView(context) }
 
-      DisposableEffect(lifecycleOwner) {
-         startCamera(lifecycleOwner, previewView.surfaceProvider)
-
-         onDispose {
-            stopCamera()
-         }
+      LaunchedEffect(lifecycleOwner) {
+         bindToCamera(context, lifecycleOwner)
       }
-      Column {
-         Box(
-            modifier,
-            contentAlignment = Alignment.BottomCenter,
-         ) {
-            AndroidView(
-               factory = { previewView }
+
+      Box(
+         modifier,
+         contentAlignment = Alignment.BottomCenter,
+      ) {
+
+         surfaceRequest?.let { request ->
+            CameraXViewfinder(
+               surfaceRequest = request,
             )
-            OutlinedButton(
-               onClick = takePhoto,
-               modifier = Modifier
-                  .size(60.dp)
-                  .padding(8.dp),
-               shape = CircleShape
-            ) {}
          }
 
-//         uri?.let {
-//            AsyncImage(
-//               model = ImageRequest.Builder(context)
-//                  .data(uri)
-//                  .crossfade(true)
-//                  .build(),
-//               contentDescription = "Ảnh vừa chụp",
-//            )
-//         }
+         OutlinedButton(
+            onClick = takePhoto,
+            modifier = Modifier
+               .size(60.dp)
+               .padding(8.dp),
+            shape = CircleShape
+         ) {}
       }
    }
 }

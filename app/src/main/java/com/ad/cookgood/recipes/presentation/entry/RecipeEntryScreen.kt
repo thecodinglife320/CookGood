@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +24,8 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -56,15 +57,16 @@ fun RecipeEntryScreen(
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
    val keyboardController = LocalSoftwareKeyboardController.current
-
+   val surfaceRequest by vm.surfaceRequest.collectAsState()
+   
    if (vm.showPopUp.value) {
       Popup(
          properties = PopupProperties(focusable = true)
       ) {
          CameraPreview(
             modifier = Modifier.height(300.dp),
-            stopCamera = vm::stopCamera,
-            startCamera = { a, b -> vm.startCamera(a, b) },
+            bindToCamera = vm::bindToCamera,
+            surfaceRequest = surfaceRequest,
             takePhoto = vm::onTakePhotoInstruction,
          )
       }
@@ -76,8 +78,8 @@ fun RecipeEntryScreen(
       ) {
          CameraPreview(
             modifier = Modifier.height(300.dp),
-            stopCamera = vm::stopCamera,
-            startCamera = { a, b -> vm.startCamera(a, b) },
+            bindToCamera = vm::bindToCamera,
+            surfaceRequest = surfaceRequest,
             takePhoto = vm::onTakePhotoRecipe,
          )
       }
@@ -225,8 +227,8 @@ fun RecipePhoto(
       CoilImage(
          uri = uri,
          modifier = Modifier
-            .width(300.dp)
-            .height(200.dp)
+            //.width(350.dp)
+            .height(300.dp)
       )
       Text(
          stringResource(R.string.add_image),

@@ -3,8 +3,8 @@ package com.ad.cookgood.mycookbook.presentaion.myrecipeedit
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.captureimage.domain.StartCameraUseCase
-import com.ad.cookgood.captureimage.domain.StopCameraUseCase
+import com.ad.cookgood.captureimage.domain.GetCaptureUseCase
+import com.ad.cookgood.captureimage.domain.GetPreviewUseCase
 import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
 import com.ad.cookgood.mycookbook.domain.model.IngredientEdit
 import com.ad.cookgood.mycookbook.domain.model.InstructionEdit
@@ -36,10 +36,10 @@ class EditMyRecipeViewModel @Inject constructor(
    addRecipeUseCase: AddRecipeUseCase,
    addIngredientUseCase: AddIngredientUseCase,
    addInstructionUseCase: AddInstructionUseCase,
-   startCameraUseCase: StartCameraUseCase,
-   stopCameraUseCase: StopCameraUseCase,
+   getPreviewUseCase: GetPreviewUseCase,
    takePhotoUseCase: TakePhotoUseCase,
    getMyRecipeUseCase: GetMyRecipeUseCase,
+   getCaptureUseCase: GetCaptureUseCase,
    stateHandle: SavedStateHandle,
    private val updateMyRecipeUseCase: UpdateMyRecipeUseCase,
    private val getIngredientEditsUseCase: GetIngredientEditsUseCase,
@@ -50,8 +50,8 @@ class EditMyRecipeViewModel @Inject constructor(
    addRecipeUseCase,
    addIngredientUseCase,
    addInstructionUseCase,
-   startCameraUseCase,
-   stopCameraUseCase,
+   getPreviewUseCase,
+   getCaptureUseCase,
    takePhotoUseCase
 ) {
 
@@ -130,7 +130,8 @@ class EditMyRecipeViewModel @Inject constructor(
                InstructionEdit(
                   it.id.toLong(),
                   it.toDomain()
-               ), id
+               ),
+               id
             )
          }
 

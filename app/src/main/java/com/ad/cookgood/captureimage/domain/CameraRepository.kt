@@ -1,11 +1,11 @@
 package com.ad.cookgood.captureimage.domain
 
 import android.net.Uri
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
-import androidx.lifecycle.LifecycleOwner
 
 interface CameraRepository {
-   fun startCamera(lifecycleOwner: LifecycleOwner, surfaceProvider: Preview.SurfaceProvider)
-   fun stopCamera()
+   fun getPreviewUseCase(): Preview
+   fun getCaptureUseCase(): ImageCapture
    suspend fun takePhoto(): Uri?
 }

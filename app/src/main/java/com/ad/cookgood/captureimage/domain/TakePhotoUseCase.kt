@@ -8,3 +8,4 @@ class TakePhotoUseCase @Inject constructor(
    suspend operator fun invoke() =
       repository.takePhoto()
 }
+
