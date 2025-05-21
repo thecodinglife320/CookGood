@@ -7,22 +7,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.ad.cookgood.R
-import com.ad.cookgood.SearchScreenAppBar
 
-@Preview
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
    modifier: Modifier = Modifier,
    titleAppBar: Int = R.string.search,
+   navigateToProfile: () -> Unit
 ) {
 
    Scaffold(
       modifier,
       topBar = {
-         SearchScreenAppBar(titleAppBar = titleAppBar)
+         SearchScreenAppBar(titleAppBar = titleAppBar, navigateToProfile = navigateToProfile)
       }
    ) {
       Text(stringResource(titleAppBar), modifier = Modifier.padding(it))

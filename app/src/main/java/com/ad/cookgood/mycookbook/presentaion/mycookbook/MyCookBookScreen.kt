@@ -13,13 +13,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ad.cookgood.R
-import com.ad.cookgood.SearchScreenAppBar
+import com.ad.cookgood.search.presentation.SearchScreenAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Composable
 fun MyCookBookScreen(
    modifier: Modifier = Modifier,
@@ -27,12 +25,16 @@ fun MyCookBookScreen(
    navigateToRecipeEntryScreen: () -> Unit = {},
    vm: MyCookBookViewModel = hiltViewModel(),
    onMyRecipeClick: (Long) -> Unit = {},
+   navigateToProfile: () -> Unit
 ) {
 
    Scaffold(
       modifier,
       topBar = {
-         SearchScreenAppBar(titleAppBar = titleAppBar)
+         SearchScreenAppBar(
+            titleAppBar = titleAppBar,
+            navigateToProfile = navigateToProfile
+         )
       },
       floatingActionButton = {
          FloatingActionButton(

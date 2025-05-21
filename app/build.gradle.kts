@@ -4,6 +4,7 @@ plugins {
    alias(libs.plugins.kotlin.compose)
    alias(libs.plugins.google.ksp)
    alias(libs.plugins.google.hilt)
+   alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -64,6 +65,10 @@ dependencies {
    implementation(libs.androidx.camera.lifecycle)
    implementation(libs.coil.compose)
    implementation(libs.androidx.camera.compose)
+   implementation(libs.firebase.auth)
+   implementation(libs.androidx.credentials)
+   implementation(libs.androidx.credentials.play.services.auth)
+   implementation(libs.googleid)
    testImplementation(libs.mockito.core)
    androidTestImplementation(libs.core.ktx)
    ksp(libs.androidx.room.compiler)

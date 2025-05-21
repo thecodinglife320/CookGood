@@ -13,16 +13,22 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ad.cookgood.R
+import com.ad.cookgood.login.presentation.AuthScreen
+import com.ad.cookgood.login.presentation.AuthViewModel
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipeedit.EditMyRecipeViewModel
+import com.ad.cookgood.navigation.data.AuthScreen
 import com.ad.cookgood.navigation.data.EditMyRecipeScreen
 import com.ad.cookgood.navigation.data.MyCookBookScreen
 import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
+import com.ad.cookgood.navigation.data.ProfileScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
+import com.ad.cookgood.profile.presentation.ProfileScreen
+import com.ad.cookgood.profile.presentation.ProfileViewModel
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
@@ -35,9 +41,26 @@ fun CookGoodNavHost(
 ) {
    NavHost(
       navController = navController,
-      startDestination = SearchScreen.route,
+      startDestination = AuthScreen.route,
       modifier = modifier
    ) {
+
+      //auth screen
+      composable(route = AuthScreen.route) {
+         val vm = hiltViewModel<AuthViewModel>()
+         AuthScreen(
+            authViewModel = vm,
+            onSignInSuccess = { navController.navigate(SearchScreen.route) }
+         )
+      }
+
+      //profileUiState screen
+      composable(route = ProfileScreen.route) {
+         val vm = hiltViewModel<ProfileViewModel>()
+         ProfileScreen(
+            profileViewModel = vm
+         )
+      }
 
       //search screen
       composable(route = SearchScreen.route) {
@@ -45,7 +68,8 @@ fun CookGoodNavHost(
          val titleAppBar =
             if (navBackStackEntry?.destination?.route == SearchScreen.route) SearchScreen.title else R.string.empty
          SearchScreen(
-            titleAppBar = titleAppBar
+            titleAppBar = titleAppBar,
+            navigateToProfile = { navController.navigate(ProfileScreen.route) }
          )
       }
 
@@ -74,6 +98,7 @@ fun CookGoodNavHost(
                   )
                )
             },
+            navigateToProfile = { navController.navigate(ProfileScreen.route) }
          )
       }
 

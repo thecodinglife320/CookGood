@@ -13,7 +13,3 @@ object MyRecipeDetailScreen : NavDestination {
 
 }
 
-object EditMyRecipeScreen : NavDestination {
-   override val route = "${MyRecipeDetailScreen.route}/edit"
-   override val title = R.string.empty
-}

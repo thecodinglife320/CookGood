@@ -2,6 +2,8 @@ package com.ad.cookgood.di
 
 import com.ad.cookgood.captureimage.data.CameraRepositoryImpl
 import com.ad.cookgood.captureimage.domain.CameraRepository
+import com.ad.cookgood.login.data.AuthRepositoryImpl
+import com.ad.cookgood.login.domain.AuthRepository
 import com.ad.cookgood.mycookbook.data.MyRecipeRepositoryImpl
 import com.ad.cookgood.mycookbook.domain.MyRecipeRepository
 import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
@@ -31,4 +33,10 @@ abstract class RepositoryModule {
    abstract fun bindCameraRepository(
       impl: CameraRepositoryImpl
    ): CameraRepository
+
+   @Singleton
+   @Binds
+   abstract fun bindAuthRepository(
+      impl: AuthRepositoryImpl
+   ): AuthRepository
 }

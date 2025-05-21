@@ -60,9 +60,7 @@ open class RecipeEntryViewModel @Inject constructor(
       null
    )
 
-   private val _error: MutableState<String?> = mutableStateOf(
-      null
-   )
+   private val _error: MutableState<String?> = mutableStateOf(null)
 
    private val _showPopUp = mutableStateOf(false)
    val showPopUp: State<Boolean> get() = _showPopUp
