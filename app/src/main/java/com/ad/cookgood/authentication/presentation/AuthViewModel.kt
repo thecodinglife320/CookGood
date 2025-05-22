@@ -1,10 +1,10 @@
-package com.ad.cookgood.login.presentation
+package com.ad.cookgood.authentication.presentation
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ad.cookgood.login.domain.AuthRepository
+import com.ad.cookgood.authentication.domain.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

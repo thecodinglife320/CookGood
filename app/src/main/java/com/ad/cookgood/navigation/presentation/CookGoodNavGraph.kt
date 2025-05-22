@@ -13,8 +13,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ad.cookgood.R
-import com.ad.cookgood.login.presentation.AuthScreen
-import com.ad.cookgood.login.presentation.AuthViewModel
+import com.ad.cookgood.authentication.presentation.AuthScreen
+import com.ad.cookgood.authentication.presentation.AuthViewModel
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen

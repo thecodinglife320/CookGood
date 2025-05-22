@@ -1,4 +1,4 @@
-package com.ad.cookgood.login.presentation
+package com.ad.cookgood.authentication.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
