@@ -27,8 +27,8 @@ import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
 import com.ad.cookgood.navigation.data.ProfileScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
-import com.ad.cookgood.profile.presentation.ProfileScreen
-import com.ad.cookgood.profile.presentation.ProfileViewModel
+//import com.ad.cookgood.profile.presentation.ProfileScreen
+//import com.ad.cookgood.profile.presentation.ProfileViewModel
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
@@ -49,18 +49,18 @@ fun CookGoodNavHost(
       composable(route = AuthScreen.route) {
          val vm = hiltViewModel<AuthViewModel>()
          AuthScreen(
-            authViewModel = vm,
+            vm = vm,
             onSignInSuccess = { navController.navigate(SearchScreen.route) }
          )
       }
 
       //profileUiState screen
-      composable(route = ProfileScreen.route) {
-         val vm = hiltViewModel<ProfileViewModel>()
-         ProfileScreen(
-            profileViewModel = vm
-         )
-      }
+//      composable(route = ProfileScreen.route) {
+//         val vm = hiltViewModel<ProfileViewModel>()
+//         ProfileScreen(
+//            profileViewModel = vm
+//         )
+//      }
 
       //search screen
       composable(route = SearchScreen.route) {

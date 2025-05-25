@@ -1,4 +1,4 @@
-package com.ad.cookgood.authentication.domain
+package com.ad.cookgood.authentication.domain.model
 
 sealed class AuthResult {
    object Success : AuthResult()

@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ad.cookgood.mycookbook.domain.model.toLocal
 import com.ad.cookgood.recipes.data.local.CookGookDb
 import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
 import com.ad.cookgood.recipes.domain.model.Recipe
@@ -58,7 +57,7 @@ class AddRecipeUseCaseIntegrationTest {
       assert(recipeId > 0)
 
       val retrievedRecipe = db.recipeDao.getRecipeById(recipeId)
-      val localRecipe = recipe.toLocal()
+      //val localRecipe = recipe.toLocal()
 
 //      assertEquals(localRecipe.title, retrievedRecipe.title)
 //      assertEquals(localRecipe.brief, retrievedRecipe.brief)

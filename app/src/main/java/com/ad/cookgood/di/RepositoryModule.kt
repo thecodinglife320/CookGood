@@ -6,8 +6,12 @@ import com.ad.cookgood.captureimage.data.CameraRepositoryImpl
 import com.ad.cookgood.captureimage.domain.CameraRepository
 import com.ad.cookgood.mycookbook.data.MyRecipeRepositoryImpl
 import com.ad.cookgood.mycookbook.domain.MyRecipeRepository
+import com.ad.cookgood.profile.data.UserProfileRepositoryImpl
+import com.ad.cookgood.profile.domain.UserProfileRepository
 import com.ad.cookgood.recipes.data.local.RecipeRepositoryImpl
 import com.ad.cookgood.recipes.domain.RecipeRepository
+import com.ad.cookgood.session_management.data.SessionManagementRepositoryImpl
+import com.ad.cookgood.session_management.domain.SessionManagementRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -39,4 +43,16 @@ abstract class RepositoryModule {
    abstract fun bindAuthRepository(
       impl: AuthRepositoryImpl
    ): AuthRepository
+
+   @Singleton
+   @Binds
+   abstract fun bindSessionManagementRepo(
+      impl: SessionManagementRepositoryImpl
+   ): SessionManagementRepository
+
+   @Singleton
+   @Binds
+   abstract fun bindUserProfileRepository(
+      impl: UserProfileRepositoryImpl
+   ): UserProfileRepository
 }
