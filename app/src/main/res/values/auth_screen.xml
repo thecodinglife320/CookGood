@@ -2,4 +2,5 @@
 <resources>
     <string name="auth_screen_title_bar">Đăng nhập</string>
     <string name="auth_button_anonymous">Đăng nhập ẩn danh</string>
+    <string name="google_signin">Đăng nhập bằng</string>
 </resources>

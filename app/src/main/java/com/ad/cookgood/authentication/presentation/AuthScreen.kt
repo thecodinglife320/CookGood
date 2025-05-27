@@ -29,6 +29,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ad.cookgood.R
 import com.ad.cookgood.authentication.domain.model.AuthResult
 import kotlinx.coroutines.launch
@@ -56,7 +58,9 @@ fun AuthScreen(
    ) {
 
       val authState by vm.authState.collectAsState()
-      val currentUserid by vm.currentUserId.collectAsState()
+      val currentUserid by vm.currentUserId.collectAsStateWithLifecycle(
+         minActiveState = Lifecycle.State.RESUMED
+      )
 
       currentUserid?.let {
          onSignInSuccess()
@@ -106,7 +110,6 @@ fun AuthScreen(
                   Image(painterResource(R.drawable.google_logo_72), contentDescription = null)
                }
 
-               Text(currentUserid.toString())
             }
          }
       }

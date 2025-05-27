@@ -9,7 +9,9 @@ class SessionManagementRepositoryImpl @Inject constructor(
 ) : SessionManagementRepository {
 
    override fun signOut() {
+      if (auth.currentUser!!.isAnonymous) {
+         auth.currentUser!!.delete()
+      }
       auth.signOut()
    }
-
 }

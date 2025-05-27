@@ -1,5 +1,7 @@
 package com.ad.cookgood.navigation.presentation
 
+//import com.ad.cookgood.profile.presentation.ProfileScreen
+//import com.ad.cookgood.profile.presentation.ProfileViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,11 +29,12 @@ import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
 import com.ad.cookgood.navigation.data.ProfileScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
-//import com.ad.cookgood.profile.presentation.ProfileScreen
-//import com.ad.cookgood.profile.presentation.ProfileViewModel
+import com.ad.cookgood.navigation.data.SessionManagementScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
+import com.ad.cookgood.session_management.presentation.SessionManagementScreen
+import com.ad.cookgood.session_management.presentation.SessionManagementViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +72,7 @@ fun CookGoodNavHost(
             if (navBackStackEntry?.destination?.route == SearchScreen.route) SearchScreen.title else R.string.empty
          SearchScreen(
             titleAppBar = titleAppBar,
-            navigateToProfile = { navController.navigate(ProfileScreen.route) }
+            navigateToProfile = { navController.navigate(SessionManagementScreen.route) }
          )
       }
 
@@ -99,6 +102,18 @@ fun CookGoodNavHost(
                )
             },
             navigateToProfile = { navController.navigate(ProfileScreen.route) }
+         )
+      }
+
+      //session management screen
+      composable(route = SessionManagementScreen.route) {
+         val vm = hiltViewModel<SessionManagementViewModel>()
+         SessionManagementScreen(
+            vm = vm,
+            onSignOutSuccess = {
+               navController.popBackStack(AuthScreen.route, inclusive = false)
+            },
+            navigateUp = { navController.navigateUp() },
          )
       }
 

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_screen_title_bar">Hồ sơ cá nhân</string>
-    <string name="google_signin">Đăng nhập bằng</string>
-    <string name="signout">Đăng xuất</string>
 </resources>

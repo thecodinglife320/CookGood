@@ -1,6 +1,7 @@
 package com.ad.cookgood.authentication.presentation
 
 import android.app.Activity
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.authentication.domain.model.AuthError
@@ -28,13 +29,17 @@ class AuthViewModel @Inject constructor(
    private val _authState = MutableStateFlow<AuthResult?>(null)
    val authState: StateFlow<AuthResult?> = _authState
 
+   init {
+      Log.i(TAG, "init")
+   }
+
    val currentUserId = getCurrentUserUseCase()
       .map {
          it?.uid
       }
       .stateIn(
          scope = viewModelScope,
-         started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+         started = SharingStarted.Lazily,
          initialValue = null
       )
 
@@ -62,5 +67,6 @@ class AuthViewModel @Inject constructor(
 
    private companion object {
       private const val TIMEOUT_MILLIS = 5_000L
+      const val TAG = "AuthViewModel"
    }
 }

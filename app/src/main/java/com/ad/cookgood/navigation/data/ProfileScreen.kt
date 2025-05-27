@@ -8,3 +8,4 @@ object ProfileScreen : NavDestination {
    override val title: Int
       get() = R.string.profile_screen_title_bar
 }
+

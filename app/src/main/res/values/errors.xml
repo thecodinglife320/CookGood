@@ -4,7 +4,7 @@
     <string name="error_unknown">Đã xảy ra lỗi không xác định. Vui lòng thử lại sau.</string>
     <string name="error_user_cancel">Bạn đã hủy quá trình đăng nhập.</string>
     <string name="error_no_user_to_link">Không có người dùng ẩn danh để liên kết.</string>
-    <string name="error_credential_in_use">Tài khoản này đã được sử dụng cho một người dùng khác.</string>
+    <string name="error_credential_in_use">Bạn đã liên kết tài khoản Google trước đây. Vui lòng đăng nhập bằng Google</string>
     <string name="error_anonymous_failed">Không thể đăng nhập ẩn danh. Vui lòng thử lại.</string>
     <string name="error_user_already_link">Người dùng hiện tại đã được liên kết tài khoản.</string>
     <string name="network_error">Vui lòng kiểm tra kết nối mạng</string>
