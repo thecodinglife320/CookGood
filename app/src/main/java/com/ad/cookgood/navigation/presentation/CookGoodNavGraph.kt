@@ -30,6 +30,8 @@ import com.ad.cookgood.navigation.data.ProfileScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.navigation.data.SessionManagementScreen
+import com.ad.cookgood.profile.presentation.ProfileScreen
+import com.ad.cookgood.profile.presentation.ProfileViewModel
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
@@ -58,12 +60,13 @@ fun CookGoodNavHost(
       }
 
       //profileUiState screen
-//      composable(route = ProfileScreen.route) {
-//         val vm = hiltViewModel<ProfileViewModel>()
-//         ProfileScreen(
-//            profileViewModel = vm
-//         )
-//      }
+      composable(route = ProfileScreen.route) {
+         val vm = hiltViewModel<ProfileViewModel>()
+         ProfileScreen(
+            profileViewModel = vm,
+            navigateUp = { navController.navigateUp() }
+         )
+      }
 
       //search screen
       composable(route = SearchScreen.route) {
@@ -101,7 +104,7 @@ fun CookGoodNavHost(
                   )
                )
             },
-            navigateToProfile = { navController.navigate(ProfileScreen.route) }
+            navigateToProfile = { navController.navigate(SessionManagementScreen.route) }
          )
       }
 
@@ -114,6 +117,7 @@ fun CookGoodNavHost(
                navController.popBackStack(AuthScreen.route, inclusive = false)
             },
             navigateUp = { navController.navigateUp() },
+            navigateToProfileScree = { navController.navigate(ProfileScreen.route) }
          )
       }
 

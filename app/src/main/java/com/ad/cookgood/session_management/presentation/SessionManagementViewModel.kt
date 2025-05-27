@@ -6,9 +6,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
+import com.ad.cookgood.authentication.domain.model.LinkResult
 import com.ad.cookgood.authentication.domain.usecase.LinkAnonymousUseCase
 import com.ad.cookgood.authentication.domain.usecase.SignInWithGoogleUseCase
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
+import com.ad.cookgood.profile.domain.UpdateUserProfileUseCase
 import com.ad.cookgood.session_management.domain.SignOutUseCase
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +27,8 @@ class SessionManagementViewModel @Inject constructor(
    private val getCurrentUserUseCase: GetCurrentUserUseCase,
    private val linkAnonymousUseCase: LinkAnonymousUseCase,
    private val application: Application,
-   private val signInWithGoogleUseCase: SignInWithGoogleUseCase
+   private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
+   private val updateUserProfileUseCase: UpdateUserProfileUseCase
 ) : ViewModel() {
 
    private val _isAnonymous: MutableStateFlow<Boolean?> = MutableStateFlow(null)
@@ -43,6 +46,9 @@ class SessionManagementViewModel @Inject constructor(
 
    private val _authState = MutableStateFlow<AuthResult?>(null)
    val authState: StateFlow<AuthResult?> = _authState
+
+   private val _linkState = MutableStateFlow<LinkResult?>(null)
+   val linkState: StateFlow<LinkResult?> = _linkState
 
    private fun collectFlow() {
       viewModelScope.launch {
@@ -62,14 +68,19 @@ class SessionManagementViewModel @Inject constructor(
    fun linkAnonymous(context: Activity) {
       if (isNetworkAvailable(application)) {
          viewModelScope.launch {
-            _authState.value = linkAnonymousUseCase(context)
+            _linkState.value = linkAnonymousUseCase(context).also {
+               if (it is LinkResult.Success) {
+                  updateUserProfileUseCase(it.name, it.url)
+               }
+            }
             collectFlow()
          }
-      } else _authState.value = AuthResult.Error(AuthError.NetworkError)
+      } else _linkState.value = LinkResult.Error(AuthError.NetworkError)
    }
 
    fun clearState() {
       _authState.value = null
+      _linkState.value = null
    }
 
    fun signInWithGoogle(context: Activity) {

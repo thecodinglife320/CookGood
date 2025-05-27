@@ -1,6 +1,6 @@
 package com.ad.cookgood.profile.data
 
-import androidx.core.net.toUri
+import android.net.Uri
 import com.ad.cookgood.profile.domain.UserProfileRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
@@ -28,10 +28,10 @@ class UserProfileRepositoryImpl @Inject constructor(
       }
    }
 
-   override suspend fun updateUserProfile(name: String, url: String) {
+   override suspend fun updateUserProfile(name: String?, url: Uri?) {
       val profileUpdates = userProfileChangeRequest {
          displayName = name
-         photoUri = url.toUri()
+         photoUri = url
       }
       firebaseAuth.currentUser!!.updateProfile(profileUpdates).await()
    }

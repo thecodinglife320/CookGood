@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,7 +23,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -35,6 +36,8 @@ import androidx.compose.ui.res.stringResource
 import com.ad.cookgood.R
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
+import com.ad.cookgood.authentication.domain.model.LinkResult
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +46,8 @@ fun SessionManagementScreen(
    modifier: Modifier = Modifier,
    vm: SessionManagementViewModel,
    onSignOutSuccess: () -> Unit,
-   navigateUp: () -> Unit
+   navigateUp: () -> Unit,
+   navigateToProfileScree: () -> Unit
 ) {
 
    val snackBarHostState = remember { SnackbarHostState() }
@@ -76,6 +80,7 @@ fun SessionManagementScreen(
 
          val isAnonymous by vm.isAnonymous.collectAsState()
          val authState by vm.authState.collectAsState()
+         val linkState by vm.linkState.collectAsState()
 
          when (isAnonymous) {
             true -> {
@@ -85,10 +90,17 @@ fun SessionManagementScreen(
                }
             }
 
-            false -> ""
+            false -> {
+               OutlinedButton(onClick = navigateToProfileScree) {
+                  Icon(Icons.Default.AccountCircle, contentDescription = null)
+                  Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
+                  Text(stringResource(R.string.user_profile))
+               }
+            }
+
             null -> {
                val message = stringResource(R.string.signout_success)
-               LaunchedEffect(Unit) {
+               SideEffect {
                   scope.launch {
                      val result = snackBarHostState.showSnackbar(
                         message = message,
@@ -108,35 +120,48 @@ fun SessionManagementScreen(
             is AuthResult.Error -> {
                val error = (authState as AuthResult.Error).reason
                val message = stringResource(error.messageRes)
+               ErrorMessage(
+                  message = message,
+                  scope = scope,
+                  snackBarHostState = snackBarHostState,
+               )
+            }
+
+            AuthResult.Success -> {
+               SuccessMessage(
+                  message = stringResource(R.string.sign_in_google_success),
+                  scope = scope,
+                  snackBarHostState = snackBarHostState
+               )
+            }
+
+            null -> ""
+         }
+
+         when (linkState) {
+            is LinkResult.Error -> {
+               val error = (linkState as LinkResult.Error).reason
+               val message = stringResource(error.messageRes)
                val actionLabel =
                   if (error is AuthError.CredentialAlreadyInUse) stringResource(R.string.auth_screen_title_bar) else null
                val context = LocalContext.current
 
-               LaunchedEffect(error) {
-                  scope.launch {
-                     val result = snackBarHostState.showSnackbar(
-                        message = message,
-                        actionLabel = actionLabel,
-                        withDismissAction = true,
-                        duration = SnackbarDuration.Short
-                     )
-                     when (result) {
-                        SnackbarResult.Dismissed -> vm.clearState()
-                        SnackbarResult.ActionPerformed -> {
-                           vm.signInWithGoogle(context as Activity)
-                        }
-                     }
-                  }
-               }
+               ErrorMessage(
+                  message = message,
+                  scope = scope,
+                  snackBarHostState = snackBarHostState,
+                  actionLabel = actionLabel,
+                  onActionPerformed = { vm.signInWithGoogle(context as Activity) },
+                  onDismissed = { vm.clearState() }
+               )
             }
 
-            AuthResult.Success -> {
-               val message = stringResource(R.string.link_anonymous_success)
-               LaunchedEffect(Unit) {
-                  scope.launch {
-                     snackBarHostState.showSnackbar(message)
-                  }
-               }
+            is LinkResult.Success -> {
+               SuccessMessage(
+                  message = stringResource(R.string.link_anonymous_success),
+                  scope = scope,
+                  snackBarHostState = snackBarHostState
+               )
             }
 
             null -> ""
@@ -146,6 +171,44 @@ fun SessionManagementScreen(
             Text(stringResource(R.string.signout))
             Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
             Icon(Icons.AutoMirrored.Filled.Logout, contentDescription = null)
+         }
+      }
+   }
+}
+
+@Composable
+fun SuccessMessage(
+   message: String,
+   scope: CoroutineScope,
+   snackBarHostState: SnackbarHostState
+) {
+   SideEffect {
+      scope.launch {
+         snackBarHostState.showSnackbar(message)
+      }
+   }
+}
+
+@Composable
+fun ErrorMessage(
+   message: String,
+   scope: CoroutineScope,
+   snackBarHostState: SnackbarHostState,
+   actionLabel: String? = null,
+   onActionPerformed: () -> Unit = {},
+   onDismissed: () -> Unit = {}
+) {
+
+   SideEffect {
+      scope.launch {
+         val result = snackBarHostState.showSnackbar(
+            message = message,
+            actionLabel = actionLabel,
+            withDismissAction = true,
+         )
+         when (result) {
+            SnackbarResult.Dismissed -> onDismissed()
+            SnackbarResult.ActionPerformed -> onActionPerformed()
          }
       }
    }

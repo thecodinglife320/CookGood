@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="profile_screen_title_bar">Hồ sơ cá nhân</string>
+    <string name="profile_screen_title_bar">Chỉnh sửa thông tin</string>
+    <string name="display_name">Tên</string>
+    <string name="email">Email</string>
+    <string name="update_profile">Cập nhật</string>
 </resources>
