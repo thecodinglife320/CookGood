@@ -1,17 +1,18 @@
 package com.ad.cookgood.recipes.presentation.entry
 
 import android.annotation.SuppressLint
+import android.app.Application
 import android.content.Context
 import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.R
 import com.ad.cookgood.captureimage.domain.GetCaptureUseCase
 import com.ad.cookgood.captureimage.domain.GetPreviewUseCase
 import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
@@ -19,10 +20,15 @@ import com.ad.cookgood.recipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddRecipeUseCase
 import com.ad.cookgood.recipes.presentation.state.CommonUiState
+import com.ad.cookgood.recipes.presentation.state.DialogUiState
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
 import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 import com.ad.cookgood.recipes.presentation.state.RecipeUiState
+import com.ad.cookgood.recipes.presentation.state.SnackBarUiState
 import com.ad.cookgood.recipes.presentation.state.toDomain
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus.Denied
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.awaitCancellation
@@ -32,6 +38,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Suppress("PropertyName")
 @HiltViewModel
 open class RecipeEntryViewModel @Inject constructor(
@@ -41,6 +48,7 @@ open class RecipeEntryViewModel @Inject constructor(
    getPreviewUseCase: GetPreviewUseCase,
    getCaptureUseCase: GetCaptureUseCase,
    private val takePhotoUseCase: TakePhotoUseCase,
+   internal val application: Application
 ) : ViewModel() {
 
    //prepare state
@@ -56,11 +64,8 @@ open class RecipeEntryViewModel @Inject constructor(
       listOf<InstructionUiState>()
    )
 
-   protected val _successMessage: MutableState<String?> = mutableStateOf(
-      null
-   )
-
-   private val _error: MutableState<String?> = mutableStateOf(null)
+   protected val _snackBarUiState = MutableStateFlow(SnackBarUiState())
+   val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
    private val _showPopUp = mutableStateOf(false)
    val showPopUp: State<Boolean> get() = _showPopUp
@@ -73,6 +78,9 @@ open class RecipeEntryViewModel @Inject constructor(
    private val _surfaceRequest = MutableStateFlow<SurfaceRequest?>(null)
    val surfaceRequest: StateFlow<SurfaceRequest?> = _surfaceRequest
 
+   private val _dialogUiState = MutableStateFlow<DialogUiState>(DialogUiState())
+   val dialogUiState: StateFlow<DialogUiState> = _dialogUiState
+
    private val cameraPreviewUseCase = getPreviewUseCase()
 
    private val cameraCaptureUseCase = getCaptureUseCase()
@@ -84,16 +92,16 @@ open class RecipeEntryViewModel @Inject constructor(
 
    val recipeUiState: State<RecipeUiState> = _recipeUiState
 
-   val successMessage: State<String?> = _successMessage
-
-   val error: State<String?> = _error
-
    val uriRecipePhoto get() = _recipeUiState.value.uri
 
    //coroutine exception handle
    internal val coroutineExceptionHandler =
       CoroutineExceptionHandler { _, ex ->
-         _error.value = ex.message
+         _snackBarUiState.value = _snackBarUiState.value.copy(
+            showSnackBar = true,
+            isError = true,
+            message = application.getString(R.string.recipe_entry_error)
+         )
       }
 
    fun addCommonUiState(uiState: CommonUiState) {
@@ -146,7 +154,11 @@ open class RecipeEntryViewModel @Inject constructor(
             addInstructionUseCase(it.toDomain(), recipeId = recipeId)
          }
 
-         _successMessage.value = "da luu"
+         _snackBarUiState.value = _snackBarUiState.value.copy(
+            showSnackBar = true,
+            isError = false,
+            message = application.getString(R.string.recipe_entry_success)
+         )
       }
    }
 
@@ -215,12 +227,40 @@ open class RecipeEntryViewModel @Inject constructor(
       }
    }
 
-   fun onPrepareTakePhotoRecipe() {
-      _showPopUp1.value = true
+   fun onPrepareTakePhotoRecipe(permissionState: PermissionState) {
+      _showPopUp1.value = handelPermission(permissionState)
    }
 
-   fun onPrepareTakePhotoInstruction(id: Int) {
-      _showPopUp.value = true
+   private fun handelPermission(permissionState: PermissionState): Boolean {
+      if (permissionState.status is Denied) {
+         _dialogUiState.value = _dialogUiState.value.copy(
+            showDialog = true
+         )
+         if ((permissionState.status as Denied).shouldShowRationale) {
+            _dialogUiState.value = _dialogUiState.value.copy(
+               message = application.getString(R.string.camera_permisson_after_denied),
+               shouldShowRationale = true
+            )
+         } //di den cai dat
+         else {
+            _dialogUiState.value = _dialogUiState.value.copy(
+               message = application.getString(R.string.camera_permission),
+               shouldShowRationale = false
+            )
+         }//hoi cap quyen
+         return false
+      } else {
+         return true
+      }
+   }
+
+   fun onDismissPopUp() {
+      _showPopUp.value = false
+      _showPopUp1.value = false
+   }
+
+   fun onPrepareTakePhotoInstruction(id: Int, permissionState: PermissionState) {
+      _showPopUp.value = handelPermission(permissionState)
       instructionNeedTakePhoto = id
    }
 
@@ -235,7 +275,19 @@ open class RecipeEntryViewModel @Inject constructor(
       }
    }
 
+   fun onDismissDialog() {
+      _dialogUiState.value = _dialogUiState.value.copy(
+         showDialog = false
+      )
+   }
+
+   fun onDismissSnackBar() {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = false
+      )
+   }
+
    private companion object {
-      const val TAG = "RecipeEntryViewModel"
+      //const val TAG = "RecipeEntryViewModel"
    }
 }

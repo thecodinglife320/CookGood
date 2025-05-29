@@ -4,19 +4,15 @@ package com.ad.cookgood.navigation.presentation
 //import com.ad.cookgood.profile.presentation.ProfileViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.ad.cookgood.R
 import com.ad.cookgood.authentication.presentation.AuthScreen
-import com.ad.cookgood.authentication.presentation.AuthViewModel
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
@@ -33,7 +29,6 @@ import com.ad.cookgood.navigation.data.SessionManagementScreen
 import com.ad.cookgood.profile.presentation.ProfileScreen
 import com.ad.cookgood.profile.presentation.ProfileViewModel
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
-import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
 import com.ad.cookgood.session_management.presentation.SessionManagementScreen
 import com.ad.cookgood.session_management.presentation.SessionManagementViewModel
@@ -52,9 +47,7 @@ fun CookGoodNavHost(
 
       //auth screen
       composable(route = AuthScreen.route) {
-         val vm = hiltViewModel<AuthViewModel>()
          AuthScreen(
-            vm = vm,
             onSignInSuccess = { navController.navigate(SearchScreen.route) }
          )
       }
@@ -70,32 +63,19 @@ fun CookGoodNavHost(
 
       //search screen
       composable(route = SearchScreen.route) {
-         val navBackStackEntry by navController.currentBackStackEntryAsState()
-         val titleAppBar =
-            if (navBackStackEntry?.destination?.route == SearchScreen.route) SearchScreen.title else R.string.empty
-         SearchScreen(
-            titleAppBar = titleAppBar,
-            navigateToProfile = { navController.navigate(SessionManagementScreen.route) }
-         )
+         SearchScreen()
       }
 
       //my cook book screen
       composable(route = MyCookBookScreen.route) {
-         val navBackStackEntry by navController.currentBackStackEntryAsState()
-
-         val titleAppBar =
-            if (navBackStackEntry?.destination?.route == MyCookBookScreen.route) MyCookBookScreen.title else R.string.empty
-
          val vm: MyCookBookViewModel = hiltViewModel(it)
 
          MyCookBookScreen(
-            titleAppBar = titleAppBar,
             navigateToRecipeEntryScreen = {
                navController.navigate(RecipeEntryScreen.route) {
                   launchSingleTop = true
                }
             },
-            vm = vm,
             onMyRecipeClick = { recipeId ->
                navController.navigate(
                   MyRecipeDetailScreen.route.replace(
@@ -104,7 +84,6 @@ fun CookGoodNavHost(
                   )
                )
             },
-            navigateToProfile = { navController.navigate(SessionManagementScreen.route) }
          )
       }
 
@@ -116,7 +95,6 @@ fun CookGoodNavHost(
             onSignOutSuccess = {
                navController.popBackStack(AuthScreen.route, inclusive = false)
             },
-            navigateUp = { navController.navigateUp() },
             navigateToProfileScree = { navController.navigate(ProfileScreen.route) }
          )
       }
@@ -154,9 +132,7 @@ fun CookGoodNavHost(
             }
          )
       ) {
-
-         val vm = hiltViewModel<EditMyRecipeViewModel>()
-
+         val vm = hiltViewModel<EditMyRecipeViewModel>(it)
          RecipeEntryScreen(
             vm = vm,
             navigateBack = { navController.popBackStack() },
@@ -167,11 +143,9 @@ fun CookGoodNavHost(
       //recipe entry screen
       composable(route = RecipeEntryScreen.route) {
 
-         val vm: RecipeEntryViewModel = hiltViewModel(it)
          RecipeEntryScreen(
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
-            vm = vm,
          )
       }
    }

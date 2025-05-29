@@ -1,9 +1,10 @@
 package com.ad.cookgood.authentication.presentation
 
 import android.app.Activity
-import android.util.Log
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.R
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
 import com.ad.cookgood.authentication.domain.usecase.SignInAnonymousUseCase
@@ -23,19 +24,15 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
    private val signInAnonymousUseCase: SignInAnonymousUseCase,
-   getCurrentUserUseCase: GetCurrentUserUseCase
+   getCurrentUserUseCase: GetCurrentUserUseCase,
+   private val application: Application
 ) : ViewModel() {
-
-   private val _authState = MutableStateFlow<AuthResult?>(null)
-   val authState: StateFlow<AuthResult?> = _authState
-
-   init {
-      Log.i(TAG, "init")
-   }
 
    val currentUserId = getCurrentUserUseCase()
       .map {
-         it?.uid
+         it?.uid.also {
+            it?.let { handleAuthResult(AuthResult.Success) }
+         }
       }
       .stateIn(
          scope = viewModelScope,
@@ -43,26 +40,42 @@ class AuthViewModel @Inject constructor(
          initialValue = null
       )
 
+   private val _messageUiState = MutableStateFlow(MessageUiState())
+
+   //expose state
+   val messageUiState: StateFlow<MessageUiState> = _messageUiState
+
+   private fun handleAuthResult(authResult: AuthResult) {
+      when (authResult) {
+         is AuthResult.Error -> {
+            _messageUiState.value =
+               MessageUiState(application.getString(authResult.reason.messageRes))
+         }
+
+         AuthResult.Success -> {
+            _messageUiState.value = MessageUiState(application.getString(R.string.message_success))
+         }
+      }
+   }
+
+   fun dismissMessage() {
+      _messageUiState.value = MessageUiState()
+   }
+
    fun signInWithGoogle(context: Activity) {
       if (isNetworkAvailable(context)) {
          viewModelScope.launch {
-            val result = signInWithGoogleUseCase(context)
-            _authState.value = result
+            handleAuthResult(signInWithGoogleUseCase(context))
          }
-      } else _authState.value = AuthResult.Error(AuthError.NetworkError)
+      } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
    }
 
-   fun signInAnonymous(context: Activity) {
-      if (isNetworkAvailable(context)) {
+   fun signInAnonymous() {
+      if (isNetworkAvailable(application)) {
          viewModelScope.launch {
-            val result = signInAnonymousUseCase()
-            _authState.value = result
+            handleAuthResult(signInAnonymousUseCase())
          }
-      } else _authState.value = AuthResult.Error(AuthError.NetworkError)
-   }
-
-   fun clearState() {
-      _authState.value = null
+      } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
    }
 
    private companion object {

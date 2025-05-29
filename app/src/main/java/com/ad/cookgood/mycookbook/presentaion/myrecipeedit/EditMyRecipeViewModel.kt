@@ -1,8 +1,10 @@
 package com.ad.cookgood.mycookbook.presentaion.myrecipeedit
 
+import android.app.Application
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.R
 import com.ad.cookgood.captureimage.domain.GetCaptureUseCase
 import com.ad.cookgood.captureimage.domain.GetPreviewUseCase
 import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
@@ -41,18 +43,20 @@ class EditMyRecipeViewModel @Inject constructor(
    getMyRecipeUseCase: GetMyRecipeUseCase,
    getCaptureUseCase: GetCaptureUseCase,
    stateHandle: SavedStateHandle,
+   application: Application,
    private val updateMyRecipeUseCase: UpdateMyRecipeUseCase,
    private val getIngredientEditsUseCase: GetIngredientEditsUseCase,
    private val getInstructionEditsUseCase: GetInstructionEditsUseCase,
    private val deleteIngredientUseCase: DeleteIngredientUseCase,
-   private val deleteInstructionUseCase: DeleteInstructionUseCase
+   private val deleteInstructionUseCase: DeleteInstructionUseCase,
 ) : RecipeEntryViewModel(
    addRecipeUseCase,
    addIngredientUseCase,
    addInstructionUseCase,
    getPreviewUseCase,
    getCaptureUseCase,
-   takePhotoUseCase
+   takePhotoUseCase,
+   application
 ) {
 
    private val id = stateHandle.get<Long>(MyRecipeDetailScreen.recipeIdArg) ?: 0
@@ -102,8 +106,8 @@ class EditMyRecipeViewModel @Inject constructor(
 
          updateMyRecipeUseCase(
             MyRecipe(
-            id = id,
-            recipe = _recipeUiState.value.toDomain()
+               id = id,
+               recipe = _recipeUiState.value.toDomain()
             )
          )
 
@@ -139,7 +143,10 @@ class EditMyRecipeViewModel @Inject constructor(
             addInstructionUseCase(it.toDomain(), id)
          }
 
-         _successMessage.value = "da cap nhat"
+         _snackBarUiState.value = _snackBarUiState.value.copy(
+            showSnackBar = true,
+            message = application.getString(R.string.recipe_updated)
+         )
 
          Log.d(TAG, "delete: $ingredientsDelete")
          Log.d(TAG, "new: $ingredientsNew")

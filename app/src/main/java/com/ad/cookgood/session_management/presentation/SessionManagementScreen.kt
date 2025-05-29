@@ -1,19 +1,18 @@
 package com.ad.cookgood.session_management.presentation
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -21,7 +20,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
@@ -40,13 +38,13 @@ import com.ad.cookgood.authentication.domain.model.LinkResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SessionManagementScreen(
    modifier: Modifier = Modifier,
    vm: SessionManagementViewModel,
    onSignOutSuccess: () -> Unit,
-   navigateUp: () -> Unit,
    navigateToProfileScree: () -> Unit
 ) {
 
@@ -54,25 +52,10 @@ fun SessionManagementScreen(
    val scope = rememberCoroutineScope()
 
    Scaffold(
-      topBar = {
-         TopAppBar(
-            title = {
-               Text(stringResource(R.string.session_management_screen_title_bar))
-            },
-            navigationIcon = {
-               IconButton(onClick = navigateUp) {
-                  Icon(
-                     imageVector = Icons.Default.ArrowBackIosNew,
-                     contentDescription = null
-                  )
-               }
-            }
-         )
-      }, snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
+      snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
    ) {
       Column(
          modifier
-            .padding(it)
             .fillMaxSize(),
          verticalArrangement = Arrangement.Center,
          horizontalAlignment = Alignment.CenterHorizontally
@@ -140,6 +123,7 @@ fun SessionManagementScreen(
 
          when (linkState) {
             is LinkResult.Error -> {
+               Log.d("SessionManagementScreen", "aaa")
                val error = (linkState as LinkResult.Error).reason
                val message = stringResource(error.messageRes)
                val actionLabel =

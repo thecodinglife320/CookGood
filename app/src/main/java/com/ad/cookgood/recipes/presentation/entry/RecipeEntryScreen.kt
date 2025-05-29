@@ -1,10 +1,14 @@
 package com.ad.cookgood.recipes.presentation.entry
 
+import android.Manifest
+import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,12 +28,14 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -43,28 +49,64 @@ import com.ad.cookgood.captureimage.presentation.CameraPreview
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
 import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 import com.ad.cookgood.shared.CoilImage
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun RecipeEntryScreen(
    modifier: Modifier = Modifier,
    navigateUp: () -> Unit = {},
    navigateBack: () -> Unit = {},
    vm: RecipeEntryViewModel = hiltViewModel()
-) {
 
+) {
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
    val keyboardController = LocalSoftwareKeyboardController.current
    val surfaceRequest by vm.surfaceRequest.collectAsState()
-   
+   val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+   val snackBarUiState by vm.snackBarUiState.collectAsState()
+   val dialogUiState by vm.dialogUiState.collectAsState()
+   val context = LocalContext.current
+
+   if (dialogUiState.showDialog) {
+      CameraPermissionDialog(
+         onDismissRequest = { vm.onDismissDialog() },
+         onConfirmClick = if (dialogUiState.shouldShowRationale) {
+            {
+               val intent = Intent(
+                  Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                  Uri.fromParts("package", context.packageName, null)
+               )
+               context.startActivity(intent)
+               vm.onDismissDialog()
+            }
+         } else {
+            {
+               cameraPermissionState.launchPermissionRequest()
+               vm.onDismissDialog()
+            }
+         },
+         onDismissClick = { vm.onDismissDialog() },
+         message = dialogUiState.message,
+      )
+   }
+
    if (vm.showPopUp.value) {
       Popup(
-         properties = PopupProperties(focusable = true)
+         properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+         ),
+         onDismissRequest = {
+            vm.onDismissPopUp()
+         }
       ) {
          CameraPreview(
-            modifier = Modifier.height(300.dp),
+            modifier = Modifier.height(600.dp),
             bindToCamera = vm::bindToCamera,
             surfaceRequest = surfaceRequest,
             takePhoto = vm::onTakePhotoInstruction,
@@ -74,10 +116,17 @@ fun RecipeEntryScreen(
 
    if (vm.showPopUp1.value) {
       Popup(
-         properties = PopupProperties(focusable = true)
+         properties = PopupProperties(
+            focusable = true,
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true
+         ),
+         onDismissRequest = {
+            vm.onDismissPopUp()
+         }
       ) {
          CameraPreview(
-            modifier = Modifier.height(300.dp),
+            modifier = Modifier.height(600.dp),
             bindToCamera = vm::bindToCamera,
             surfaceRequest = surfaceRequest,
             takePhoto = vm::onTakePhotoRecipe,
@@ -85,9 +134,30 @@ fun RecipeEntryScreen(
       }
    }
 
+   if (snackBarUiState.showSnackBar) {
+      SideEffect {
+         scope.launch {
+            val result = snackBarHostState.showSnackbar(
+               message = snackBarUiState.message,
+               withDismissAction = true,
+               duration = SnackbarDuration.Short
+            )
+            when (result) {
+               SnackbarResult.Dismissed -> if (snackBarUiState.isError) {
+                  vm.onDismissSnackBar()
+               } else {
+                  navigateBack()
+               }
+
+               SnackbarResult.ActionPerformed -> ""
+            }
+         }
+      }
+   }
+
    Scaffold(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) },
-      modifier = modifier,
+      modifier = modifier.imePadding(),
       topBar = {
          TopAppBar(
             title = {},
@@ -123,7 +193,7 @@ fun RecipeEntryScreen(
       ) {
 
          RecipePhoto(
-            onPrepareTakePhotoRecipe = vm::onPrepareTakePhotoRecipe,
+            onPrepareTakePhotoRecipe = { vm.onPrepareTakePhotoRecipe(cameraPermissionState) },
             uri = vm.uriRecipePhoto
          )
 
@@ -186,32 +256,8 @@ fun RecipeEntryScreen(
             label = R.string.instruction_entry_label,
             placeHolder = R.string.instruction_entry_placeholder,
             onPrepareTakePhotoInstruction = {
-               vm.onPrepareTakePhotoInstruction(it)
+               vm.onPrepareTakePhotoInstruction(it, cameraPermissionState)
             },
-         )
-      }
-   }
-
-   vm.successMessage.value?.let {
-      scope.launch {
-         val result = snackBarHostState.showSnackbar(
-            message = it,
-            withDismissAction = true,
-            duration = SnackbarDuration.Short
-         )
-         when (result) {
-            SnackbarResult.Dismissed -> navigateBack()
-            SnackbarResult.ActionPerformed -> ""
-         }
-      }
-   }
-
-   vm.error.value?.let {
-      scope.launch {
-         snackBarHostState.showSnackbar(
-            message = it,
-            withDismissAction = true,
-            duration = SnackbarDuration.Short
          )
       }
    }

@@ -158,8 +158,8 @@ fun RecipeEntrySection3(
       commonUiStates.forEach { uiState ->
          key(uiState.id) {
             CommonEntry(
-               onValueChange = { name ->
-                  updateCommonUiState(uiState, name)
+               onValueChange = {
+                  updateCommonUiState(uiState, it)
                },
                onRemove = { removeCommonUiState(uiState) },
                stepNumber = if (uiState is InstructionUiState) uiState.stepNumber else null,
@@ -169,7 +169,7 @@ fun RecipeEntrySection3(
                   onPrepareTakePhotoInstruction(uiState.id)
                },
                uri = if (uiState is InstructionUiState) uiState.uri else null,
-               str = uiState.name
+               value = uiState.name
             )
          }
       }
@@ -194,7 +194,7 @@ fun CommonEntry(
    @StringRes placeHolder: Int = R.string.ingredient_entry_place_holder,
    onPrepareTakePhotoInstruction: () -> Unit = {},
    uri: Uri? = null,
-   str: String = ""
+   value: String = ""
 ) {
    Column(modifier) {
       Row(
@@ -207,13 +207,14 @@ fun CommonEntry(
             onValueChange = onValueChange,
             label = label,
             placeHolder = placeHolder,
-            value = str
+            value = value
          )
 
          IconButton(onClick = onRemove) {
             Icon(Icons.Default.Delete, contentDescription = null)
          }
       }
+
       stepNumber?.let {
          Row {
             OutlinedButton(onClick = onPrepareTakePhotoInstruction) {
@@ -259,9 +260,9 @@ fun CircularText(text: String = "1") {
    Box(
       contentAlignment = Alignment.Center,
       modifier = Modifier
-         .size(32.dp) // Kích thước vuông
-         .clip(CircleShape) // Bo thành hình tròn
-         .background(Color.DarkGray) // Màu nền
+         .size(32.dp)
+         .clip(CircleShape)
+         .background(Color.DarkGray)
    ) {
       Text(
          text = text,

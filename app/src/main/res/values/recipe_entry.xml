@@ -2,7 +2,7 @@
 <resources>
     <string name="add_image">📷 Đăng hình đại diện cho món ăn</string>
     <string name="recipe_entry_name_label">Tên món</string>
-    <string name="recipe_entry_name_placeholder">Đặc sản Tây Bắc</string>
+    <string name="recipe_entry_name_placeholder">Rau xào</string>
 
     <string name="recipe_entry_info_label">Mô tả</string>
     <string name="recipe_entry_info_placeholder">Mô tả của món ăn</string>
@@ -20,11 +20,18 @@
     <string name="ingredient_entry_place_holder">250g bột</string>
     <string name="ingredient_entry_label">🍎</string>
 
-
     <string name="cach_lam">Cách làm</string>
     <string name="them_buoc_lam">Thêm bước làm</string>
     <string name="instruction_entry_label">🍈</string>
     <string name="instruction_entry_placeholder">Chuẩn bị các nguyên liệu</string>
     <string name="luu">Lưu</string>
     <string name="huy">Hủy</string>
+
+    <string name="camera_permission">Bạn cần cấp quyền truy cập camera để sử dụng chức năng này</string>
+    <string name="camera_permisson_after_denied">Bạn cần đi đến cài đặt để cấp quyền truy cập camera</string>
+    "
+
+    <string name="recipe_entry_error">Đã xảy ra lỗi</string>
+    <string name="recipe_entry_success">Thêm thành công</string>
+    <string name="recipe_updated">Cập nhật thành công</string>
 </resources>
