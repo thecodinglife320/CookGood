@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="session_management_screen_title_bar">Quản lí phiên</string>
     <string name="signout">Đăng xuất</string>
     <string name="signout_success">Đăng xuất thành công</string>
     <string name="link_anonymous">Liên kết tài khoản ẩn danh với tài khoản Google</string>
     <string name="link_anonymous_success">Liên kết thành công</string>
     <string name="user_profile">Thông tin tài khoản</string>
-    <string name="sign_in_google_success">Đăng nhập thành công</string>
 </resources>

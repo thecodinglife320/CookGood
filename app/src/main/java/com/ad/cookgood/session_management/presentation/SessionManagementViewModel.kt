@@ -4,14 +4,15 @@ import android.app.Activity
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ad.cookgood.R
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
-import com.ad.cookgood.authentication.domain.model.LinkResult
 import com.ad.cookgood.authentication.domain.usecase.LinkAnonymousUseCase
 import com.ad.cookgood.authentication.domain.usecase.SignInWithGoogleUseCase
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
 import com.ad.cookgood.profile.domain.UpdateUserProfileUseCase
 import com.ad.cookgood.session_management.domain.SignOutUseCase
+import com.ad.cookgood.shared.SnackBarUiState
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,11 +45,10 @@ class SessionManagementViewModel @Inject constructor(
          initialValue = false
       )
 
-   private val _authState = MutableStateFlow<AuthResult?>(null)
-   val authState: StateFlow<AuthResult?> = _authState
+   private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
 
-   private val _linkState = MutableStateFlow<LinkResult?>(null)
-   val linkState: StateFlow<LinkResult?> = _linkState
+   //expose state
+   val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
    private fun collectFlow() {
       viewModelScope.launch {
@@ -61,35 +61,68 @@ class SessionManagementViewModel @Inject constructor(
    fun signOut() {
       isNetworkAvailable(application).let {
          if (it) signOutUseCase()
-         else _authState.value = AuthResult.Error(AuthError.NetworkError)
+         else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
       }
    }
 
    fun linkAnonymous(context: Activity) {
       if (isNetworkAvailable(application)) {
          viewModelScope.launch {
-            _linkState.value = linkAnonymousUseCase(context).also {
-               if (it is LinkResult.Success) {
-                  updateUserProfileUseCase(it.name, it.url)
-               }
-            }
-            collectFlow()
+            handleAuthResult(linkAnonymousUseCase(context))
          }
-      } else _linkState.value = LinkResult.Error(AuthError.NetworkError)
-   }
-
-   fun clearState() {
-      _authState.value = null
-      _linkState.value = null
+      } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
    }
 
    fun signInWithGoogle(context: Activity) {
       if (isNetworkAvailable(context)) {
          viewModelScope.launch {
-            val result = signInWithGoogleUseCase(context)
-            _authState.value = result
+            handleAuthResult(signInWithGoogleUseCase(context))
          }
-      } else _authState.value = AuthResult.Error(AuthError.NetworkError)
+      } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
+   }
+
+   private fun handleAuthResult(authResult: AuthResult) {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = true
+      )
+      when (authResult) {
+         is AuthResult.Error -> {
+            _snackBarUiState.value = _snackBarUiState.value.copy(
+               message = application.getString(authResult.reason.messageRes),
+               isError = true
+            )
+            if (authResult.reason is AuthError.CredentialAlreadyInUse) {
+               _snackBarUiState.value = _snackBarUiState.value.copy(
+                  actionLabel = application.getString(R.string.auth_screen_title_bar),
+               )
+            }
+         }
+
+         AuthResult.Success -> {
+            _snackBarUiState.value = _snackBarUiState.value.copy(
+               message = application.getString(R.string.message_success),
+               isError = false
+            )
+         }
+
+         is AuthResult.LinkSuccess -> {
+            _snackBarUiState.value = _snackBarUiState.value.copy(
+               message = application.getString(R.string.link_anonymous_success),
+               isError = false
+            )
+            viewModelScope.launch {
+               updateUserProfileUseCase(authResult.name, authResult.url)
+               collectFlow()
+            }
+         }
+      }
+   }
+
+   fun onDismissSnackBar() {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = false,
+         actionLabel = null
+      )
    }
 
    private companion object {

@@ -16,14 +16,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,10 +30,12 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ad.cookgood.R
 import com.ad.cookgood.shared.CoilImage
 import kotlinx.coroutines.launch
@@ -42,25 +43,25 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(
-   modifier: Modifier = Modifier,
-   profileViewModel: ProfileViewModel,
    navigateUp: () -> Unit
 ) {
 
+   val vm = hiltViewModel<ProfileViewModel>()
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
-   val error by profileViewModel.error
+   val snackBarUiState by vm.snackBarUiState.collectAsState()
+   val profileUiState by vm.profileUiState.collectAsState()
 
-   LaunchedEffect(error) {
-      error?.let {
+   if (snackBarUiState.showSnackBar) {
+      SideEffect {
          scope.launch {
             val result = snackBarHostState.showSnackbar(
-               message = it,
+               message = snackBarUiState.message,
+               actionLabel = snackBarUiState.actionLabel,
                withDismissAction = true,
-               duration = SnackbarDuration.Short
             )
             when (result) {
-               SnackbarResult.Dismissed -> ""
+               SnackbarResult.Dismissed -> vm.onDismissSnackBar()
                SnackbarResult.ActionPerformed -> ""
             }
          }
@@ -80,63 +81,76 @@ fun ProfileScreen(
       },
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
    ) {
-
-      val profileUiState by profileViewModel.profileUiState.collectAsState()
-
-      Column(
-         modifier = modifier
-            .fillMaxSize()
+      ProfileScreenContent(
+         Modifier
             .padding(it)
-            .padding(horizontal = dimensionResource(R.dimen.padding_medium)),
-         horizontalAlignment = Alignment.CenterHorizontally,
-      ) {
-         when (profileUiState) {
+            .fillMaxSize(),
+         profileUiState = profileUiState,
+         onNameChange = {
+            vm.onNameChange(it)
+         },
+         updateUserProfile = vm::updateUserProfile
+      )
+   }
+}
 
-            ProfileUiState.Loading -> {
-               CircularProgressIndicator()
+@Preview
+@Composable
+fun ProfileScreenContent(
+   modifier: Modifier = Modifier,
+   profileUiState: ProfileUiState = ProfileUiState.Success(
+      email = "ttll@gmail.com",
+      name = "dap dep trai",
+      url = "".toUri()
+   ),
+   onNameChange: (String) -> Unit = {},
+   updateUserProfile: () -> Unit = {}
+) {
+   Column(
+      modifier
+         .padding(horizontal = dimensionResource(id = R.dimen.padding_medium)),
+      horizontalAlignment = Alignment.CenterHorizontally
+   ) {
+      when (val profileUiState = profileUiState) {
+         ProfileUiState.Loading -> CircularProgressIndicator()
+         is ProfileUiState.Success -> {
+            Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
+
+            CoilImage(
+               uri = profileUiState.url,
+               modifier = Modifier
+                  .size(100.dp)
+                  .clip(CircleShape)
+            )
+
+            Spacer(Modifier.size(32.dp))
+
+            OutlinedTextField(
+               value = profileUiState.name ?: "",
+               onValueChange = onNameChange,
+               label = { Text(stringResource(R.string.display_name)) },
+               modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
+
+            OutlinedTextField(
+               value = profileUiState.email ?: "",
+               onValueChange = {},
+               label = { Text(stringResource(R.string.email)) },
+               enabled = false,
+               modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(Modifier.size(32.dp))
+            OutlinedButton(updateUserProfile) {
+               Text(stringResource(R.string.update_profile))
             }
 
-            is ProfileUiState.Success -> {
-               val context = LocalContext.current
-               val profileData = profileUiState as ProfileUiState.Success
-
-               Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
-
-               CoilImage(
-                  uri = profileData.url,
-                  modifier = Modifier
-                     .size(100.dp)
-                     .clip(CircleShape)
-               )
-
-               Spacer(Modifier.size(32.dp))
-
-               OutlinedTextField(
-                  value = profileData.name ?: "",
-                  onValueChange = profileViewModel::onNameChange,
-                  label = { Text(stringResource(R.string.display_name)) },
-                  modifier = Modifier.fillMaxWidth()
-               )
-
-               Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
-
-               OutlinedTextField(
-                  value = profileData.email ?: "",
-                  onValueChange = {},
-                  label = { Text(stringResource(R.string.email)) },
-                  enabled = false,
-                  modifier = Modifier.fillMaxWidth()
-               )
-
-               Spacer(Modifier.size(32.dp))
-               OutlinedButton(profileViewModel::updateUserProfile) {
-                  Text(stringResource(R.string.update_profile))
-               }
-
-               Text(profileData.toString())
-            }
+            Text(profileUiState.toString())
          }
       }
+
    }
 }
 

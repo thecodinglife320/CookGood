@@ -14,9 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ad.cookgood.authentication.presentation.AuthScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
-import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
-import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeViewModel
 import com.ad.cookgood.mycookbook.presentaion.myrecipeedit.EditMyRecipeViewModel
 import com.ad.cookgood.navigation.data.AuthScreen
 import com.ad.cookgood.navigation.data.EditMyRecipeScreen
@@ -27,11 +25,10 @@ import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.navigation.data.SessionManagementScreen
 import com.ad.cookgood.profile.presentation.ProfileScreen
-import com.ad.cookgood.profile.presentation.ProfileViewModel
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
+import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
 import com.ad.cookgood.session_management.presentation.SessionManagementScreen
-import com.ad.cookgood.session_management.presentation.SessionManagementViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,9 +51,7 @@ fun CookGoodNavHost(
 
       //profileUiState screen
       composable(route = ProfileScreen.route) {
-         val vm = hiltViewModel<ProfileViewModel>()
          ProfileScreen(
-            profileViewModel = vm,
             navigateUp = { navController.navigateUp() }
          )
       }
@@ -68,7 +63,6 @@ fun CookGoodNavHost(
 
       //my cook book screen
       composable(route = MyCookBookScreen.route) {
-         val vm: MyCookBookViewModel = hiltViewModel(it)
 
          MyCookBookScreen(
             navigateToRecipeEntryScreen = {
@@ -89,9 +83,7 @@ fun CookGoodNavHost(
 
       //session management screen
       composable(route = SessionManagementScreen.route) {
-         val vm = hiltViewModel<SessionManagementViewModel>()
          SessionManagementScreen(
-            vm = vm,
             onSignOutSuccess = {
                navController.popBackStack(AuthScreen.route, inclusive = false)
             },
@@ -109,10 +101,7 @@ fun CookGoodNavHost(
          ),
       ) {
 
-         val vm = hiltViewModel<MyRecipeViewModel>(it)
-
          MyRecipeDetailScreen(
-            vm = vm,
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
             navigateToEditScreen = {
@@ -142,10 +131,11 @@ fun CookGoodNavHost(
 
       //recipe entry screen
       composable(route = RecipeEntryScreen.route) {
-
+         val vm = hiltViewModel<RecipeEntryViewModel>()
          RecipeEntryScreen(
             navigateUp = { navController.navigateUp() },
             navigateBack = { navController.popBackStack() },
+            vm = vm
          )
       }
    }

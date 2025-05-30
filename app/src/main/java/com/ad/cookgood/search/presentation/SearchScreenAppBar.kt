@@ -6,8 +6,8 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.ExpandedFullScreenSearchBar
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarState
+import androidx.compose.material3.TopSearchBar
 import androidx.compose.material3.rememberSearchBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,8 +17,6 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SearchScreenAppBar(
    modifier: Modifier = Modifier,
-   //canNavigateBack: Boolean = false,
-   //navigateUp: () -> Unit = {},
    textFieldState: TextFieldState = rememberTextFieldState(),
    searchBarState: SearchBarState = rememberSearchBarState()
 ) {
@@ -26,7 +24,7 @@ fun SearchScreenAppBar(
       modifier = modifier.fillMaxWidth(),
       horizontalAlignment = Alignment.CenterHorizontally
    ) {
-      SearchBar(
+      TopSearchBar(
          state = searchBarState,
          inputField = {
             SearchField(

@@ -15,14 +15,11 @@ class UserProfileRepositoryImpl @Inject constructor(
 
    override fun getCurrentUser() = callbackFlow {
       val authStateListener = FirebaseAuth.AuthStateListener { auth ->
-         // Mỗi khi trạng thái thay đổi, emit người dùng hiện tại
          trySend(auth.currentUser)
       }
 
-      // Thêm listener vào FirebaseAuth
       firebaseAuth.addAuthStateListener(authStateListener)
 
-      // Khi Flow không còn được thu thập (collect) nữa, loại bỏ listener
       awaitClose {
          firebaseAuth.removeAuthStateListener(authStateListener)
       }

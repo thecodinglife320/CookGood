@@ -1,14 +1,12 @@
 package com.ad.cookgood.profile.presentation
 
 import android.app.Application
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.R
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
 import com.ad.cookgood.profile.domain.UpdateUserProfileUseCase
+import com.ad.cookgood.shared.SnackBarUiState
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,8 +25,10 @@ class ProfileViewModel @Inject constructor(
       MutableStateFlow(ProfileUiState.Loading)
    val profileUiState: StateFlow<ProfileUiState> = _profileUiState
 
-   private val _error: MutableState<String?> = mutableStateOf(null)
-   val error: State<String?> = _error
+   private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
+
+   //expose state
+   val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
    init {
       loadUserProfile()
@@ -40,8 +40,6 @@ class ProfileViewModel @Inject constructor(
             getCurrentUserUseCase().collect {
                it?.let {
                   _profileUiState.value = ProfileUiState.Success(
-                     userId = it.uid,
-                     isAnonymous = it.isAnonymous,
                      name = it.displayName,
                      url = it.photoUrl,
                      email = it.email
@@ -49,7 +47,7 @@ class ProfileViewModel @Inject constructor(
                }
             }
          }
-      } else _error.value = application.getString(R.string.network_error)
+      } else handleError()
    }
 
    fun onNameChange(name: String) {
@@ -65,6 +63,21 @@ class ProfileViewModel @Inject constructor(
             val url = (_profileUiState.value as ProfileUiState.Success).url!!
             updateUserProfileUseCase(name, url)
          }
-      } else _error.value = application.getString(R.string.network_error)
+      } else handleError()
+   }
+
+   fun handleError() {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         message = application.getString(R.string.network_error),
+         isError = true,
+         showSnackBar = true
+      )
+   }
+
+   fun onDismissSnackBar() {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = false,
+         actionLabel = null
+      )
    }
 }

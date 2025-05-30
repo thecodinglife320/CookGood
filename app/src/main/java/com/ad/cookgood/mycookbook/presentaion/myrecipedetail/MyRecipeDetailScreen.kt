@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -30,19 +31,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ad.cookgood.R
+import com.ad.cookgood.recipes.presentation.state.IngredientUiState
+import com.ad.cookgood.recipes.presentation.state.InstructionUiState
+import com.ad.cookgood.recipes.presentation.state.RecipeUiState
 import com.ad.cookgood.shared.CoilImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyRecipeDetailScreen(
-   modifier: Modifier = Modifier,
-   vm: MyRecipeViewModel,
    navigateUp: () -> Unit,
    navigateBack: () -> Unit,
    navigateToEditScreen: (Long) -> Unit
 ) {
-
+   val vm: MyRecipeViewModel = hiltViewModel()
    val myRecipeUiState by vm.myRecipeUiState.collectAsState()
    val instructionUiStates by vm.instructionUiStates.collectAsState()
    val ingredientUiStates by vm.ingredientUiStates.collectAsState()
@@ -62,7 +66,6 @@ fun MyRecipeDetailScreen(
 
    myRecipeUiState?.let { myRecipeUiState ->
       Scaffold(
-         modifier = modifier,
          topBar = {
             TopAppBar(
                title = { Text(myRecipeUiState.recipeUiState.title) },
@@ -96,43 +99,62 @@ fun MyRecipeDetailScreen(
          },
 
          ) {
-         Column(
-            Modifier
+         MyRecipeDetailScreenContent(
+            modifier = Modifier
                .padding(it)
-               .verticalScroll(rememberScrollState())
-         ) {
-
-            //recipe avatar
-            CoilImage(
-               uri = myRecipeUiState.recipeUiState.uri,
-               modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(Modifier.size(dimensionResource(R.dimen.padding_medium)))
-
-            //recipe info
-            RecipeInfoCard(
-               cookTimeMinutes = myRecipeUiState.recipeUiState.cookTimeMinutes,
-               cookTimeHours = myRecipeUiState.recipeUiState.cookTimeHours,
-               servings = myRecipeUiState.recipeUiState.servings,
-               brief = myRecipeUiState.recipeUiState.brief
-            )
-
-            //nguyen lieu
-            Text(stringResource(R.string.nguyen_lieu))
-            IngredientColumn(
-               ingredientUiStates = ingredientUiStates,
-            )
-
-            //buoc lam
-            Text(stringResource(R.string.cach_lam))
-            InstructionRow(
-               instructionUiStates = instructionUiStates
-            )
-         }
+               .verticalScroll(rememberScrollState()),
+            recipeUiState = myRecipeUiState.recipeUiState,
+            ingredientUiStates = ingredientUiStates,
+            instructionUiStates = instructionUiStates
+         )
       }
    } ?: Box(Modifier.fillMaxWidth()) { Text("loi") }
 }
+
+@Preview
+@Composable
+fun MyRecipeDetailScreenContent(
+   modifier: Modifier = Modifier,
+   recipeUiState: RecipeUiState = RecipeUiState(),
+   ingredientUiStates: List<IngredientUiState> = listOf(IngredientUiState(1, "rau cai")),
+   instructionUiStates: List<InstructionUiState> = listOf(
+      InstructionUiState(name = "alo", stepNumber = 1, uri = null),
+      InstructionUiState(name = "alo", stepNumber = 2, uri = null),
+      InstructionUiState(name = "alo", stepNumber = 3, uri = null)
+   )
+) {
+   Column(modifier) {
+
+      //recipe image
+      CoilImage(
+         uri = recipeUiState.uri,
+         modifier = Modifier.height(350.dp)
+      )
+
+      Spacer(Modifier.size(dimensionResource(R.dimen.padding_medium)))
+
+      //recipe info
+      RecipeInfoCard(
+         cookTimeMinutes = recipeUiState.cookTimeMinutes,
+         cookTimeHours = recipeUiState.cookTimeHours,
+         servings = recipeUiState.servings,
+         brief = recipeUiState.brief
+      )
+
+      //nguyen lieu
+      Text(stringResource(R.string.nguyen_lieu))
+      IngredientColumn(
+         ingredientUiStates = ingredientUiStates,
+      )
+
+      //buoc lam
+      Text(stringResource(R.string.cach_lam))
+      InstructionRow(
+         instructionUiStates = instructionUiStates
+      )
+   }
+}
+
 
 @Preview
 @Composable

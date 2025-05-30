@@ -19,13 +19,14 @@ import com.ad.cookgood.captureimage.domain.TakePhotoUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddIngredientUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddInstructionUseCase
 import com.ad.cookgood.recipes.domain.usecase.AddRecipeUseCase
+import com.ad.cookgood.recipes.presentation.state.CameraPreviewUiState
 import com.ad.cookgood.recipes.presentation.state.CommonUiState
 import com.ad.cookgood.recipes.presentation.state.DialogUiState
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
 import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 import com.ad.cookgood.recipes.presentation.state.RecipeUiState
-import com.ad.cookgood.recipes.presentation.state.SnackBarUiState
 import com.ad.cookgood.recipes.presentation.state.toDomain
+import com.ad.cookgood.shared.SnackBarUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus.Denied
@@ -67,11 +68,8 @@ open class RecipeEntryViewModel @Inject constructor(
    protected val _snackBarUiState = MutableStateFlow(SnackBarUiState())
    val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
-   private val _showPopUp = mutableStateOf(false)
-   val showPopUp: State<Boolean> get() = _showPopUp
-
-   private val _showPopUp1 = mutableStateOf(false)
-   val showPopUp1: State<Boolean> get() = _showPopUp1
+   private val _cameraPreviewUiState = MutableStateFlow(CameraPreviewUiState())
+   val cameraPreviewUiState: StateFlow<CameraPreviewUiState> = _cameraPreviewUiState
 
    private var instructionNeedTakePhoto: Int = 0
 
@@ -91,8 +89,6 @@ open class RecipeEntryViewModel @Inject constructor(
    val instructionUiStates: State<List<InstructionUiState>> get() = _instructionUiStates
 
    val recipeUiState: State<RecipeUiState> = _recipeUiState
-
-   val uriRecipePhoto get() = _recipeUiState.value.uri
 
    //coroutine exception handle
    internal val coroutineExceptionHandler =
@@ -223,12 +219,14 @@ open class RecipeEntryViewModel @Inject constructor(
                uri = takePhotoUseCase()
             ) else it
          }
-         _showPopUp.value = false
       }
    }
 
    fun onPrepareTakePhotoRecipe(permissionState: PermissionState) {
-      _showPopUp1.value = handelPermission(permissionState)
+      _cameraPreviewUiState.value = _cameraPreviewUiState.value.copy(
+         showCameraPreview = handelPermission(permissionState),
+         isCaptureForRecipe = true
+      )
    }
 
    private fun handelPermission(permissionState: PermissionState): Boolean {
@@ -254,13 +252,11 @@ open class RecipeEntryViewModel @Inject constructor(
       }
    }
 
-   fun onDismissPopUp() {
-      _showPopUp.value = false
-      _showPopUp1.value = false
-   }
-
    fun onPrepareTakePhotoInstruction(id: Int, permissionState: PermissionState) {
-      _showPopUp.value = handelPermission(permissionState)
+      _cameraPreviewUiState.value = _cameraPreviewUiState.value.copy(
+         showCameraPreview = handelPermission(permissionState),
+         isCaptureForRecipe = false
+      )
       instructionNeedTakePhoto = id
    }
 
@@ -271,8 +267,13 @@ open class RecipeEntryViewModel @Inject constructor(
          _recipeUiState.value = _recipeUiState.value.copy(
             uri = takePhotoUseCase()
          )
-         _showPopUp1.value = false
       }
+   }
+
+   fun onDismissCameraPreview() {
+      _cameraPreviewUiState.value = _cameraPreviewUiState.value.copy(
+         showCameraPreview = false
+      )
    }
 
    fun onDismissDialog() {

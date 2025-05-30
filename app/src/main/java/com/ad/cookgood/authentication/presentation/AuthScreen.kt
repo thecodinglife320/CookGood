@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -31,8 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ad.cookgood.R
 import kotlinx.coroutines.launch
 
@@ -45,10 +44,7 @@ fun AuthScreen(
    val snackBarHostState = remember { SnackbarHostState() }
    val scope = rememberCoroutineScope()
    val vm: AuthViewModel = hiltViewModel<AuthViewModel>()
-   val messageUiState by vm.messageUiState.collectAsState()
-   val currentUserid by vm.currentUserId.collectAsStateWithLifecycle(
-      minActiveState = Lifecycle.State.RESUMED
-   )
+   val snackBarUiState by vm.snackBarUiState.collectAsState()
 
    Scaffold(
       topBar = {
@@ -61,16 +57,22 @@ fun AuthScreen(
       snackbarHost = { SnackbarHost(hostState = snackBarHostState) }
    ) {
 
-      messageUiState.message?.let {
-         scope.launch {
-            val result = snackBarHostState.showSnackbar(
-               message = it,
-               withDismissAction = true,
-            )
-            vm.dismissMessage()
-            if (result == SnackbarResult.Dismissed) {
-               currentUserid?.let {
-                  onSignInSuccess()
+      if (snackBarUiState.showSnackBar) {
+         SideEffect {
+            scope.launch {
+               val result = snackBarHostState.showSnackbar(
+                  message = snackBarUiState.message,
+                  withDismissAction = true,
+               )
+               when (result) {
+                  SnackbarResult.Dismissed -> if (snackBarUiState.isError) {
+                     vm.onDismissSnackBar()
+                  } else {
+                     vm.onDismissSnackBar()
+                     onSignInSuccess()
+                  }
+
+                  SnackbarResult.ActionPerformed -> ""
                }
             }
          }

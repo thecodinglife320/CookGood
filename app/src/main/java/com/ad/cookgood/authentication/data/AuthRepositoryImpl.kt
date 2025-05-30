@@ -9,7 +9,6 @@ import androidx.credentials.exceptions.GetCredentialCancellationException
 import com.ad.cookgood.authentication.domain.AuthRepository
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
-import com.ad.cookgood.authentication.domain.model.LinkResult
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.AuthCredential
@@ -54,16 +53,16 @@ class AuthRepositoryImpl @Inject constructor(
          val currentUser = firebaseAuth.currentUser
          val authCredential = getGoogleAuthCredential(context)
          currentUser!!.linkWithCredential(authCredential).await()
-         LinkResult.Success(name, url)
+         AuthResult.LinkSuccess(name, url)
       } catch (_: FirebaseAuthInvalidCredentialsException) {
-         LinkResult.Error(AuthError.InvalidCredential)
+         AuthResult.Error(AuthError.InvalidCredential)
       } catch (_: GetCredentialCancellationException) {
-         LinkResult.Error(AuthError.UserCancelFlow)
+         AuthResult.Error(AuthError.UserCancelFlow)
       } catch (_: FirebaseAuthUserCollisionException) {
-         LinkResult.Error(AuthError.CredentialAlreadyInUse)
+         AuthResult.Error(AuthError.CredentialAlreadyInUse)
       } catch (e: Exception) {
          Log.e(TAG, "Unknown error during anonymous linking", e)
-         LinkResult.Error(AuthError.Unknown)
+         AuthResult.Error(AuthError.Unknown)
       }
 
    private suspend fun getGoogleAuthCredential(context: Activity): AuthCredential {
@@ -84,7 +83,7 @@ class AuthRepositoryImpl @Inject constructor(
       return GoogleAuthProvider.getCredential(tokenCredential.idToken, null)
    }
 
-   companion object {
+   private companion object {
       const val TAG = "AuthRepositoryImpl"
    }
 }

@@ -10,13 +10,12 @@ import com.ad.cookgood.authentication.domain.model.AuthResult
 import com.ad.cookgood.authentication.domain.usecase.SignInAnonymousUseCase
 import com.ad.cookgood.authentication.domain.usecase.SignInWithGoogleUseCase
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
+import com.ad.cookgood.shared.SnackBarUiState
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,42 +23,50 @@ import javax.inject.Inject
 class AuthViewModel @Inject constructor(
    private val signInWithGoogleUseCase: SignInWithGoogleUseCase,
    private val signInAnonymousUseCase: SignInAnonymousUseCase,
-   getCurrentUserUseCase: GetCurrentUserUseCase,
+   private val getCurrentUserUseCase: GetCurrentUserUseCase,
    private val application: Application
 ) : ViewModel() {
 
-   val currentUserId = getCurrentUserUseCase()
-      .map {
-         it?.uid.also {
-            it?.let { handleAuthResult(AuthResult.Success) }
-         }
-      }
-      .stateIn(
-         scope = viewModelScope,
-         started = SharingStarted.Lazily,
-         initialValue = null
-      )
-
-   private val _messageUiState = MutableStateFlow(MessageUiState())
-
-   //expose state
-   val messageUiState: StateFlow<MessageUiState> = _messageUiState
-
-   private fun handleAuthResult(authResult: AuthResult) {
-      when (authResult) {
-         is AuthResult.Error -> {
-            _messageUiState.value =
-               MessageUiState(application.getString(authResult.reason.messageRes))
-         }
-
-         AuthResult.Success -> {
-            _messageUiState.value = MessageUiState(application.getString(R.string.message_success))
+   init {
+      viewModelScope.launch {
+         getCurrentUserUseCase().first()?.let {
+            handleAuthResult(AuthResult.Success)
          }
       }
    }
 
-   fun dismissMessage() {
-      _messageUiState.value = MessageUiState()
+   private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
+
+   //expose state
+   val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
+
+   private fun handleAuthResult(authResult: AuthResult) {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = true
+      )
+      when (authResult) {
+         is AuthResult.Error -> {
+            _snackBarUiState.value = _snackBarUiState.value.copy(
+               message = application.getString(authResult.reason.messageRes),
+               isError = true
+            )
+         }
+
+         AuthResult.Success -> {
+            _snackBarUiState.value = _snackBarUiState.value.copy(
+               message = application.getString(R.string.message_success),
+               isError = false
+            )
+         }
+
+         is AuthResult.LinkSuccess -> ""
+      }
+   }
+
+   fun onDismissSnackBar() {
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         showSnackBar = false
+      )
    }
 
    fun signInWithGoogle(context: Activity) {
