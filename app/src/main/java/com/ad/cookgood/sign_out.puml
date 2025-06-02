@@ -1,0 +1,26 @@
+@startuml
+title Activity Diagram: Đăng xuất
+
+|Người dùng|
+:Click "Đăng xuất";
+|Ứng dụng|
+if (Là tài khoản ẩn danh?) then (Có)
+  |Firebase|
+  :Xóa tài khoản \nẩn danh);
+  |Ứng dụng|
+  :Đăng xuất khỏi thiết bị;
+else (Không)
+  |Ứng dụng|
+  :Đăng xuất khỏi thiết bị;
+endif
+
+|Firebase|
+:Huỷ phiên đăng nhập;
+|Ứng dụng|
+:Xoá dữ liệu local;
+:Chuyển đến màn hình đăng nhập;
+|Người dùng|
+:Nhìn thấy màn hình đăng nhập;
+
+stop
+@enduml

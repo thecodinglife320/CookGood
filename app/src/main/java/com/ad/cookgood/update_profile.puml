@@ -1,0 +1,29 @@
+@startuml
+title Activity diagram: Cập nhật profile
+
+|Người dùng|
+:Chỉnh sửa thông tin cá nhân;
+:Nhấn "Lưu thay đổi";
+
+|Ứng dụng|
+:Chuẩn bị dữ liệu cập nhật;
+:Gửi yêu cầu đến hệ thống;
+
+|Firebase|
+if (Xử lý thành công?) then (Có)
+  :Lưu thông tin mới;
+  |Ứng dụng|
+  :Hiển thị thông tin mới;
+  |Người dùng|
+  :Xác nhận cập nhật thành công;
+else (Lỗi)
+  |Firebase|
+  :Báo lỗi \n hệ thống;
+  |Ứng dụng|
+  :Thông báo lỗi \n cho người dùng;
+  |Người dùng|
+  :Nhận thông báo lỗi;
+endif
+
+stop
+@enduml

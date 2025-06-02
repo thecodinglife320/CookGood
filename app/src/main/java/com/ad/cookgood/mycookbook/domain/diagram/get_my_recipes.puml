@@ -1,0 +1,42 @@
+@startuml
+title Biểu đồ luồng: Xem danh sách công thức đã tạo (Mức trừu tượng)
+
+|Người dùng|
+: Mở màn hình "Công thức của tôi";
+
+|Tầng biểu diễn|
+: Gọi use case tải danh sách công thức;
+
+|Tầng nghiệp vụ|
+: Gọi repository để lấy dữ liệu;
+
+|Tầng dữ liệu|
+: Truy vấn csdl và sắp xếp dữ liệu;
+: Trả về danh sách công thức;
+
+|Tầng nghiệp vụ|
+:Áp dụng quy tắc nghiệp vụ;
+: Trả dữ liệu cho Tầng biểu diễn;
+
+|Tầng biểu diễn|
+: Chuyển đổi thành dữ liệu \nhiển thị ra màn hình;
+
+|Tầng biểu diễn|
+if (Có dữ liệu?) then (Có)
+  : Hiển thị danh sách công thức;
+  note right
+    **Mỗi công thức hiển thị:**
+    - Tên công thức
+    - Ảnh món ăn
+    và kèm theo id của công thức
+  end note
+else (Không có dữ liệu)
+  : Hiển thị màn hình trống;
+endif
+
+|Người dùng|
+: Xem danh sách công thức;
+: Chọn một công thức để xem chi tiết;
+
+stop
+@enduml

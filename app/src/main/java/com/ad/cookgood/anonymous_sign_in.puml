@@ -1,0 +1,22 @@
+@startuml
+title Biểu đồ luồng đăng nhập ẩn danh
+|Khách|
+start
+:Click "Đăng nhập ẩn danh";
+|Ứng dụng|
+:Gửi yêu cầu đăng nhập ẩn danh;
+|Firebase|
+if (Thành \n công?) then (Có)
+  :Tạo UID  tạm thời;
+  :Trả về phiên \n đăng nhập;
+  |Ứng dụng|
+  :Chuyển đến màn hình chính;
+else (Lỗi)
+  |Firebase|
+  :Trả về thông báo lỗi;
+  |Ứng dụng|
+  :Hiển thị thông báo lỗi;
+endif
+
+stop
+@enduml

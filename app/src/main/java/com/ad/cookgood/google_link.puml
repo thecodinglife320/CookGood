@@ -1,0 +1,35 @@
+@startuml
+title __Biểu đồ hoạt động đăng nhập bằng Google__
+
+|Khách|
+start
+:Click "Liên kết tài khoản ẩn danh";
+|Ứng dụng|
+:Hiển thị hộp thoại \nhọn tài khoản Google;
+|Google|
+:Hiển thị danh sách tài khoản;
+|Khách|
+if (Hủy bỏ?) then (Có)
+  :Đóng
+  hộp thoại;
+  |Ứng dụng|
+  :Thông báo hủy;
+  stop
+else (Không)
+	|Khách|
+  :Chọn tài khoản Google;
+  |Google|
+  :Trả về credential (ID token);
+  |Ứng dụng|
+  :Gửi credential tới Firebase;
+  |Firebase|
+  if (Liên kết\n\nthành công?) then (Có)
+    |Ứng dụng|
+    :Cập nhật hồ sơ \ncủa người dùng;
+  else (Lỗi)
+    |Ứng dụng|
+    :Hiển thị thông báo lỗi;
+  endif
+endif
+stop
+@enduml

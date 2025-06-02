@@ -1,0 +1,48 @@
+@startuml
+title Biểu đồ luồng: Xem chi tiết công thức
+
+|Người dùng|
+: Chọn công thức từ danh sách;
+
+|Tầng biểu diễn|
+: Gọi use case lấy chi tiết công thức\nvới recipeId được chọn;
+
+|Tầng nghiệp vụ|
+: Gọi repository để lấy:\n- Thông tin công thức\n- Danh sách nguyên liệu\n- Các bước hướng dẫn;
+
+|Tầng dữ liệu|
+:Truy vấn công thức theo id ;
+:Truy vấn nguyên \nliệu có trong công thức;
+:Truy vấn bước làm \ncó trong công thức;
+:Chuyển dữ liệu truy vấn thành thực thể;
+:Trả dữ liệu cho tầng nghiệp vụ;
+
+|Tầng nghiệp vụ|
+: Trả dữ liệu cho Tầng biểu diễn;
+
+|Tầng biểu diễn|
+:Chuyển thực thể \nthành dữ liệu hiển thị;
+
+|Tầng biểu diễn|
+if (Thành công?) then (Có)
+  : Hiển thị chi tiết công thức;
+  note right
+    **Bao gồm:**
+    1. Ảnh món ăn
+    2. Tên và mô tả
+    3. Thời gian nấu
+    4. Khẩu phần
+    5. Nguyên liệu
+    6. Các bước nấu (có ảnh minh họa)
+  end note
+else (Lỗi)
+  : Hiển thị thông báo lỗi;
+endif
+
+|Người dùng|
+: Xem chi tiết công thức;
+: Cuộn để xem toàn bộ nội dung;
+: Bấm nút "Sửa" hoặc "Xoá";
+
+stop
+@enduml

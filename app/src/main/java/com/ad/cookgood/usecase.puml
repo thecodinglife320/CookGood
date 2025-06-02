@@ -1,0 +1,107 @@
+@startuml
+left to right direction
+
+:Người dùng: as user
+:Khách: as guest
+:Người dùng ẩn danh: as anonymous
+
+'note'
+
+package "Xác thực người dùng"{
+	usecase googleSignin as "Đăng nhập bằng Google"
+	usecase anonymousSignin as "Đăng nhập ẩn danh"
+	usecase linkGoogle as "Liên kết Google"
+}
+
+package "Quản lí phiên"{
+	usecase logout as "Đăng xuất"
+
+}
+
+package "Quản lí tài khoản"{
+	usecase viewProfile as "Hiển thị hồ sơ"
+	usecase updateProfile as "Cập nhật hồ sơ"
+}
+
+anonymous-->logout
+anonymous-->linkGoogle
+anonymous -u->viewProfile
+
+user--->logout
+user--->viewProfile
+user--->updateProfile
+
+guest  -u-->anonymousSignin
+guest -u-->googleSignin
+guest--->viewProfile
+
+newpage
+(Cập nhật hồ sơ) ..>(Hiển thị hồ sơ) :<<include>>
+
+(Đăng nhập ẩn danh) ..>(Xác thực người dùng):<<extend>>
+(Đăng nhập bằng Google) ..>(Xác thực người dùng):<<extend>>
+
+newpage
+left to right direction
+:Người dùng: as user
+:Người dùng ẩn danh: as anonymous
+
+user -|>anonymous
+
+anonymous-->(Thêm công thức)
+anonymous-->(Thêm nguyên liệu)
+anonymous-->(Thêm bước làm)
+anonymous-->(Chụp ảnh món ăn)
+anonymous-->(Chụp ảnh bước làm)
+
+newpage
+left to right direction
+:Người dùng: as user
+:Người dùng ẩn danh: as anonymous
+
+user -|>anonymous
+
+anonymous-->(Xem danh sách công thức)
+anonymous-->(Xem chi tiết công thức)
+anonymous-->(Xem danh sách nguyên liệu)
+anonymous-->(Xem danh sách bước)
+
+newpage
+left to right direction
+:Người dùng: as user
+:Người dùng ẩn danh: as anonymous
+
+user -|>anonymous
+
+anonymous-->(Xoá công thức)
+anonymous-->(Xoá nguyên liệu)
+anonymous-->(Xoá bước làm)
+
+newpage
+left to right direction
+:Người dùng: as user
+:Người dùng ẩn danh: as anonymous
+
+user -|>anonymous
+
+anonymous-->(Sửa công thức)
+anonymous-->(Sửa nguyên liệu)
+anonymous-->(Sửa bước làm)
+
+newpage
+left to right direction
+
+(Thêm bước làm)..>(Thêm công thức):<<include>>
+(Thêm bước làm)..>(Chụp ảnh bước làm):<<include>>
+(Thêm nguyên liệu)..>(Thêm công thức):<<include>>
+
+(Thêm công thức)..>(Chụp ảnh món ăn):<<include>>
+
+(Xem chi tiết công thức)..>(Xem danh sách bước):<<include>>
+(Xem chi tiết công thức)..>(Xem danh sách nguyên liệu):<<include>>
+
+(Xoá công thức)..>(Xoá bước làm):<<include>>
+(Xoá công thức)..>(Xoá nguyên liệu):<<include>>
+
+@enduml
+

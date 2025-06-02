@@ -1,0 +1,49 @@
+@startuml
+title Biểu đồ luồng: Thêm công thức nấu ăn (Mức trừu tượng)
+
+|Người dùng|
+: Mở màn hình thêm công thức;
+: Nhập thông tin công thức (tên, mô tả, thời gian...);
+: Thêm nguyên liệu;
+: Thêm hướng dẫn nấu;
+: Nhấn nút "Lưu";
+|Lớp biểu diễn|
+:Chuyển đổi công thức nhập thành\nthực thể __Công thức__;
+: Gọi Lớp nghiệp vụ \n để thêm __Công thức__;
+|Lớp nghiệp vụ|
+: Gọi lớp dữ liệu để xử lí;
+|Lớp dữ liệu|
+: Lưu công thức vào csdl;
+:Trả về id của công thức;
+|Lớp biểu diễn|
+: Nhận ID công thức mới tạo;
+while (Danh sách nguyên \nliệu nhập còn phần tử?) is (còn)
+	:Chuyển nguyên liệu nhập \nthành thực thể __Nguyên liệu__;
+  :Gọi lớp nghiệp vụ để \nthêm __Nguyên liệu__;
+  |Lớp nghiệp vụ|
+  :Gọi lớp dữ liệu để xử lí;
+  |Lớp dữ liệu|
+  :Lưu nguyên liệu vào csdl;
+endwhile (hết)
+|Lớp biểu diễn|
+while (Danh sách bước làm \n nhập còn phần tử?) is (còn)
+  :Chuyển bước làm nhập \nthành thực thể __Bước làm__;
+    :Gọi lớp nghiệp vụ để \nthêm __Bước làm__;
+    |Lớp nghiệp vụ|
+    :Gọi lớp dữ liệu để xử lí;
+    |Lớp dữ liệu|
+    :Lưu bước làm vào csdl;
+endwhile (hết)
+|Lớp biểu diễn|
+if (Thành công?) then (Có)
+  : Hiển thị thông báo thành công;
+  : Chuyển về màn hình trước;
+  |Người dùng|
+  : Nhìn thấy công thức mới được thêm;
+  stop
+else (Lỗi)
+	|Lớp biểu diễn|
+  : Hiển thị thông báo lỗi;
+  kill
+endif
+@enduml
