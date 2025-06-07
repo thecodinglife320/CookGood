@@ -7,6 +7,7 @@ CookGood is an Android application built with Kotlin, designed to help users man
 - [About](#about)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Screenshots](#screenshots)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Contributing](#contributing)
@@ -39,6 +40,11 @@ CookGood is an open-source Android app that provides an intuitive platform for s
 - **Image Loading:** Coil
 - **Camera:** CameraX
 - **Dependency Injection:** Dagger/Hilt
+
+## Screenshots
+| Login Screen | Recipe Detail Screen | Add Recipe Screen | Profile Screen
+|--------------|---------------------|---------------| -----------------
+| ![Login screen](screenshot/auth_screen.png) | ![Recipe Detail Screen](screenshot/my_recipe_detail.png) | ![Add Recipe Screen](screenshot/add_recipe_screen.png) | ![Profile Screen](screenshot/profile_screen.png) |
 
 ## Installation
 
