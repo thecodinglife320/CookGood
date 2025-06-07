@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -45,6 +46,8 @@ fun AuthScreen(
    val scope = rememberCoroutineScope()
    val vm: AuthViewModel = hiltViewModel<AuthViewModel>()
    val snackBarUiState by vm.snackBarUiState.collectAsState()
+   val isLoadingGoogle by vm.isLoadingGoogle.collectAsState()
+   val isLoadingAnonymous by vm.isLoadingAnonymous.collectAsState()
 
    Scaffold(
       topBar = {
@@ -84,6 +87,8 @@ fun AuthScreen(
             .fillMaxSize(),
          onAnonymousSignInButtonClick = { vm.signInAnonymous() },
          onGoogleSignInButtonClick = { vm.signInWithGoogle(it) },
+         isLoadingGoogle = isLoadingGoogle,
+         isLoadingAnonymous = isLoadingAnonymous
       )
    }
 }
@@ -94,6 +99,8 @@ fun AuthScreenContent(
    modifier: Modifier = Modifier,
    onAnonymousSignInButtonClick: () -> Unit = {},
    onGoogleSignInButtonClick: (Activity) -> Unit = {},
+   isLoadingGoogle: Boolean = true,
+   isLoadingAnonymous: Boolean = true
 ) {
    Column(
       modifier,
@@ -105,7 +112,9 @@ fun AuthScreenContent(
          onClick = onAnonymousSignInButtonClick,
          modifier = Modifier.width(300.dp)
       ) {
-         Text(stringResource(R.string.auth_button_anonymous))
+         if (isLoadingAnonymous) {
+            CircularProgressIndicator()
+         } else Text(stringResource(R.string.auth_button_anonymous))
       }
 
       Spacer(Modifier.size(dimensionResource(R.dimen.padding_medium)))
@@ -114,10 +123,13 @@ fun AuthScreenContent(
          onClick = { onGoogleSignInButtonClick(context as Activity) },
          modifier = Modifier.width(300.dp)
       ) {
-         Text(stringResource(R.string.google_signin))
-         Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
-         Image(painterResource(R.drawable.google_logo_72), contentDescription = null)
+         if (isLoadingGoogle) {
+            CircularProgressIndicator()
+         } else {
+            Text(stringResource(R.string.google_signin))
+            Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
+            Image(painterResource(R.drawable.google_logo_72), contentDescription = null)
+         }
       }
-
    }
 }

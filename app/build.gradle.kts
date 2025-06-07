@@ -18,6 +18,9 @@ android {
       versionCode = 1
       versionName = "1.0"
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+      buildConfigField("String", "APPWRITE_ENDPOINT", "\"https://fra.cloud.appwrite.io/v1\"")
+      buildConfigField("String", "APPWRITE_PROJECT_ID", "\"684170a5002413c6c4c8\"")
+      buildConfigField("String", "APPWRITE_BUCKET_ID", "\"68417176002dac7c6a1e\"")
    }
 
    buildTypes {
@@ -38,6 +41,7 @@ android {
    }
    buildFeatures {
       compose = true
+      buildConfig = true
    }
    ksp { // Nếu bạn đang sử dụng KSP
       arg("room.schemaLocation", "$project.directory/schemas".toString())
@@ -69,6 +73,7 @@ dependencies {
    implementation(libs.androidx.credentials)
    implementation(libs.androidx.credentials.play.services.auth)
    implementation(libs.googleid)
+   implementation(libs.androidx.ui.text.google.fonts)
    testImplementation(libs.mockito.core)
    androidTestImplementation(libs.core.ktx)
    ksp(libs.androidx.room.compiler)
@@ -94,5 +99,6 @@ dependencies {
    implementation(libs.androidx.navigation.compose)
    implementation(libs.material3)
    implementation(libs.material.icons.extended)
+   implementation(libs.sdk.for1.android)
 
 }

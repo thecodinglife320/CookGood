@@ -33,7 +33,8 @@ class AddRecipeUseCaseTest {
          title = "a",
          brief = "b",
          serving = 1,
-         cookTime = 1
+         cookTime = 1,
+         uri = null
       )
 
       //dinh nghia hanh vi cua mock repository khi insert recipe

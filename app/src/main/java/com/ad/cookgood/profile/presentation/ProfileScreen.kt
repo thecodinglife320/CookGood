@@ -1,5 +1,12 @@
 package com.ad.cookgood.profile.presentation
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +38,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,7 +70,11 @@ fun ProfileScreen(
                withDismissAction = true,
             )
             when (result) {
-               SnackbarResult.Dismissed -> vm.onDismissSnackBar()
+               SnackbarResult.Dismissed -> {
+                  vm.onDismissSnackBar()
+                  if (!snackBarUiState.isError) navigateUp()
+               }
+
                SnackbarResult.ActionPerformed -> ""
             }
          }
@@ -89,7 +102,10 @@ fun ProfileScreen(
          onNameChange = {
             vm.onNameChange(it)
          },
-         updateUserProfile = vm::updateUserProfile
+         updateUserProfile = vm::updateUserProfile,
+         onImagePicked = {
+            vm.onImagePicked(it)
+         },
       )
    }
 }
@@ -100,12 +116,23 @@ fun ProfileScreenContent(
    modifier: Modifier = Modifier,
    profileUiState: ProfileUiState = ProfileUiState.Success(
       email = "ttll@gmail.com",
-      name = "dap dep trai",
-      url = "".toUri()
+      name = "dap",
+      uri = "".toUri()
    ),
    onNameChange: (String) -> Unit = {},
-   updateUserProfile: () -> Unit = {}
+   updateUserProfile: () -> Unit = {},
+   onImagePicked: (Uri) -> Unit = {},
 ) {
+
+   val singleImagePickerLauncher = rememberLauncherForActivityResult(
+      contract = ActivityResultContracts.PickVisualMedia(),
+      onResult = {
+         if (it != null) {
+            onImagePicked(it)
+         }
+      }
+   )
+
    Column(
       modifier
          .padding(horizontal = dimensionResource(id = R.dimen.padding_medium)),
@@ -116,12 +143,39 @@ fun ProfileScreenContent(
          is ProfileUiState.Success -> {
             Spacer(Modifier.size(dimensionResource(R.dimen.padding_small)))
 
-            CoilImage(
-               uri = profileUiState.url,
-               modifier = Modifier
-                  .size(100.dp)
-                  .clip(CircleShape)
-            )
+            Box {
+               CoilImage(
+                  uri = profileUiState.uri,
+                  modifier = Modifier
+                     .size(150.dp)
+                     .clip(CircleShape)
+                     .clickable {
+                        singleImagePickerLauncher.launch(
+                           PickVisualMediaRequest(
+                              ActivityResultContracts.PickVisualMedia.ImageOnly
+                           )
+                        )
+                     }
+               )
+               Icon(
+                  imageVector = Icons.Default.Edit,
+                  contentDescription = null,
+                  tint = Color.White,
+                  modifier = Modifier
+                     .align(Alignment.BottomEnd)
+                     .size(32.dp)
+                     .clip(CircleShape)
+                     .background(Color.Blue)
+                     .clickable {
+                        singleImagePickerLauncher.launch(
+                           PickVisualMediaRequest(
+                              ActivityResultContracts.PickVisualMedia.ImageOnly
+                           )
+                        )
+                     }
+               )
+
+            }
 
             Spacer(Modifier.size(32.dp))
 
@@ -146,9 +200,9 @@ fun ProfileScreenContent(
             OutlinedButton(updateUserProfile) {
                Text(stringResource(R.string.update_profile))
             }
+            Text(profileUiState.toString())
          }
       }
-
    }
 }
 

@@ -16,7 +16,7 @@ import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.navigation.data.SessionManagementScreen
 import com.ad.cookgood.navigation.presentation.BottomNavigationBar
 import com.ad.cookgood.navigation.presentation.CookGoodNavHost
-import com.ad.cookgood.ui.theme.CookGoodTheme
+import com.ad.cookgood.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
       super.onCreate(savedInstanceState)
       enableEdgeToEdge()
       setContent {
-         CookGoodTheme {
+         AppTheme {
 
             val navController = rememberNavController()
             val backStackEntry by navController.currentBackStackEntryAsState()

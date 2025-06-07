@@ -9,7 +9,7 @@ sealed class ProfileUiState {
    data class Success(
       val email: String?,
       val name: String?,
-      val url: Uri?
+      val uri: Uri?
    ) : ProfileUiState()
 
 }

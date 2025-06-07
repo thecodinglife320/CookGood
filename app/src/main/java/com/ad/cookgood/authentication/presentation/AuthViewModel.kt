@@ -37,6 +37,12 @@ class AuthViewModel @Inject constructor(
 
    private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
 
+   private val _isLoadingGoogle = MutableStateFlow(false)
+   private val _isLoadingAnonymous = MutableStateFlow(false)
+
+   val isLoadingGoogle: StateFlow<Boolean> = _isLoadingGoogle
+   val isLoadingAnonymous: StateFlow<Boolean> = _isLoadingAnonymous
+
    //expose state
    val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
@@ -61,6 +67,8 @@ class AuthViewModel @Inject constructor(
 
          is AuthResult.LinkSuccess -> ""
       }
+      _isLoadingGoogle.value = false
+      _isLoadingAnonymous.value = false
    }
 
    fun onDismissSnackBar() {
@@ -72,6 +80,7 @@ class AuthViewModel @Inject constructor(
    fun signInWithGoogle(context: Activity) {
       if (isNetworkAvailable(context)) {
          viewModelScope.launch {
+            _isLoadingGoogle.value = true
             handleAuthResult(signInWithGoogleUseCase(context))
          }
       } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
@@ -80,6 +89,7 @@ class AuthViewModel @Inject constructor(
    fun signInAnonymous() {
       if (isNetworkAvailable(application)) {
          viewModelScope.launch {
+            _isLoadingAnonymous.value = true
             handleAuthResult(signInAnonymousUseCase())
          }
       } else handleAuthResult(AuthResult.Error(AuthError.NetworkError))

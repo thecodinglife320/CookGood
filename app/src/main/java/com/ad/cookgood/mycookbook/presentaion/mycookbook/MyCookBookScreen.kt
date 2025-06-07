@@ -3,6 +3,7 @@ package com.ad.cookgood.mycookbook.presentaion.mycookbook
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +35,7 @@ fun MyCookBookScreen(
    Scaffold(
       floatingActionButton = {
          FloatingActionButton(
+            shape = CircleShape,
             onClick = navigateToRecipeEntryScreen
          ) {
             Icon(imageVector = Icons.Default.Add, contentDescription = null)

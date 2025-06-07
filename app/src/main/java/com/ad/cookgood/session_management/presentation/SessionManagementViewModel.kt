@@ -32,7 +32,7 @@ class SessionManagementViewModel @Inject constructor(
    private val updateUserProfileUseCase: UpdateUserProfileUseCase
 ) : ViewModel() {
 
-   private val _isAnonymous: MutableStateFlow<Boolean?> = MutableStateFlow(null)
+   private val _isAnonymous: MutableStateFlow<Boolean?> = MutableStateFlow(false)
 
    init {
       collectFlow()
@@ -60,7 +60,9 @@ class SessionManagementViewModel @Inject constructor(
 
    fun signOut() {
       isNetworkAvailable(application).let {
-         if (it) signOutUseCase()
+         if (it) {
+            signOutUseCase()
+         }
          else handleAuthResult(AuthResult.Error(AuthError.NetworkError))
       }
    }
