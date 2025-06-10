@@ -74,6 +74,8 @@ dependencies {
    implementation(libs.androidx.credentials.play.services.auth)
    implementation(libs.googleid)
    implementation(libs.androidx.ui.text.google.fonts)
+   implementation(libs.exoplayer.core)
+   implementation(libs.exoplayer.ui)
    testImplementation(libs.mockito.core)
    androidTestImplementation(libs.core.ktx)
    ksp(libs.androidx.room.compiler)
@@ -100,5 +102,4 @@ dependencies {
    implementation(libs.material3)
    implementation(libs.material.icons.extended)
    implementation(libs.sdk.for1.android)
-
 }

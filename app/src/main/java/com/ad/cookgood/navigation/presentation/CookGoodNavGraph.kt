@@ -1,7 +1,5 @@
 package com.ad.cookgood.navigation.presentation
 
-//import com.ad.cookgood.profile.presentation.ProfileScreen
-//import com.ad.cookgood.profile.presentation.ProfileViewModel
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ad.cookgood.authentication.presentation.AuthScreen
 import com.ad.cookgood.mycookbook.presentaion.mycookbook.MyCookBookScreen
+
 import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.MyRecipeDetailScreen
 import com.ad.cookgood.mycookbook.presentaion.myrecipeedit.EditMyRecipeViewModel
 import com.ad.cookgood.navigation.data.AuthScreen
@@ -103,7 +102,6 @@ fun CookGoodNavHost(
 
          MyRecipeDetailScreen(
             navigateUp = { navController.navigateUp() },
-            navigateBack = { navController.popBackStack() },
             navigateToEditScreen = {
                val route =
                   EditMyRecipeScreen.route.replace("{${MyRecipeDetailScreen.recipeIdArg}}", "$it")
