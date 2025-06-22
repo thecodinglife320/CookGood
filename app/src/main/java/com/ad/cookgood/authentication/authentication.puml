@@ -1,0 +1,113 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+left to right direction
+
+package com.ad.cookgood.authentication{
+
+	package domain{
+		abstract class AuthResult
+
+    class Success
+
+    class Error {
+      -reason: AuthError
+    }
+
+    class LinkSuccess {
+      - name: String?
+      - url: Uri?
+    }
+
+    abstract class AuthError {
+      - messageRes: Int
+    }
+
+    exception InvalidCredential
+    exception Unknown
+    exception UserCancelFlow
+    exception CredentialAlreadyInUse
+    exception NetworkError
+
+    InvalidCredential --|> AuthError
+    Unknown --|> AuthError
+    UserCancelFlow --|> AuthError
+    CredentialAlreadyInUse --|> AuthError
+    NetworkError --|> AuthError
+
+		Success --|> AuthResult
+    Error --|> AuthResult
+    LinkSuccess --|> AuthResult
+
+    interface AuthRepository{
+      +signInWithGoogle(context: Activity): AuthResult
+      +signInAnonymous(): AuthResult
+      +linkAnonymous(context: Activity): AuthResult
+    }
+
+		package usecase{
+			class LinkAnonymousUseCase{
+				-authRepository: AuthRepository
+				+invoke(context: Activity): AuthResult
+			}
+
+			class SignInAnonymousUseCase{
+				-authRepository: AuthRepository
+				+invoke(): AuthResult
+			}
+
+			class SignInWithGoogleUseCase{
+				-authRepository: AuthRepository
+				+invoke(context: Activity): AuthResult
+			}
+		}
+
+		Error-->AuthError
+		LinkAnonymousUseCase-->AuthRepository
+		SignInAnonymousUseCase-->AuthRepository
+		SignInWithGoogleUseCase-->AuthRepository
+		AuthRepository-->AuthResult
+
+
+  }
+
+  package data{
+
+    class AuthRepositoryImpl{
+      +clientId: String
+      +firebaseAuth: FirebaseAuth
+      -name: String?
+      -url: Uri?
+
+      +signInWithGoogle(context: Activity):AuthResult
+      +signInAnonymous():AuthResult
+      +linkAnonymous(context: Activity):AuthResult
+      -getGoogleAuthCredential(context: Activity): AuthCredential
+    }
+
+    class FirebaseAuth<<external>>
+
+    AuthRepositoryImpl..>FirebaseAuth
+    AuthRepositoryImpl..|>AuthRepository
+  }
+
+  package presentation{
+
+		class AuthViewModel extends ViewModel{
+			-signInWithGoogleUseCase: SignInWithGoogleUseCase
+			-signInAnonymousUseCase: SignInAnonymousUseCase
+      -getCurrentUserUseCase: GetCurrentUserUseCase
+      -application: Application
+
+      -handleAuthResult(authResult: AuthResult)
+      +signInWithGoogle(context: Activity)
+      +signInAnonymous()
+		}
+
+		AuthViewModel-->SignInWithGoogleUseCase
+		AuthViewModel-->SignInAnonymousUseCase
+  }
+}
+
+
+@enduml

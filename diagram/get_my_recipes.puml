@@ -1,27 +1,28 @@
 @startuml
-title Biểu đồ luồng: Xem danh sách công thức đã tạo (Mức trừu tượng)
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
 
 |Người dùng|
 : Mở màn hình "Công thức của tôi";
 
-|Tầng biểu diễn|
-: Gọi use case tải danh sách công thức;
+|Lớp biểu diễn|
+: Gọi lớp nghiệp vụ để tải danh sách công thức;
 
-|Tầng nghiệp vụ|
-: Gọi repository để lấy dữ liệu;
+|Lớp nghiệp vụ|
+: Gọi lớp dữ liệu để lấy dữ liệu;
 
-|Tầng dữ liệu|
+|Lớp dữ liệu|
 : Truy vấn csdl và sắp xếp dữ liệu;
 : Trả về danh sách công thức;
 
-|Tầng nghiệp vụ|
+|Lớp nghiệp vụ|
 :Áp dụng quy tắc nghiệp vụ;
-: Trả dữ liệu cho Tầng biểu diễn;
+: Trả dữ liệu cho Lớp biểu diễn;
 
-|Tầng biểu diễn|
+|Lớp biểu diễn|
 : Chuyển đổi thành dữ liệu \nhiển thị ra màn hình;
 
-|Tầng biểu diễn|
+|Lớp biểu diễn|
 if (Có dữ liệu?) then (Có)
   : Hiển thị danh sách công thức;
   note right

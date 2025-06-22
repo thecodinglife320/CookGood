@@ -24,6 +24,6 @@ fun RecipeUiState.toDomain() =
          brief = brief,
          serving = servingsInt,
          cookTime = hoursInt * 60 + minutesInt,
-         uri = uri
+         uri = uri.toString()
       )
    }

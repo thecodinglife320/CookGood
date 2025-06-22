@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="add_image">📷 Đăng hình đại diện cho món ăn</string>
+    <string name="add_image">📷 Ảnh món ăn</string>
     <string name="recipe_entry_name_label">Tên món</string>
     <string name="recipe_entry_name_placeholder">Rau xào</string>
 

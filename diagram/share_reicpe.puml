@@ -1,0 +1,46 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+'left to right direction
+
+|Người dùng|
+:Người dùng xem chi tiết công thức nấu ăn;
+: Nhấn nút "Chia sẻ";
+
+|Lớp Biểu diễn|
+if (Kiểm tra có phải người
+dùng ẩn danh không?) then (Có)
+	:Thông báo người dùng\ncần liên kết tài khoản\nđể chia sẻ công thức;
+	stop
+else (Không)
+	:Gọi lớp nghiệp vụ để \nupload ảnh của món ăn\nvà bước làm;
+endif
+
+|Lớp Nghiệp vụ|
+	:Gọi lớp dữ liệu để upload ảnh;
+
+|Lớp Dữ liệu|
+:Upload ảnh lên AppWrite;
+|AppWrite|
+if(Upload\nthành công?) then (Có)
+	:Trả về đường dẫn\ncủa ảnh;
+	|Lớp Nghiệp vụ|
+	:Đóng gói dữ liệu;
+	:Gọi lớp dữ liệu để\nchia sẻ công thức;
+	|Lớp Dữ liệu|
+	:Upload công\nthức lên Firebase;
+	|Firebase|
+	if(Upload\nthành công?) then (Có)
+		:Tạo một bản ghi\nlên FireStore;
+		|Lớp Biểu diễn|
+		:Thông báo công thức đã được chia sẻ;
+	else (Lỗi)
+		|Lớp Biểu diễn|
+		:Thông báo lỗi;
+	endif
+	stop
+else (Lỗi)
+	|Lớp Biểu diễn|
+	:Thông báo lỗi;
+stop
+@enduml

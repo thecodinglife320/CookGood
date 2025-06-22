@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,7 +39,7 @@ fun MyRecipeDetailScreen(
    val myRecipeUiState by vm.myRecipeUiState.collectAsState()
    val instructionUiStates by vm.instructionUiStates.collectAsState()
    val ingredientUiStates by vm.ingredientUiStates.collectAsState()
-
+   val currentUser by vm.currentUser.collectAsState()
 
    val scrollState = rememberScrollState()
 
@@ -109,6 +110,13 @@ fun MyRecipeDetailScreen(
                navigateToEditScreen(it.id)
             }) {
                Icon(Icons.Default.Edit, contentDescription = null)
+            }
+            currentUser?.let {
+               if (it.isAnonymous.not()) {
+                  FilledIconButton(onClick = { vm.shareRecipe() }) {
+                     Icon(Icons.Default.Share, contentDescription = null)
+                  }
+               }
             }
          }
       }

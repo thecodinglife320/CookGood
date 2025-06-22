@@ -1,6 +1,7 @@
 package com.ad.cookgood.uploadimage.data
 
 import com.ad.cookgood.BuildConfig
+import com.ad.cookgood.uploadimage.domain.UploadImageRepository
 import io.appwrite.Query
 import io.appwrite.models.File
 import io.appwrite.models.FileList
@@ -8,11 +9,11 @@ import io.appwrite.models.InputFile
 import io.appwrite.services.Storage
 import javax.inject.Inject
 
-class AppWriteStorageRepository @Inject constructor(
+class UploadImageRepositoryImpl @Inject constructor(
    private val storage: Storage,
-) {
+) : UploadImageRepository {
 
-   suspend fun upload(file: InputFile, fileId: String): Result<File> {
+   override suspend fun upload(file: InputFile, fileId: String): Result<File> {
       return try {
          val file = storage.createFile(
             bucketId = BuildConfig.APPWRITE_BUCKET_ID,
@@ -22,11 +23,10 @@ class AppWriteStorageRepository @Inject constructor(
          Result.success(file)
       } catch (e: Exception) {
          Result.failure(e)
-
       }
    }
 
-   suspend fun delete(fileId: String) = try {
+   override suspend fun delete(fileId: String) = try {
       storage.deleteFile(
          bucketId = BuildConfig.APPWRITE_BUCKET_ID,
          fileId = fileId,
@@ -36,7 +36,7 @@ class AppWriteStorageRepository @Inject constructor(
       Result.failure(e)
    }
 
-   suspend fun listFile(): Result<FileList> {
+   override suspend fun listFile(): Result<FileList> {
       return try {
          val result = storage.listFiles(
             bucketId = BuildConfig.APPWRITE_BUCKET_ID,

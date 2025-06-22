@@ -1,11 +1,11 @@
 @startuml
-title __Biểu đồ hoạt động đăng nhập bằng Google__
-
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
 |Khách|
 start
 :Click "Đăng nhập bằng Google";
 |Ứng dụng|
-:Hiển thị hộp thoại \nhọn tài khoản Google;
+:Hiển thị hộp thoại \nchọn tài khoản Google;
 |Google|
 :Hiển thị danh sách tài khoản;
 |Khách|

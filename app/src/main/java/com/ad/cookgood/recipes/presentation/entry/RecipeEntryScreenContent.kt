@@ -16,7 +16,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 
 @OptIn(ExperimentalPermissionsApi::class)
-@Preview
+@Preview(device = "spec:width=1280px,height=720px,dpi=480,orientation=portrait")
 @Composable
 fun RecipeEntryScreenContent(
    modifier: Modifier = Modifier,

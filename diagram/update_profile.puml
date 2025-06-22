@@ -1,5 +1,6 @@
 @startuml
-title Activity diagram: Cập nhật profile
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 20
 
 |Người dùng|
 :Chỉnh sửa thông tin cá nhân;

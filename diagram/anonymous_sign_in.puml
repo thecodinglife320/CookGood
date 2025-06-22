@@ -1,5 +1,7 @@
 @startuml
-title Biểu đồ luồng đăng nhập ẩn danh
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+
 |Khách|
 start
 :Click "Đăng nhập ẩn danh";

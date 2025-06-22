@@ -25,5 +25,5 @@ fun LocalRecipe.toDomain() =
       brief = brief,
       serving = servings,
       cookTime = cookTime,
-      uri = uri
+      uri = uri.toString()
    )

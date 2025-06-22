@@ -76,6 +76,7 @@ dependencies {
    implementation(libs.androidx.ui.text.google.fonts)
    implementation(libs.exoplayer.core)
    implementation(libs.exoplayer.ui)
+   implementation(libs.firebase.firestore)
    testImplementation(libs.mockito.core)
    androidTestImplementation(libs.core.ktx)
    ksp(libs.androidx.room.compiler)

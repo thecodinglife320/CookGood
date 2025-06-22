@@ -4,13 +4,15 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
-import android.provider.OpenableColumns
 import android.util.Log
 import androidx.core.net.toUri
 import com.ad.cookgood.uploadimage.data.FileDetails
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 fun isNetworkAvailable(context: Context): Boolean {
    val connectivityManager =
@@ -36,23 +38,15 @@ suspend fun getFileDetailsFromUri(context: Context, uri: Uri): FileDetails? {
       mimeType = context.contentResolver.getType(uri)
       Log.d("FileDetails", "MIME Type: $mimeType")
 
-      // 2. Get filename (optional, might not always be available or accurate)
-      context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
-         if (cursor.moveToFirst()) {
-            val displayNameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
-            if (displayNameIndex != -1) {
-               filename = cursor.getString(displayNameIndex)
-               Log.d("FileDetails", "Filename: $filename")
-            }
-         }
-      }
-      // Fallback if display name is not found (you can generate a name if needed)
-      if (filename == null) {
-         filename = "upload_${System.currentTimeMillis()}" + (mimeType?.let {
-            "." + it.substringAfterLast('/')
-         } ?: "")
-         Log.d("FileDetails", "Generated Filename: $filename")
-      }
+      // 2. generate filename depend on timestamp
+      val currentDateTime = LocalDateTime.now()
+      val formatter = DateTimeFormatter.ofPattern(
+         "yyyyMMdd_HHmmssSSS",
+         Locale.ENGLISH
+      )
+      val formattedDateTime = currentDateTime.format(formatter)
+      filename = "image_$formattedDateTime"
+      Log.d("FileDetails", "Filename: $filename")
 
       // 3. Get byte array
       inputStream = context.contentResolver.openInputStream(uri)
@@ -92,7 +86,7 @@ suspend fun getFileDetailsFromUri(context: Context, uri: Uri): FileDetails? {
    }
 }
 
-fun getAppWriteFileViewUrl(
+fun getAppWriteFileViewUri(
    bucketId: String,
    fileId: String,
    projectId: String,

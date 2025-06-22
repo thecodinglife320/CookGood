@@ -1,0 +1,212 @@
+@startuml
+
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 35
+
+package domain {
+  class Recipe {
+    + title: String
+    + brief: String
+    + servings: Int
+    + cookTime: Int
+    + uri: Uri
+
+    +toLocal(): LocalRecipe
+    +toRecipeUiState(): RecipeUiState
+  }
+
+  class Ingredient{
+    +name:String
+
+    +toLocal(recipeId: Long): LocalIngredient
+    +toUiState(): IngredientUiState
+  }
+
+  class Instruction{
+    +stepNumber: Int
+    +name: String
+    +uri: Uri
+
+    +toLocal(recipeId: Long): LocalInstruction
+    +toUiState(): InstructionUiState
+  }
+
+  interface RecipeRepository {
+    + insertRecipe(recipe: Recipe): Long
+    + insertIngredient(ingredient: Ingredient, recipeId: Long)
+    + insertInstruction(instruction: Instruction, recipeId: Long)
+  }
+
+  RecipeRepository ..> Recipe
+  RecipeRepository ..> Ingredient
+  RecipeRepository ..> Instruction
+
+  class AddRecipeUseCase{
+    - recipeRepository: RecipeRepository
+    + invoke(recipe: Recipe)
+  }
+  class AddIngredientUseCase{
+    - recipeRepository: RecipeRepository
+    + invoke(ingredient: Ingredient, recipeId: Long)
+  }
+  class AddInstructionUseCase{
+    - recipeRepository: RecipeRepository
+    + invoke(instruction: Instruction, recipeId: Long)
+  }
+
+  AddRecipeUseCase --> RecipeRepository
+  'AddRecipeUseCase ..>Recipe
+
+  AddIngredientUseCase --> RecipeRepository
+  'AddIngredientUseCase ..>Ingredient
+
+  AddInstructionUseCase --> RecipeRepository
+  'AddInstructionUseCase ..>Instruction
+}
+
+package data{
+	class RecipeRepositoryImpl {
+			- recipeDao: RecipeDao
+			- ingredientDao: IngredientDao
+			- instructionDao: InstructionDao
+
+			+ insertRecipe(recipe: Recipe): Long
+			+ insertIngredient(ingredient: Ingredient, recipeId: Long)
+			+ insertInstruction(instruction: Instruction, recipeId: Long)
+	}
+
+	package roomDao {
+
+    interface RecipeDao{
+      +insertRecipe(localRecipe: LocalRecipe): Long
+      +getRecipeById(recipeId: Long): Flow<LocalRecipe>
+      +getAllRecipe(): Flow<List<LocalRecipe>>
+      +delete(localRecipe: LocalRecipe): Int
+      +update(localRecipe: LocalRecipe)
+    }
+
+    interface IngredientDao{
+    	+insertIngredient(localIngredient: LocalIngredient): Long
+  		+getIngredientsByRecipeId(recipeId: Long): Flow<List<LocalIngredient>>
+  		+delete(localIngredient: LocalIngredient): Int
+    }
+
+    interface InstructionDao{
+      +insertInstruction(localInstruction: LocalInstruction): Long
+  		+getInstructionsByRecipeId(recipeId: Long): Flow<List<LocalInstruction>>
+  		+delete(localInstruction: LocalInstruction): Int
+  	}
+
+  	abstract class CookGoodDb {
+  		+recipeDao(): RecipeDao
+  		+ingredientDao(): IngredientDao
+  		+instructionDao(): InstructionDao
+  	}
+
+  	CookGoodDb --> RecipeDao
+  	CookGoodDb --> IngredientDao
+  	CookGoodDb --> InstructionDao
+  }
+
+	package roomEntity {
+
+    class LocalRecipe {
+      +id: Long
+      +title: String
+      +brief: String
+      +servings: Int
+      +cookTime: Int
+      +uri: Uri
+    }
+
+    class LocalIngredient {
+      +id: Long
+      +name: String
+      +recipeId: Long
+    }
+
+    class LocalInstruction {
+      +id: Long
+      +name: String
+      +stepNumber: Int
+      +recipeId: Long
+      +uri: Uri
+    }
+
+    LocalIngredient --> LocalRecipe : recipeId (FK)
+    LocalInstruction -> LocalRecipe : recipeId (FK)
+  }
+
+  RecipeRepositoryImpl --> roomDao.RecipeDao
+  RecipeRepositoryImpl --> roomDao.IngredientDao
+  RecipeRepositoryImpl --> roomDao.InstructionDao
+  RecipeRepositoryImpl ..> domain.Instruction
+  RecipeRepositoryImpl ..> domain.Ingredient
+  RecipeRepositoryImpl ..> domain.Recipe
+  RecipeRepositoryImpl ..|> domain.RecipeRepository
+  RecipeDao ..> roomEntity.LocalRecipe
+  IngredientDao ..> roomEntity.LocalIngredient
+  InstructionDao ..> roomEntity.LocalInstruction
+}
+
+package presentation {
+	class RecipeEntryViewModel {
+		- addRecipeUseCase: AddRecipeUseCase
+		- addIngredientUseCase: AddIngredientUseCase
+		- addInstructionUseCase: AddInstructionUseCase
+		- recipeUiState: MutableState<RecipeUiState>
+		- ingredientUiStates: MutableState<List<IngredientUiState>>
+		- instructionUiStates: MutableState<List<InstructionUiState>>
+
+		+ addCommonUiState(commonUiState: CommonUiState)
+		+ updateCommonUiState(uiState: CommonUiState, newName: String)
+		+ removeCommonUiState(uiState: CommonUiState)
+		+ saveRecipe()
+		+ onRecipeUiStateChange(recipeUiState: RecipeUiState)
+	}
+
+	class RecipeUiState {
+		+ title: String
+		+ brief: String
+		+ servings: String
+		+ cookTimeMinutes: String
+		+cookTimeHours: String
+		+ uri: Uri
+
+		+toDomain(): Recipe
+	}
+
+	class IngredientUiState {
+		+ id: Int
+		+ name: String
+
+		+toDomain(): Ingredient
+	}
+
+	class InstructionUiState{
+		+ id: Int
+		+ name: String
+		+ stepNumber: Int
+		+ uri: Uri
+
+		+toDomain(): Instruction
+	}
+
+	interface CommonUiState{
+		+ id: Int
+		+ name: String
+	}
+
+	InstructionUiState .|> CommonUiState
+	IngredientUiState .|> CommonUiState
+	RecipeEntryViewModel --> AddRecipeUseCase
+	RecipeEntryViewModel --> AddIngredientUseCase
+	RecipeEntryViewModel --> AddInstructionUseCase
+	RecipeEntryViewModel --> RecipeUiState
+	RecipeEntryViewModel --> IngredientUiState
+	RecipeEntryViewModel -d--> InstructionUiState
+	RecipeEntryViewModel --> CommonUiState
+}
+
+
+@enduml

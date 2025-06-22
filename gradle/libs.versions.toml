@@ -41,6 +41,7 @@ sdkForAndroid = "8.1.0"
 uiTextGoogleFonts = "1.9.0-alpha04"
 exoplayerCore = "2.19.1"
 exoplayerUi = "2.19.1"
+firebaseFirestore = "25.1.4"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -87,6 +88,7 @@ androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text
 sdk-for1-android = { module = "io.appwrite:sdk-for-android", version.ref = "sdkForAndroid" }
 exoplayer-core = { group = "com.google.android.exoplayer", name = "exoplayer-core", version.ref = "exoplayerCore" }
 exoplayer-ui = { group = "com.google.android.exoplayer", name = "exoplayer-ui", version.ref = "exoplayerUi" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

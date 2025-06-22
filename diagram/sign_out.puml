@@ -1,18 +1,18 @@
 @startuml
-title Activity Diagram: Đăng xuất
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
 
 |Người dùng|
 :Click "Đăng xuất";
 |Ứng dụng|
 if (Là tài khoản ẩn danh?) then (Có)
   |Firebase|
-  :Xóa tài khoản \nẩn danh);
+  :Xóa tài khoản \nẩn danh;
   |Ứng dụng|
-  :Đăng xuất khỏi thiết bị;
 else (Không)
   |Ứng dụng|
-  :Đăng xuất khỏi thiết bị;
 endif
+  :Đăng xuất khỏi thiết bị;
 
 |Firebase|
 :Huỷ phiên đăng nhập;

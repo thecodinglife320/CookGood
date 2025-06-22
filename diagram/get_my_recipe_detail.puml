@@ -1,29 +1,30 @@
 @startuml
-title Biểu đồ luồng: Xem chi tiết công thức
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
 
 |Người dùng|
 : Chọn công thức từ danh sách;
 
-|Tầng biểu diễn|
-: Gọi use case lấy chi tiết công thức\nvới recipeId được chọn;
+|Lớp biểu diễn|
+: Gọi lớp nghiệp vụ để lấy\nchi tiết công thức được chọn;
 
-|Tầng nghiệp vụ|
-: Gọi repository để lấy:\n- Thông tin công thức\n- Danh sách nguyên liệu\n- Các bước hướng dẫn;
+|Lớp nghiệp vụ|
+: Gọi lớp dữ liệu để lấy:\n- Thông tin công thức\n- Danh sách nguyên liệu\n- Các bước hướng dẫn;
 
-|Tầng dữ liệu|
+|Lớp dữ liệu|
 :Truy vấn công thức theo id ;
 :Truy vấn nguyên \nliệu có trong công thức;
 :Truy vấn bước làm \ncó trong công thức;
 :Chuyển dữ liệu truy vấn thành thực thể;
-:Trả dữ liệu cho tầng nghiệp vụ;
+:Trả dữ liệu cho Lớp nghiệp vụ;
 
-|Tầng nghiệp vụ|
-: Trả dữ liệu cho Tầng biểu diễn;
+|Lớp nghiệp vụ|
+: Trả dữ liệu cho Lớp biểu diễn;
 
-|Tầng biểu diễn|
+|Lớp biểu diễn|
 :Chuyển thực thể \nthành dữ liệu hiển thị;
 
-|Tầng biểu diễn|
+|Lớp biểu diễn|
 if (Thành công?) then (Có)
   : Hiển thị chi tiết công thức;
   note right

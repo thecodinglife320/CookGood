@@ -1,5 +1,6 @@
 @startuml
-title Biểu đồ luồng: Thêm công thức nấu ăn (Mức trừu tượng)
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
 
 |Người dùng|
 : Mở màn hình thêm công thức;
@@ -23,7 +24,7 @@ while (Danh sách nguyên \nliệu nhập còn phần tử?) is (còn)
   |Lớp nghiệp vụ|
   :Gọi lớp dữ liệu để xử lí;
   |Lớp dữ liệu|
-  :Lưu nguyên liệu vào csdl;
+  :Lưu nguyên\nliệu vào csdl;
 endwhile (hết)
 |Lớp biểu diễn|
 while (Danh sách bước làm \n nhập còn phần tử?) is (còn)
@@ -32,7 +33,7 @@ while (Danh sách bước làm \n nhập còn phần tử?) is (còn)
     |Lớp nghiệp vụ|
     :Gọi lớp dữ liệu để xử lí;
     |Lớp dữ liệu|
-    :Lưu bước làm vào csdl;
+    :Lưu bước\nlàm vào csdl;
 endwhile (hết)
 |Lớp biểu diễn|
 if (Thành công?) then (Có)

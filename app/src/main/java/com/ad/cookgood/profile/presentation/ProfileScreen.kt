@@ -200,7 +200,6 @@ fun ProfileScreenContent(
             OutlinedButton(updateUserProfile) {
                Text(stringResource(R.string.update_profile))
             }
-            Text(profileUiState.toString())
          }
       }
    }

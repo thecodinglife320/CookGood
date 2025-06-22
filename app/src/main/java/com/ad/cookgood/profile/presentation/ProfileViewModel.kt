@@ -11,9 +11,10 @@ import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
 import com.ad.cookgood.profile.domain.UpdateUserProfileUseCase
 import com.ad.cookgood.profile.presentation.ProfileViewModel.Companion.TAG
 import com.ad.cookgood.shared.SnackBarUiState
-import com.ad.cookgood.uploadimage.data.AppWriteStorageRepository
+import com.ad.cookgood.uploadimage.domain.DeleteImageUseCase
+import com.ad.cookgood.uploadimage.domain.UploadImageUseCase
 import com.ad.cookgood.util.extractFileIdWithUriClass
-import com.ad.cookgood.util.getAppWriteFileViewUrl
+import com.ad.cookgood.util.getAppWriteFileViewUri
 import com.ad.cookgood.util.getFileDetailsFromUri
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,8 +33,9 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
    private val getCurrentUserUseCase: GetCurrentUserUseCase,
    private val updateUserProfileUseCase: UpdateUserProfileUseCase,
+   private val uploadImageUseCase: UploadImageUseCase,
+   private val deleteImageUseCase: DeleteImageUseCase,
    private val application: Application,
-   private val appWriteStorageRepository: AppWriteStorageRepository
 ) : ViewModel() {
 
    private val _profileUiState: MutableStateFlow<ProfileUiState> =
@@ -48,7 +50,7 @@ class ProfileViewModel @Inject constructor(
    val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
    private val myResource: SomeResource = SomeResource(
-      repository = appWriteStorageRepository,
+      deleteImageUseCase = deleteImageUseCase,
    )
 
    init {
@@ -125,9 +127,9 @@ class ProfileViewModel @Inject constructor(
             fileDetail.filename!!,
             fileDetail.mimeType ?: "application/octet-stream"
          )
-         val result = appWriteStorageRepository.upload(file, ID.unique())
+         val result = uploadImageUseCase(file, ID.unique())
          result.onSuccess {
-            uploadedUri = getAppWriteFileViewUrl(
+            uploadedUri = getAppWriteFileViewUri(
                bucketId = BuildConfig.APPWRITE_BUCKET_ID,
                fileId = it.id,
                projectId = BuildConfig.APPWRITE_PROJECT_ID
@@ -147,7 +149,7 @@ class ProfileViewModel @Inject constructor(
 
 // Dummy resource for demonstration
 class SomeResource(
-   private val repository: AppWriteStorageRepository,
+   private val deleteImageUseCase: DeleteImageUseCase,
 ) : Closeable {
 
    private val customScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -155,7 +157,7 @@ class SomeResource(
 
    override fun close() {
       customScope.launch(Dispatchers.IO) {
-         repository.delete(fileId)
+         deleteImageUseCase(fileId)
             .onSuccess {
                Log.d(TAG, "delete ok")
             }

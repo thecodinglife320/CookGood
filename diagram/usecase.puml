@@ -1,92 +1,76 @@
 @startuml
 left to right direction
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 13
 
 :Người dùng: as user
 :Khách: as guest
 :Người dùng ẩn danh: as anonymous
 
 'note'
-
-package "Xác thực người dùng"{
+rectangle {
 	usecase googleSignin as "Đăng nhập bằng Google"
 	usecase anonymousSignin as "Đăng nhập ẩn danh"
 	usecase linkGoogle as "Liên kết Google"
-}
-
-package "Quản lí phiên"{
 	usecase logout as "Đăng xuất"
-
-}
-
-package "Quản lí tài khoản"{
 	usecase viewProfile as "Hiển thị hồ sơ"
 	usecase updateProfile as "Cập nhật hồ sơ"
+	}
+
+user---logout
+user---viewProfile
+user---updateProfile
+
+anonymous--logout
+anonymous--linkGoogle
+
+guest --anonymousSignin
+guest --googleSignin
+
+updateProfile -l..>viewProfile:<<include>>
+
+newpage
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+left to right direction
+:Người dùng: as user
+:Người dùng ẩn danh: as anonymous
+
+rectangle {
+	usecase manage_ingredient as "Quản lí nguyên liệu"
+	usecase manage_instruction as "Quản lí bước làm"
+	usecase manage_recipe as "Quản lí công thức"
+	usecase upload_recipe as "Chia sẻ công thức"
+	usecase rate_recipe as "Đánh giá công thức"
+	usecase like_recipe as "Yêu thích công thức"
 }
 
-anonymous-->logout
-anonymous-->linkGoogle
-anonymous -u->viewProfile
+anonymous --manage_ingredient
+anonymous --manage_instruction
+anonymous ---manage_recipe
 
-user--->logout
-user--->viewProfile
-user--->updateProfile
+user ---manage_ingredient
+user ---manage_instruction
+user ---manage_recipe
+user ---upload_recipe
+user --rate_recipe
+user --like_recipe
 
-guest  -u-->anonymousSignin
-guest -u-->googleSignin
-guest--->viewProfile
 
-newpage
-(Cập nhật hồ sơ) ..>(Hiển thị hồ sơ) :<<include>>
+note right of (manage_ingredient)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
 
-(Đăng nhập ẩn danh) ..>(Xác thực người dùng):<<extend>>
-(Đăng nhập bằng Google) ..>(Xác thực người dùng):<<extend>>
+note right of (manage_recipe)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
 
-newpage
-left to right direction
-:Người dùng: as user
-:Người dùng ẩn danh: as anonymous
-
-user -|>anonymous
-
-anonymous-->(Thêm công thức)
-anonymous-->(Thêm nguyên liệu)
-anonymous-->(Thêm bước làm)
-anonymous-->(Chụp ảnh món ăn)
-anonymous-->(Chụp ảnh bước làm)
-
-newpage
-left to right direction
-:Người dùng: as user
-:Người dùng ẩn danh: as anonymous
-
-user -|>anonymous
-
-anonymous-->(Xem danh sách công thức)
-anonymous-->(Xem chi tiết công thức)
-anonymous-->(Xem danh sách nguyên liệu)
-anonymous-->(Xem danh sách bước)
-
-newpage
-left to right direction
-:Người dùng: as user
-:Người dùng ẩn danh: as anonymous
-
-user -|>anonymous
-
-anonymous-->(Xoá công thức)
-anonymous-->(Xoá nguyên liệu)
-anonymous-->(Xoá bước làm)
-
-newpage
-left to right direction
-:Người dùng: as user
-:Người dùng ẩn danh: as anonymous
-
-user -|>anonymous
-
-anonymous-->(Sửa công thức)
-anonymous-->(Sửa nguyên liệu)
-anonymous-->(Sửa bước làm)
+note right of (manage_instruction)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
 
 newpage
 left to right direction
