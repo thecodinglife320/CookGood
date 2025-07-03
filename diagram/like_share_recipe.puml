@@ -1,0 +1,56 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+
+|Người dùng|
+: Nhấn nút "Yêu thích" ♡ trên\nchi tiết công thức;
+
+|Lớp Biểu diễn\n(Presentation)|
+: Cập nhật trạng thái UI ngay lập tức\n(hiển thị ♥);
+: Kiểm tra trạng thái hiện tại;
+if (Đang yêu thích?) then (Có)
+  :Gọi lớp nghiệp\nvụ để bỏ thích;
+else (Không)
+  :Gọi lớp nghiệp\nvụ để thích;
+endif
+
+|Lớp Nghiệp vụ\n(Domain)|
+:Xác thực người dùng đã đăng nhập;
+:Kiểm tra quyền thao tác;
+:Gọi lớp dữ liệu;
+
+|Lớp Dữ liệu\n(Data)|
+if (Thêm yêu thích?) then (Có)
+  : Tạo transaction trên Firestore;
+    note right
+    1. Thêm công thức vào danh
+    sách yêu thích của người dùng
+    2. Tăng số lượt thích cho công thức
+    end note
+else (Xóa yêu thích)
+  : Tạo transaction ngược lại;
+endif
+
+|Firebase|
+: Xác thực quyền ghi qua Security Rules;
+if (Thành công?) then (Có)
+  : Cập nhật dữ liệu;
+  : Trả về kết quả;
+else (Lỗi)
+  : Trả về lỗi permission/data;
+endif
+
+|Lớp Biểu diễn\n(Presentation)|
+if (Thành công?) then (Có)
+  : Cập nhật UI State;
+else (Lỗi)
+  : Khôi phục trạng thái UI ban đầu;
+  : Hiển thị thông báo lỗi;
+endif
+
+|Người dùng|
+: Nhận phản hồi trực quan\n(animation/notification);
+: Tiếp tục tương tác;
+
+stop
+@enduml

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="auth_screen_title_bar">Đăng nhập</string>
-    <string name="auth_button_anonymous">Đăng nhập ẩn danh</string>
+    <string name="auth_button_anonymous">Đăng nhập khách</string>
     <string name="google_signin">Đăng nhập bằng</string>
     <string name="message_success">Đăng nhập thành công</string>
 </resources>

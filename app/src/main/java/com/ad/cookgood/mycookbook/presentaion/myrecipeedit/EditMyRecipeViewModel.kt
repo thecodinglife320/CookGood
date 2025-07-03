@@ -2,6 +2,7 @@ package com.ad.cookgood.mycookbook.presentaion.myrecipeedit
 
 import android.app.Application
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.R
@@ -88,7 +89,7 @@ class EditMyRecipeViewModel @Inject constructor(
                      it.id.toInt(),
                      it.instruction.name,
                      stepNumber = it.instruction.stepNumber,
-                     uri = it.instruction.uri
+                     uri = it.instruction.photo?.toUri()
                   )
                }
             }.first().also {

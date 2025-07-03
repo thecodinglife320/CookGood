@@ -1,0 +1,59 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+
+|Người dùng|
+: Chọn công thức từ danh sách;
+
+|Lớp Biểu diễn\n(Presentation)|
+:Hiển thị biểu\ntượng tải;
+:Gọi lớp nghiệp vụ để lấy\nchi tiết công thức được chọn;
+
+|Lớp Nghiệp vụ\n(Domain)|
+:Gọi lớp dữ liệu để\nlấy dữ liệu;
+
+|Lớp Dữ liệu\n(Data)|
+: Tạo câu truy vấn;
+	note right
+  **Query bao gồm:**
+  - Document từ collection "recipes"
+  - Subcollection "ingredients"
+  - Subcollection "instructions"
+  end note
+
+|Firebase|
+if (Công thức tồn tại?) then (Có)
+  : Trả về document chính;
+  : Trả về các subcollections;
+else (Không)
+  : Trả về lỗi "Không tìm thấy";
+endif
+
+|Lớp Dữ liệu\n(Data)|
+: Kết hợp dữ liệu thành đối tượng hoàn chỉnh;
+: Lưu cache cục bộ (nếu cần);
+: Trả về thông tin\nchi tiết về công thức;
+	note right
+    **Thông tin bao gồm:**
+    - Thông tin về công thức
+    - Danh sách bước làm
+    - Danh sách nguyên liệu
+  end note
+
+|Lớp Nghiệp vụ\n(Domain)|
+:Trả kết quả cho\nlớp biểu biểu diễn;
+
+|Lớp Biểu diễn\n(Presentation)|
+if (Thành công?) then (Có)
+  :Cập nhật giao\ndiện với dữ liệu mới;
+  : Hiển thị thông tin chi tiết;
+else (Lỗi)
+  : Hiển thị thông báo lỗi phù hợp;
+endif
+
+|Người dùng|
+: Xem toàn bộ nội dung công thức;
+: Tương tác với công thức\n(Lưu/Chia sẻ/Bình luận);
+
+stop
+@enduml

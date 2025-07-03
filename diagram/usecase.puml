@@ -43,11 +43,15 @@ rectangle {
 	usecase upload_recipe as "Chia sẻ công thức"
 	usecase rate_recipe as "Đánh giá công thức"
 	usecase like_recipe as "Yêu thích công thức"
+	usecase search_share_recipe as "Tìm kiếm công thức\nđã được chia sẻ"
+	usecase view_share_recipe as "Xem công thức\nđã được chia sẻ"
 }
 
 anonymous --manage_ingredient
 anonymous --manage_instruction
 anonymous ---manage_recipe
+anonymous --view_share_recipe
+anonymous ---search_share_recipe
 
 user ---manage_ingredient
 user ---manage_instruction
@@ -55,6 +59,8 @@ user ---manage_recipe
 user ---upload_recipe
 user --rate_recipe
 user --like_recipe
+user --search_share_recipe
+user --view_share_recipe
 
 
 note right of (manage_ingredient)

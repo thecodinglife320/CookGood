@@ -11,8 +11,8 @@ import com.ad.cookgood.recipes.data.local.recipe.RecipeDao
 
 @Database(
    entities = [LocalRecipe::class, LocalIngredient::class, LocalInstruction::class],
-   version = 6,
-   exportSchema = true,
+   version = 7,
+   exportSchema = false,
 )
 abstract class CookGookDb : RoomDatabase() {
 

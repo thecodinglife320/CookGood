@@ -113,7 +113,7 @@ fun RecipeEntrySection2(
             Modifier.weight(1f)
          )
          RecipeEntryInput(
-            modifier = Modifier.width(75.dp),
+            modifier = Modifier.width(90.dp),
             label = R.string.hour_label,
             placeHolder = R.string.default00,
             onValueChange = onHourChange,

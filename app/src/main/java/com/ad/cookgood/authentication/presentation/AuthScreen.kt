@@ -99,7 +99,7 @@ fun AuthScreen(
             .padding(it)
             .fillMaxSize(),
          onAnonymousSignInButtonClick = { vm.signInAnonymous() },
-         onGoogleSignInButtonClick = { vm.signInWithGoogle(it) },
+         onGoogleSignInButtonClick = { it -> vm.signInWithGoogle(it) },
          isLoadingGoogle = isLoadingGoogle,
          isLoadingAnonymous = isLoadingAnonymous
       )

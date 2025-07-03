@@ -1,14 +1,14 @@
 @startuml
 skinparam DefaultFontName "Liberation Serif"
 skinparam DefaultFontSize 30
-|Khách|
+|Người dùng|
 start
 :Click "Đăng nhập bằng Google";
 |Ứng dụng|
 :Hiển thị hộp thoại \nchọn tài khoản Google;
 |Google|
 :Hiển thị danh sách tài khoản;
-|Khách|
+|Người dùng|
 if (Hủy bỏ?) then (Có)
   :Đóng
   hộp thoại;
@@ -16,7 +16,7 @@ if (Hủy bỏ?) then (Có)
   :Thông báo hủy;
   stop
 else (Không)
-	|Khách|
+	|Người dùng|
   :Chọn tài khoản Google;
   |Google|
   :Trả về credential (ID token);

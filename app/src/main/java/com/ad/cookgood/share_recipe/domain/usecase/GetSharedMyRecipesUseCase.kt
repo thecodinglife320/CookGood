@@ -1,10 +1,10 @@
-package com.ad.cookgood.mycookbook.domain.usecase
+package com.ad.cookgood.share_recipe.domain.usecase
 
-import com.ad.cookgood.mycookbook.domain.MyRecipeRepository
+import com.ad.cookgood.share_recipe.domain.ShareRecipeRepository
 import javax.inject.Inject
 
 class GetSharedMyRecipesUseCase @Inject constructor(
-   private val repository: MyRecipeRepository
+   private val repository: ShareRecipeRepository
 ) {
    operator fun invoke(userId: String) = repository.getSharedMyRecipes(userId)
 }

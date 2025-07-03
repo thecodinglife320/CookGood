@@ -9,7 +9,7 @@ data class Recipe(
    val brief: String = "",
    val serving: Int = 0,
    val cookTime: Int = 0,
-   val uri: String? = null
+   val photo: String? = null
 )
 
 fun Recipe.toLocal() =
@@ -18,7 +18,7 @@ fun Recipe.toLocal() =
       brief = brief,
       servings = serving,
       cookTime = cookTime,
-      uri = uri?.toUri()
+      photo = photo
    )
 
 fun Recipe.toRecipeUiState() =
@@ -28,5 +28,5 @@ fun Recipe.toRecipeUiState() =
       servings = "$serving",
       cookTimeMinutes = "${cookTime % 60}",
       cookTimeHours = "${cookTime / 60}",
-      uri = uri?.toUri()
+      uri = photo?.toUri()
    )

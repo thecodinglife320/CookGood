@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.Uri
 import android.util.Log
-import androidx.core.net.toUri
 import com.ad.cookgood.uploadimage.data.FileDetails
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -86,21 +85,11 @@ suspend fun getFileDetailsFromUri(context: Context, uri: Uri): FileDetails? {
    }
 }
 
-fun getAppWriteFileViewUri(
+fun getAppWriteFileViewUrl(
    bucketId: String,
    fileId: String,
    projectId: String,
    mode: String = "admin"
 ) =
-   "https://fra.cloud.appwrite.io/v1/storage/buckets/$bucketId/files/$fileId/view?project=$projectId&mode=$mode".toUri()
-
-fun extractFileIdWithUriClass(uri: Uri): String {
-   val pathSegments = uri.pathSegments // List of path segments
-   // The structure is like: ..., "storage", "buckets", BUCKET_ID, "files", FILE_ID, "view"
-   // So, if "files" is found, the next segment should be the FILE_ID.
-   val filesIndex = pathSegments.indexOf("files")
-   return if (filesIndex != -1 && filesIndex + 1 < pathSegments.size) {
-      pathSegments[filesIndex + 1]
-   } else ""
-}
+   "https://fra.cloud.appwrite.io/v1/storage/buckets/$bucketId/files/$fileId/view?project=$projectId&mode=$mode"
 

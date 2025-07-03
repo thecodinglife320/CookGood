@@ -3,30 +3,24 @@ package com.ad.cookgood.profile.presentation
 import android.app.Application
 import android.net.Uri
 import android.util.Log
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ad.cookgood.BuildConfig
 import com.ad.cookgood.R
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
 import com.ad.cookgood.profile.domain.UpdateUserProfileUseCase
-import com.ad.cookgood.profile.presentation.ProfileViewModel.Companion.TAG
 import com.ad.cookgood.shared.SnackBarUiState
-import com.ad.cookgood.uploadimage.domain.DeleteImageUseCase
 import com.ad.cookgood.uploadimage.domain.UploadImageUseCase
-import com.ad.cookgood.util.extractFileIdWithUriClass
-import com.ad.cookgood.util.getAppWriteFileViewUri
+import com.ad.cookgood.util.getAppWriteFileViewUrl
 import com.ad.cookgood.util.getFileDetailsFromUri
 import com.ad.cookgood.util.isNetworkAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.appwrite.ID
 import io.appwrite.models.InputFile
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.io.Closeable
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,7 +28,6 @@ class ProfileViewModel @Inject constructor(
    private val getCurrentUserUseCase: GetCurrentUserUseCase,
    private val updateUserProfileUseCase: UpdateUserProfileUseCase,
    private val uploadImageUseCase: UploadImageUseCase,
-   private val deleteImageUseCase: DeleteImageUseCase,
    private val application: Application,
 ) : ViewModel() {
 
@@ -44,18 +37,13 @@ class ProfileViewModel @Inject constructor(
 
    private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
 
-   private var uploadedUri: Uri? = null
+   private var uploadedUserPhoto: String? = null
 
    //expose state
    val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
 
-   private val myResource: SomeResource = SomeResource(
-      deleteImageUseCase = deleteImageUseCase,
-   )
-
    init {
       loadUserProfile()
-      addCloseable(myResource)
    }
 
    private fun loadUserProfile() {
@@ -68,7 +56,6 @@ class ProfileViewModel @Inject constructor(
                      uri = it.photoUrl,
                      email = it.email
                   )
-                  myResource.fileId = extractFileIdWithUriClass(it.photoUrl!!)
                }
             }
          }
@@ -86,7 +73,7 @@ class ProfileViewModel @Inject constructor(
          viewModelScope.launch {
             uploadImage()
             val name = (_profileUiState.value as ProfileUiState.Success).name!!
-            updateUserProfileUseCase(name, uploadedUri)
+            updateUserProfileUseCase(name, uploadedUserPhoto?.toUri())
             _snackBarUiState.value = _snackBarUiState.value.copy(
                message = application.getString(R.string.profile_updated),
                showSnackBar = true
@@ -116,27 +103,29 @@ class ProfileViewModel @Inject constructor(
       )
    }
 
-   suspend fun uploadImage() {
-      val fileDetail = getFileDetailsFromUri(
-         application,
-         (_profileUiState.value as ProfileUiState.Success).uri!!
-      )
-      if (fileDetail != null) {
-         val file = InputFile.fromBytes(
-            fileDetail.bytes,
-            fileDetail.filename!!,
-            fileDetail.mimeType ?: "application/octet-stream"
+   fun uploadImage() {
+      viewModelScope.launch {
+         val fileDetail = getFileDetailsFromUri(
+            application,
+            (_profileUiState.value as ProfileUiState.Success).uri!!
          )
-         val result = uploadImageUseCase(file, ID.unique())
-         result.onSuccess {
-            uploadedUri = getAppWriteFileViewUri(
-               bucketId = BuildConfig.APPWRITE_BUCKET_ID,
-               fileId = it.id,
-               projectId = BuildConfig.APPWRITE_PROJECT_ID
+         if (fileDetail != null) {
+            val file = InputFile.fromBytes(
+               fileDetail.bytes,
+               fileDetail.filename!!,
+               fileDetail.mimeType ?: "application/octet-stream"
             )
-            Log.d(TAG, "uploadImage: $it")
-         }.onFailure {
-            Log.e(TAG, it.message.toString())
+            val result = uploadImageUseCase(file, ID.unique(), BuildConfig.APPWRITE_BUCKET_ID)
+            result.onSuccess {
+               uploadedUserPhoto = getAppWriteFileViewUrl(
+                  bucketId = BuildConfig.APPWRITE_BUCKET_ID,
+                  fileId = it.id,
+                  projectId = BuildConfig.APPWRITE_PROJECT_ID
+               )
+               Log.d(TAG, "uploadImage: $it")
+            }.onFailure {
+               Log.e(TAG, it.message.toString())
+            }
          }
       }
    }
@@ -145,33 +134,4 @@ class ProfileViewModel @Inject constructor(
       const val TAG = "ProfileViewModel"
    }
 
-}
-
-// Dummy resource for demonstration
-class SomeResource(
-   private val deleteImageUseCase: DeleteImageUseCase,
-) : Closeable {
-
-   private val customScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
-   var fileId: String = ""
-
-   override fun close() {
-      customScope.launch(Dispatchers.IO) {
-         deleteImageUseCase(fileId)
-            .onSuccess {
-               Log.d(TAG, "delete ok")
-            }
-            .onFailure {
-               Log.e(TAG, "delete fail")
-            }
-//         repository.listFile()
-//            .onSuccess {
-//               Log.d(TAG,fileId)
-//               Log.d(ProfileViewModel.TAG, it.files.toString())
-//            }
-//            .onFailure {
-//               Log.e(ProfileViewModel.TAG, it.message, it)
-//            }
-      }
-   }
 }

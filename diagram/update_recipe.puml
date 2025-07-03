@@ -1,0 +1,52 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+
+|Người dùng|
+: Mở màn hình chỉnh sửa công thức;
+: Thay đổi thông tin (tên, nguyên liệu...);
+: Nhấn nút "Lưu thay đổi";
+
+|Lớp Biểu diễn\n(Presentation)|
+: Validate dữ liệu đầu vào;
+if (Dữ liệu hợp lệ?) then (Có)
+  : Đóng gói thành thực thể __Công thức__;
+  :Gọi lớp nghiệp vụ để\ncập nhật công thức;
+else (Không)
+  : Hiển thị lỗi validation;
+  stop
+endif
+
+|Lớp Nghiệp vụ\n(Domain)|
+:Gọi lớp dữ liệu để\ncập nhật công thức;
+
+|Lớp Dữ liệu\n(Data)|
+  : Cập nhật bảng Công thức;
+  : Xóa và chèn lại nguyên liệu;
+  : Xóa và chèn lại bước làm;
+: Thực hiện transaction;
+
+|Room Database|
+if (Transaction thành công?) then (Có)
+  : Commit thay đổi;
+  : Trả về kết quả;
+else (Lỗi)
+  : Rollback tự động;
+  : Trả về lỗi;
+endif
+
+|Lớp Biểu diễn\n(Presentation)|
+if (Thành công?) then (Có)
+  : Cập nhật UI State;
+  : Hiển thị "Cập nhật thành công";
+  : Đóng màn hình chỉnh sửa;
+else (Lỗi)
+  : Hiển thị thông báo lỗi;
+endif
+
+|Người dùng|
+: Nhận kết quả cập nhật;
+: Xem thông tin mới trên danh sách;
+
+stop
+@enduml

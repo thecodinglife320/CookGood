@@ -1,0 +1,108 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+
+
+class Recipe {
+    + title: String
+    + brief: String
+    + servings: Int
+    + cookTime: Int
+    + uri: Uri
+  }
+
+class Ingredient{
+    +name:String
+  }
+
+class Instruction{
+    +stepNumber: Int
+    +name: String
+    +uri: Uri
+   }
+
+abstract class AuthResult
+	class Success
+	class Error {
+		-reason: AuthError
+	}
+	class LinkSuccess {
+		-name: String?
+		-url: Uri?
+  }
+	abstract class AuthError {
+		- messageRes: Int
+	}
+
+class IngredientEdit{
+   +id: Long
+   +ingredient: Ingredient
+}
+
+class InstructionEdit{
+   +id: Long
+   +instruction: Instruction
+}
+
+class MyRecipe{
+   +id: Long
+   +recipe: Recipe
+}
+
+class User{
+	+id:String
+	+isAnonymous:Boolean
+	+displayName:String
+	+email:String
+	+photoUrl:String
+}
+
+class SharedIngredient{
+   +id: String
+   +ingredient: Ingredient
+}
+
+class SharedInstruction{
+   +id: String
+   +instruction: Instruction
+}
+
+class SharedRecipe{
+   +id: String
+   +recipe: Recipe
+   +userId: String
+}
+
+class FavoriteRecipe{
+	+recipeId: String
+	+favoriteAt: Long
+	+userId: String
+}
+
+Recipe "1" *-- "0..*" Instruction
+Recipe "1" *--"0..*" Ingredient
+
+Success --|> AuthResult
+Error --|> AuthResult
+LinkSuccess --|> AuthResult
+Error --> AuthError
+
+IngredientEdit *-- Ingredient
+SharedIngredient *-- Ingredient
+
+InstructionEdit *-- Instruction
+SharedInstruction*-- Instruction
+
+MyRecipe *-- Recipe
+
+'SharedRecipe "1..*"--"1..*" Recipe
+'SharedRecipe "1..*"<--"1..*" User
+
+'FavoriteRecipe "1..*"--"1..*" Recipe
+'FavoriteRecipe "1..*"<--"1..*" User
+
+(User, Recipe) .. FavoriteRecipe:favorite
+(User, Recipe) .. SharedRecipe:share
+'User "1" -- "0..*" Recipe : favorites
+
+@enduml

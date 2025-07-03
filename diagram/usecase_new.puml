@@ -1,0 +1,139 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+left to right direction
+:Người dùng: as user
+:Người dùng khách: as anonymous
+
+rectangle {
+usecase signIn as "Đăng nhập"
+usecase signOut as "Đăng xuất"
+usecase manage_recipe as "Quản lí công thức"
+usecase manage_ingredient as "Quản lí nguyên liệu"
+usecase manage_instruction as "Quản lí bước làm"
+usecase manageShareRecipe as "Quản lí công thức\nđã được chia sẻ"
+usecase manageAccount as "Quản lí tài khoản"
+usecase likeShareRecipe as "Yêu thích công thức\nđã được chia sẻ"
+usecase searchShareRecipe as "Tìm kiếm công thức\nđã được chia sẻ"
+usecase viewShareRecipe as "Xem công thức đã\nđược chia sẻ"
+}
+user ----- signIn
+signIn ----- anonymous
+
+user -- manage_recipe
+manage_recipe -- anonymous
+
+user --manage_ingredient
+manage_ingredient -- anonymous
+
+user --manage_instruction
+manage_instruction -- anonymous
+
+user --signOut
+signOut -- anonymous
+
+user --manageShareRecipe
+user --likeShareRecipe
+
+user --viewShareRecipe
+viewShareRecipe -- anonymous
+
+user --searchShareRecipe
+searchShareRecipe -- anonymous
+
+user -- manageAccount
+
+newpage
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+left to right direction
+:Người dùng khách: as anonymous
+
+rectangle {
+usecase signIn as "Đăng nhập"
+usecase signOut as "Đăng xuất"
+usecase manage_recipe as "Quản lí công thức"
+usecase manage_ingredient as "Quản lí nguyên liệu"
+usecase manage_instruction as "Quản lí bước làm"
+usecase searchShareRecipe as "Tìm kiếm công thức\nđã được chia sẻ"
+usecase viewShareRecipe as "Xem công thức đã\nđược chia sẻ"
+}
+
+note right of (manage_ingredient)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+note right of (manage_recipe)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+note right of (manage_instruction)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+anonymous -----signIn
+anonymous --signOut
+anonymous --manage_instruction
+anonymous --manage_recipe
+anonymous --manage_ingredient
+anonymous --searchShareRecipe
+anonymous --viewShareRecipe
+
+newpage
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+left to right direction
+:Người dùng: as user
+
+rectangle {
+usecase signIn as "Đăng nhập"
+usecase signOut as "Đăng xuất"
+usecase manage_recipe as "Quản lí công thức"
+usecase manage_ingredient as "Quản lí nguyên liệu"
+usecase manage_instruction as "Quản lí bước làm"
+usecase searchShareRecipe as "Tìm kiếm công thức\nđã được chia sẻ"
+usecase viewShareRecipe as "Xem công thức đã\nđược chia sẻ"
+usecase manageShareRecipe as "Quản lí công thức\nđã được chia sẻ"
+usecase manageAccount as "Quản lí tài khoản"
+usecase likeShareRecipe as "Yêu thích công thức\nđã được chia sẻ"
+usecase deleteShareRecipe as "Gỡ bỏ công\nthức đã chia sẻ"
+usecase updateShareRecipe as "Cập nhật công thức\nđã được chia sẻ"
+usecase shareRecipe as "Chia sẻ công thức"
+
+manageShareRecipe .>deleteShareRecipe:<<include>>
+manageShareRecipe .>updateShareRecipe:<<include>>
+manageShareRecipe -l.>shareRecipe:<<include>>
+}
+
+note right of (manage_ingredient)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+note right of (manage_recipe)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+note right of (manage_instruction)
+	Thêm/Xem
+	/Sửa/Xoá
+end note
+
+user -----signIn
+user --signOut
+user --manage_instruction
+user --manage_recipe
+user --manage_ingredient
+user --searchShareRecipe
+user --viewShareRecipe
+user -d--manageShareRecipe
+user --manageAccount
+user --likeShareRecipe
+
+
+
+@enduml

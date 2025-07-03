@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="myrecipes">Các công thức đã tạo</string>
-    <string name="sharedrecipes">Các công thức đã chia sẻ</string>">
+    <string name="sharedrecipes">Các công thức đã chia sẻ</string>
+    <string name="favorites">Yêu thích</string>
+    <string name="empty_shared_recipe">Không có công thức nào được chia sẻ</string>
+    <string name="empty_favorite_recipe">Không có công thức nào được yêu thích</string>
+    <string name="empty_my_recipe">Không có công thức nào được tạo</string>
+    <string name="not_anonymous_require">Bạn vui lòng liên kết tài khoản để chia sẻ công thức</string>
+    <string name="not_anonymous_require2">Bạn vui lòng liên kết tài khoản để yêu thích công thức</string>
 </resources>

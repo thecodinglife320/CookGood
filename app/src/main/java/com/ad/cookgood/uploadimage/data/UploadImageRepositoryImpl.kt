@@ -13,10 +13,10 @@ class UploadImageRepositoryImpl @Inject constructor(
    private val storage: Storage,
 ) : UploadImageRepository {
 
-   override suspend fun upload(file: InputFile, fileId: String): Result<File> {
+   override suspend fun upload(file: InputFile, fileId: String, bucketId: String): Result<File> {
       return try {
          val file = storage.createFile(
-            bucketId = BuildConfig.APPWRITE_BUCKET_ID,
+            bucketId = bucketId,
             fileId = fileId,
             file = file,
          )

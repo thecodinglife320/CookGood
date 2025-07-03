@@ -4,7 +4,7 @@ skinparam DefaultFontSize 30
 
 |Khách|
 start
-:Click "Liên kết tài khoản ẩn danh";
+:Click "Liên kết tài khoản tạm thời";
 |Ứng dụng|
 :Hiển thị hộp thoại \nchọn tài khoản Google;
 |Google|

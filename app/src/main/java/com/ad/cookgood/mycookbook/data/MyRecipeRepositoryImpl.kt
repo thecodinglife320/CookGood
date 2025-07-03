@@ -13,10 +13,6 @@ import com.ad.cookgood.recipes.data.local.instruction.LocalInstruction
 import com.ad.cookgood.recipes.data.local.instruction.toDomain
 import com.ad.cookgood.recipes.data.local.recipe.RecipeDao
 import com.ad.cookgood.recipes.data.local.recipe.toDomain
-import com.ad.cookgood.share_recipe.data.FirebaseRecipe
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -24,7 +20,6 @@ class MyRecipeRepositoryImpl @Inject constructor(
    private val recipeDao: RecipeDao,
    private val ingredientDao: IngredientDao,
    private val instructionDao: InstructionDao,
-   private val db: FirebaseFirestore
 ) : MyRecipeRepository {
    override fun getMyRecipeById(recipeId: Long) =
       recipeDao.getRecipeById(recipeId).map {
@@ -57,21 +52,6 @@ class MyRecipeRepositoryImpl @Inject constructor(
             )
          }
       }
-
-   override fun getSharedMyRecipes(userId: String) = callbackFlow {
-      val query = db.collection("recipes")
-         .whereEqualTo("userId", userId)
-
-      val subscription = query.addSnapshotListener { value, error ->
-         if (error != null) {
-            close(error)
-            return@addSnapshotListener
-         }
-         val recipes = value?.toObjects(FirebaseRecipe::class.java) ?: emptyList()
-         trySend(recipes)
-      }
-      awaitClose { subscription.remove() }
-   }
 
    override suspend fun deleteMyRecipe(myRecipe: MyRecipe) =
       recipeDao.delete(myRecipe.toLocal())
@@ -119,7 +99,7 @@ class MyRecipeRepositoryImpl @Inject constructor(
             instructionEdit.instruction.name,
             instructionEdit.instruction.stepNumber,
             recipeId,
-            instructionEdit.instruction.uri
+            instructionEdit.instruction.photo
          )
       )
 }

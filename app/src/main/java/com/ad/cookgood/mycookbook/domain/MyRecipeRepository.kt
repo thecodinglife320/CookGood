@@ -5,7 +5,6 @@ import com.ad.cookgood.mycookbook.domain.model.InstructionEdit
 import com.ad.cookgood.mycookbook.domain.model.MyRecipe
 import com.ad.cookgood.recipes.domain.model.Ingredient
 import com.ad.cookgood.recipes.domain.model.Instruction
-import com.ad.cookgood.share_recipe.data.FirebaseRecipe
 import kotlinx.coroutines.flow.Flow
 
 interface MyRecipeRepository {
@@ -13,7 +12,6 @@ interface MyRecipeRepository {
    fun getInstructionsByRecipeId(recipeId: Long): Flow<List<Instruction>>
    fun getIngredientsByRecipeId(recipeId: Long): Flow<List<Ingredient>>
    fun getMyRecipes(): Flow<List<MyRecipe>>
-   fun getSharedMyRecipes(userId: String): Flow<List<FirebaseRecipe>>
    suspend fun deleteMyRecipe(myRecipe: MyRecipe): Int
    suspend fun updateMyRecipe(myRecipe: MyRecipe)
    suspend fun getIngredientEdits(recipeId: Long): Flow<List<IngredientEdit>>

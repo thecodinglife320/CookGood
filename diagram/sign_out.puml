@@ -5,9 +5,9 @@ skinparam DefaultFontSize 15
 |Người dùng|
 :Click "Đăng xuất";
 |Ứng dụng|
-if (Là tài khoản ẩn danh?) then (Có)
+if (Là tài khoản tạm thời?) then (Có)
   |Firebase|
-  :Xóa tài khoản \nẩn danh;
+  :Xóa tài khoản \ntạm thời;
   |Ứng dụng|
 else (Không)
   |Ứng dụng|

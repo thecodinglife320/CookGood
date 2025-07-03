@@ -1,0 +1,56 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+
+|Người dùng|
+:Nhập từ khóa tìm kiếm;
+:Nhấn nút "Tìm kiếm" hoặc\nnhấn Enter;
+
+|Lớp Biểu diễn\n(Presentation)|
+: Validate từ khóa (độ dài, ký tự đặc biệt);
+if (Từ khóa hợp lệ?) then (Có)
+  : Hiển thị trạng thái loading;
+  : Gọi lớp nghiệp vụ để tìm kiếm;
+else (Không)
+  : Hiển thị thông báo lỗi;
+  stop
+endif
+
+|Lớp Nghiệp vụ\n(Domain)|
+:Gọi lớp dữ liệu\nđể tìm kiếm;
+
+|Lớp Dữ liệu\n(Data)|
+: Kết nối Firebase;
+
+|Firebase|
+:Thực thi truy vấn\ntrên Cloud Firestore;
+if (Có kết quả?) then (Có)
+  : Trả về danh sách documents;
+else (Không)
+  : Trả về danh sách rỗng;
+endif
+
+|Lớp Dữ liệu\n(Data)|
+:Chuyển đổi Firestore documents\nthành thực thể;
+:Trả kết quả cho Use Case;
+
+|Lớp Nghiệp vụ\n(Domain)|
+: Áp dụng sorting (nếu cần);
+: Lọc kết quả trùng lặp;
+: Trả kết quả cho lớp biểu diễn;
+
+|Lớp Biểu diễn\n(Presentation)|
+: Cập nhật UI State;
+if (Có kết quả?) then (Có)
+  :Hiển thị danh\nsách công thức;
+else (Không)
+  :Hiển thị màn\nhình "Không tìm thấy";
+endif
+
+|Người dùng|
+: Xem kết quả tìm kiếm;
+: Cuộn để tải thêm (pagination);
+: Chọn công thức để xem chi tiết;
+
+stop
+@enduml

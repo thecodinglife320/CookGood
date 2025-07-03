@@ -4,6 +4,8 @@ import com.ad.cookgood.authentication.data.AuthRepositoryImpl
 import com.ad.cookgood.authentication.domain.AuthRepository
 import com.ad.cookgood.captureimage.data.CameraRepositoryImpl
 import com.ad.cookgood.captureimage.domain.CameraRepository
+import com.ad.cookgood.like_recipe.data.LikeRecipeRepositoryImpl
+import com.ad.cookgood.like_recipe.domain.LikeRecipeRepository
 import com.ad.cookgood.mycookbook.data.MyRecipeRepositoryImpl
 import com.ad.cookgood.mycookbook.domain.MyRecipeRepository
 import com.ad.cookgood.profile.data.UserProfileRepositoryImpl
@@ -72,4 +74,9 @@ abstract class RepositoryModule {
       impl: UploadImageRepositoryImpl
    ): UploadImageRepository
 
+   @Singleton
+   @Binds
+   abstract fun bindLikeRecipeRepository(
+      impl: LikeRecipeRepositoryImpl
+   ): LikeRecipeRepository
 }

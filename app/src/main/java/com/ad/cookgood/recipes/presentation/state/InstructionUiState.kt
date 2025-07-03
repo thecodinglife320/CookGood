@@ -14,5 +14,5 @@ fun InstructionUiState.toDomain() =
    Instruction(
       stepNumber = stepNumber,
       name = name,
-      uri = uri,
+      photo = uri.toString(),
    )

@@ -1,6 +1,5 @@
 package com.ad.cookgood.mycookbook.domain.model
 
-import androidx.core.net.toUri
 import com.ad.cookgood.recipes.data.local.recipe.LocalRecipe
 import com.ad.cookgood.recipes.domain.model.Recipe
 
@@ -16,5 +15,5 @@ fun MyRecipe.toLocal() =
       brief = recipe.brief,
       servings = recipe.serving,
       cookTime = recipe.cookTime,
-      uri = recipe.uri?.toUri()
+      photo = recipe.photo
    )

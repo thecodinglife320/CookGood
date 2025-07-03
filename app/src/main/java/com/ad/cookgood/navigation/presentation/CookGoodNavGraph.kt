@@ -23,11 +23,13 @@ import com.ad.cookgood.navigation.data.ProfileScreen
 import com.ad.cookgood.navigation.data.RecipeEntryScreen
 import com.ad.cookgood.navigation.data.SearchScreen
 import com.ad.cookgood.navigation.data.SessionManagementScreen
+import com.ad.cookgood.navigation.data.SharedRecipeDetailScreen
 import com.ad.cookgood.profile.presentation.ProfileScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryScreen
 import com.ad.cookgood.recipes.presentation.entry.RecipeEntryViewModel
 import com.ad.cookgood.search.presentation.SearchScreen
 import com.ad.cookgood.session_management.presentation.SessionManagementScreen
+import com.ad.cookgood.share_recipe.presentaion.SharedRecipeDetailScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,6 +79,14 @@ fun CookGoodNavHost(
                   )
                )
             },
+            onSharedRecipeClick = {
+               navController.navigate(
+                  SharedRecipeDetailScreen.route.replace(
+                     "{${SharedRecipeDetailScreen.sharedRecipeIdArg}}",
+                     "$it"
+                  )
+               )
+            }
          )
       }
 
@@ -107,6 +117,7 @@ fun CookGoodNavHost(
                   EditMyRecipeScreen.route.replace("{${MyRecipeDetailScreen.recipeIdArg}}", "$it")
                navController.navigate(route)
             },
+            navigateBack = { navController.popBackStack() },
          )
       }
 
@@ -135,6 +146,18 @@ fun CookGoodNavHost(
             navigateBack = { navController.popBackStack() },
             vm = vm
          )
+      }
+
+      //shared recipe detail screen
+      composable(
+         route = SharedRecipeDetailScreen.route,
+         arguments = listOf(
+            navArgument(SharedRecipeDetailScreen.sharedRecipeIdArg) {
+               type = NavType.StringType
+            }
+         )
+      ) {
+         SharedRecipeDetailScreen()
       }
    }
 }

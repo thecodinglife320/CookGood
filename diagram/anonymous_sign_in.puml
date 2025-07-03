@@ -4,9 +4,9 @@ skinparam DefaultFontSize 15
 
 |Khách|
 start
-:Click "Đăng nhập ẩn danh";
+:Click "Đăng nhập khách";
 |Ứng dụng|
-:Gửi yêu cầu đăng nhập ẩn danh;
+:Gửi yêu cầu đăng nhập khách;
 |Firebase|
 if (Thành \n công?) then (Có)
   :Tạo UID  tạm thời;

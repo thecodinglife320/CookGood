@@ -1,7 +1,6 @@
 package com.ad.cookgood.mycookbook.presentaion.myrecipedetail
 
 import android.app.Application
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -12,18 +11,21 @@ import com.ad.cookgood.mycookbook.domain.usecase.GetIngredientsOfMyRecipeUseCase
 import com.ad.cookgood.mycookbook.domain.usecase.GetInstructionsOfMyRecipeUseCase
 import com.ad.cookgood.mycookbook.domain.usecase.GetMyRecipeUseCase
 import com.ad.cookgood.mycookbook.presentaion.state.MyRecipeUiState
+import com.ad.cookgood.mycookbook.presentaion.state.ShareConfirmDialogUiState
 import com.ad.cookgood.mycookbook.presentaion.state.toDomain
 import com.ad.cookgood.navigation.data.MyRecipeDetailScreen
 import com.ad.cookgood.profile.domain.GetCurrentUserUseCase
 import com.ad.cookgood.recipes.domain.model.toRecipeUiState
 import com.ad.cookgood.recipes.domain.model.toUiState
+import com.ad.cookgood.recipes.presentation.state.IngredientUiState
+import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 import com.ad.cookgood.recipes.presentation.state.toDomain
-import com.ad.cookgood.share_recipe.data.FirebaseIngredient
-import com.ad.cookgood.share_recipe.data.FirebaseInstruction
-import com.ad.cookgood.share_recipe.data.FirebaseRecipe
-import com.ad.cookgood.share_recipe.domain.ShareRecipeUseCase
+import com.ad.cookgood.share_recipe.domain.model.SharedIngredient
+import com.ad.cookgood.share_recipe.domain.model.SharedInstruction
+import com.ad.cookgood.share_recipe.domain.model.SharedRecipe
+import com.ad.cookgood.share_recipe.domain.usecase.ShareRecipeUseCase
 import com.ad.cookgood.uploadimage.domain.UploadImageUseCase
-import com.ad.cookgood.util.getAppWriteFileViewUri
+import com.ad.cookgood.util.getAppWriteFileViewUrl
 import com.ad.cookgood.util.getFileDetailsFromUri
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,6 +36,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -51,9 +54,11 @@ class MyRecipeViewModel @Inject constructor(
 ) : ViewModel() {
 
    private val id = stateHandle.get<Long>(MyRecipeDetailScreen.recipeIdArg) ?: 0
-
    private val _currentUser: MutableStateFlow<FirebaseUser?> = MutableStateFlow(null)
    val currentUser: StateFlow<FirebaseUser?> = _currentUser
+
+   private val _shareConfirmDialogUiState = MutableStateFlow(ShareConfirmDialogUiState())
+   val shareConfirmDialogUiState: StateFlow<ShareConfirmDialogUiState> = _shareConfirmDialogUiState
 
    init {
       viewModelScope.launch {
@@ -64,21 +69,23 @@ class MyRecipeViewModel @Inject constructor(
    }
 
    //prepare state
-   val myRecipeUiState =
-      getMyRecipeUseCase(id)
-         .map {
-            it?.let {
-               MyRecipeUiState(
-                  id = it.id,
-                  recipeUiState = it.recipe.toRecipeUiState().copy(
-                     cookTimeMinutes = "${it.recipe.cookTime % 60} phút",
-                     cookTimeHours = "${it.recipe.cookTime / 60} tiếng",
-                     servings = "${it.recipe.serving} người"
-                  )
+   val myRecipeUiState = getMyRecipeUseCase(id)
+      .map {
+         it?.let {
+            MyRecipeUiState(
+               id = it.id,
+               recipeUiState = it.recipe.toRecipeUiState().copy(
+                  cookTimeMinutes = "${it.recipe.cookTime % 60} phút",
+                  cookTimeHours = "${it.recipe.cookTime / 60} tiếng",
+                  servings = "${it.recipe.serving} người"
                )
-            }
+            )
          }
-         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(TIMEOUT_MILLIS), MyRecipeUiState())
+      }.stateIn(
+         viewModelScope,
+         SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
+         null
+      )
 
    val instructionUiStates =
       getInstructionsOfMyRecipeUseCase(id)
@@ -103,10 +110,66 @@ class MyRecipeViewModel @Inject constructor(
       const val TAG = "MyRecipeViewModel"
    }
 
-   fun shareRecipe() =
+   fun onShareConfirmDialogDismiss() {
+      _shareConfirmDialogUiState.update {
+         it.copy(
+            isVisible = false
+         )
+      }
+   }
+
+   fun onLaunchShareConfirmDialog() {
+      _shareConfirmDialogUiState.update {
+         it.copy(
+            isVisible = true
+         )
+      }
+   }
+
+   fun onShareConfirmDialogConfirm() {
       viewModelScope.launch {
-         var uploadedRecipeUri: Uri? = null
-         myRecipeUiState.value!!.recipeUiState.uri?.let {
+         _shareConfirmDialogUiState.update {
+            it.copy(
+               isSharing = true
+            )
+         }
+         shareRecipe()
+         _shareConfirmDialogUiState.update {
+            it.copy(
+               isSharing = false
+            )
+         }
+      }
+   }
+
+   private suspend fun shareRecipe() {
+      var uploadedRecipePhoto: String? = null
+      myRecipeUiState.value!!.recipeUiState.uri?.let {
+         val fileDetails = getFileDetailsFromUri(application, it)
+         if (fileDetails != null) {
+            val file = InputFile.fromBytes(
+               fileDetails.bytes,
+               fileDetails.filename!!,
+               fileDetails.mimeType ?: "application/octet-stream"
+            )
+            uploadImageUseCase(file, ID.unique(), BuildConfig.APPWRITE_BUCKET_ID)
+               .onSuccess {
+                  uploadedRecipePhoto = getAppWriteFileViewUrl(
+                     bucketId = BuildConfig.APPWRITE_BUCKET_ID,
+                     fileId = it.id,
+                     projectId = BuildConfig.APPWRITE_PROJECT_ID
+                  )
+                  Log.d(TAG, "uploadImage: $it")
+               }
+               .onFailure {
+                  Log.e(TAG, it.message.toString())
+               }
+         }
+      }
+
+      val sharedInstructions = instructionUiStates.value.map {
+         var uploadedInstructionPhoto: String? = null
+         it.uri?.let {
             val fileDetails = getFileDetailsFromUri(application, it)
             if (fileDetails != null) {
                val file = InputFile.fromBytes(
@@ -114,68 +177,61 @@ class MyRecipeViewModel @Inject constructor(
                   fileDetails.filename!!,
                   fileDetails.mimeType ?: "application/octet-stream"
                )
-               uploadImageUseCase(file, ID.unique())
+               uploadImageUseCase(file, ID.unique(), BuildConfig.APPWRITE_BUCKET_ID)
                   .onSuccess {
-                     uploadedRecipeUri = getAppWriteFileViewUri(
+                     uploadedInstructionPhoto = getAppWriteFileViewUrl(
                         bucketId = BuildConfig.APPWRITE_BUCKET_ID,
                         fileId = it.id,
                         projectId = BuildConfig.APPWRITE_PROJECT_ID
                      )
-                     Log.d(TAG, "uploadImage: $it")
                   }
                   .onFailure {
                      Log.e(TAG, it.message.toString())
                   }
             }
          }
-
-         val firebaseRecipe = FirebaseRecipe(
-            recipe = myRecipeUiState.value!!.recipeUiState.toDomain().copy(
-               uri = uploadedRecipeUri.toString()
-            ),
-            userId = currentUser.value?.uid
+         it.toSharedInstruction(
+            uploadedInstructionPhoto
          )
-         val firebaseInstructions = instructionUiStates.value.map {
-            var uploadedInstructionUri: Uri? = null
-            it.uri?.let {
-               val fileDetails = getFileDetailsFromUri(application, it)
-               if (fileDetails != null) {
-                  val file = InputFile.fromBytes(
-                     fileDetails.bytes,
-                     fileDetails.filename!!,
-                     fileDetails.mimeType ?: "application/octet-stream"
-                  )
-                  uploadImageUseCase(file, ID.unique())
-                     .onSuccess {
-                        uploadedInstructionUri = getAppWriteFileViewUri(
-                           bucketId = BuildConfig.APPWRITE_BUCKET_ID,
-                           fileId = it.id,
-                           projectId = BuildConfig.APPWRITE_PROJECT_ID
-                        )
-                     }
-                     .onFailure {
-                        Log.e(TAG, it.message.toString())
-                     }
-               }
-            }
-            FirebaseInstruction(
-               instruction = it.toDomain().copy(
-                  uri = uploadedInstructionUri
-               )
-            )
-         }
-         val firebaseIngredients = ingredientUiStates.value.map {
-            FirebaseIngredient(
-               ingredient = it.toDomain()
-            )
-         }
-         shareRecipeUseCase(firebaseRecipe, firebaseInstructions, firebaseIngredients)
       }
+
+      val sharedIngredients = ingredientUiStates.value.map {
+         it.toSharedIngredient()
+      }
+
+      shareRecipeUseCase(
+         myRecipeUiState.value!!.toSharedRecipe(
+            _currentUser.value!!.uid,
+            uploadedRecipePhoto
+         ),
+         sharedInstructions,
+         sharedIngredients
+      )
+   }
 
    fun deleteMyRecipe() =
       viewModelScope.launch {
          deleteMyRecipeUseCase(myRecipeUiState.value!!.toDomain())
       }
 }
+
+fun MyRecipeUiState.toSharedRecipe(userId: String, uploadedRecipePhoto: String? = null) =
+   SharedRecipe(
+      recipe = recipeUiState.toDomain().copy(photo = uploadedRecipePhoto),
+      userId = userId,
+      id = ""
+   )
+
+fun IngredientUiState.toSharedIngredient() =
+   SharedIngredient(
+      ingredient = toDomain(),
+      id = ""
+   )
+
+fun InstructionUiState.toSharedInstruction(uploadedInstructionPhoto: String?) =
+   SharedInstruction(
+      id = "",
+      instruction = toDomain().copy(photo = uploadedInstructionPhoto)
+   )
 
 

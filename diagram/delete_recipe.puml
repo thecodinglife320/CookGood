@@ -1,0 +1,49 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 30
+
+|Người dùng|
+: Màn hình chi tiết công thức nấu ăn;
+: Nhấn nút "Xóa";
+: Xác nhận hành động;
+
+|Lớp Biểu diễn|
+: Hiển thị dialog xác nhận;
+if (Người dùng đồng ý?) then (Có)
+  : Gọi Lớp nghiệp vụ để xử lý xóa;
+else (Không)
+  : Đóng dialog;
+  stop
+endif
+
+|Lớp Nghiệp vụ|
+: Kiểm tra quyền xóa\n(ownership/role);
+: Gọi lớp dữ liệu để xoá;
+
+|Lớp Dữ liệu|
+:Xóa công thức;
+:Xóa nguyên liệu liên quan;
+:Xóa hướng dẫn liên quan;
+
+
+|Room Database|
+: Thực hiện transaction;
+if (Thành công?) then (Có)
+  : Trả về kết quả thành công;
+else (Lỗi)
+  : Rollback thay đổi;
+  : Trả về lỗi;
+endif
+
+|Lớp Biểu diễn|
+if (Thành công?) then (Có)
+  :Đưa người dùng trở về\nmàn hình danh sách công thức;
+else (Lỗi)
+  : Hiển thị thông báo lỗi;
+endif
+
+|Người dùng|
+:Nhận thông báo;
+
+stop
+@enduml
