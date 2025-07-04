@@ -151,7 +151,6 @@ fun MyRecipeDetailScreenContent(
 ) {
    Column(modifier) {
 
-      //recipe image
       CoilImage(
          uri = recipeUiState.uri,
          modifier = Modifier.height(300.dp)

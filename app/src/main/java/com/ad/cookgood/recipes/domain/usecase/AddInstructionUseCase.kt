@@ -5,8 +5,8 @@ import com.ad.cookgood.recipes.domain.model.Instruction
 import javax.inject.Inject
 
 class AddInstructionUseCase @Inject constructor(
-   private val recipeRepositoryImpl: RecipeRepository,
+   private val recipeRepository: RecipeRepository,
 ) {
    suspend operator fun invoke(instruction: Instruction, recipeId: Long) =
-      recipeRepositoryImpl.insertInstruction(instruction = instruction, recipeId)
+      recipeRepository.insertInstruction(instruction = instruction, recipeId)
 }

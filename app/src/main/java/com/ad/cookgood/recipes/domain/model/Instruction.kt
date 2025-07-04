@@ -7,7 +7,7 @@ import com.ad.cookgood.recipes.presentation.state.InstructionUiState
 data class Instruction(
    val stepNumber: Int = 0,
    val name: String = "",
-   val photo: String?
+   val photo: String? = ""
 )
 
 fun Instruction.toLocal(recipeId: Long) =

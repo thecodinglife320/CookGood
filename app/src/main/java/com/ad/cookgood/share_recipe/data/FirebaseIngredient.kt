@@ -5,5 +5,5 @@ import com.google.firebase.firestore.DocumentId
 
 data class FirebaseIngredient(
    @DocumentId val id: String? = null,
-   val ingredient: Ingredient
+   val ingredient: Ingredient = Ingredient()
 )

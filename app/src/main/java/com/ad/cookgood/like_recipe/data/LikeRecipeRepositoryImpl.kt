@@ -7,7 +7,6 @@ import com.ad.cookgood.like_recipe.domain.model.toData
 import com.ad.cookgood.share_recipe.data.FirebaseRecipe
 import com.ad.cookgood.share_recipe.data.toSharedRecipe
 import com.ad.cookgood.share_recipe.domain.model.SharedRecipe
-import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -28,6 +27,13 @@ class LikeRecipeRepositoryImpl @Inject constructor(
          .document(firebaseFavoriteRecipe.recipeId)
 
       favoriteRef.set(firebaseFavoriteRecipe).await()
+   }
+
+   override suspend fun removeFavorite(favoriteRecipe: FavoriteRecipe) {
+      val favoriteRef = db.collection("users").document(favoriteRecipe.userId)
+         .collection("favorites")
+         .document(favoriteRecipe.recipeId)
+      favoriteRef.delete().await()
    }
 
    override fun getFavorites(userId: String): Flow<List<SharedRecipe>> = callbackFlow {
@@ -61,20 +67,19 @@ class LikeRecipeRepositoryImpl @Inject constructor(
                         )
                      }
                   }
-                  // Sau khi đã fetch tất cả, phát ra danh sách
                   trySend(recipes.toList().map { it.toSharedRecipe() })
                }
-            } else trySend(emptyList()) // Không có công thức yêu thích nào
+            } else trySend(emptyList())
          } else trySend(emptyList())
       }
-      awaitClose { favoritesSubscription.remove() } // Hủy lắng nghe khi Flow kết thúc
+      awaitClose { favoritesSubscription.remove() }
    }
 
    private companion object {
       const val TAG = "LikeRecipeRepository"
    }
 
-   private fun isRecipeFavorite(recipeId: String, currentUserId: String?): Flow<Boolean> =
+   override fun isRecipeFavorite(recipeId: String, currentUserId: String?): Flow<Boolean> =
       callbackFlow {
 
          val favoriteRef = db.collection("users").document(currentUserId ?: "")
@@ -91,7 +96,3 @@ class LikeRecipeRepositoryImpl @Inject constructor(
       }
 }
 
-data class FirebaseFavoriteRecipe(
-   @DocumentId val recipeId: String = "",
-   val favoriteAt: Long = System.currentTimeMillis(),
-)

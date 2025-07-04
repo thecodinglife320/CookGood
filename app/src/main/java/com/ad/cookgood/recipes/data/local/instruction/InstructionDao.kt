@@ -10,16 +10,12 @@ import kotlinx.coroutines.flow.Flow
 interface InstructionDao {
    @Insert
    suspend fun insertInstruction(localInstruction: LocalInstruction): Long
-
    @Query("select * from instructions where id = :instructionId")
    suspend fun getInstructionById(instructionId: Long): LocalInstruction?
-
    @Query("select * from instructions")
    suspend fun getAllInstruction(): List<LocalInstruction>
-
    @Query("select * from instructions where recipe_id=:recipeId")
    fun getInstructionsByRecipeId(recipeId: Long): Flow<List<LocalInstruction>>
-
    @Delete
    suspend fun deleteInstruction(instruction: LocalInstruction)
 }

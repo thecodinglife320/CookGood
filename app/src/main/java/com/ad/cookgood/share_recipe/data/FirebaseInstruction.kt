@@ -5,5 +5,5 @@ import com.google.firebase.firestore.DocumentId
 
 data class FirebaseInstruction(
    @DocumentId val id: String? = null,
-   val instruction: Instruction
+   val instruction: Instruction = Instruction()
 )

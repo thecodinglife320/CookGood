@@ -63,14 +63,18 @@ class ShareRecipeRepositoryImpl @Inject constructor(
             ingredientsSnapshot.documents.mapNotNull { it.toObject(FirebaseIngredient::class.java) }
 
          val stepsSnapshot = db.collection("recipes").document(sharedRecipeId)
-            .collection("steps").orderBy("order").get().await()
+            .collection("instructions").get().await()
          val firebaseInstructions =
             stepsSnapshot.documents.mapNotNull { it.toObject(FirebaseInstruction::class.java) }
 
          SharedRecipeDetails(
             firebaseRecipe.toSharedRecipe(),
             firebaseIngredients.map { it.toSharedIngredient() },
-            firebaseInstructions.map { it.toSharedInstruction() })
+            firebaseInstructions.map { it.toSharedInstruction() }.sortedBy {
+               it.instruction.stepNumber
+            }).also {
+            Log.d(TAG, "SharedRecipeDetails: $it")
+         }
       } catch (e: Exception) {
          Log.e(TAG, "Error getting shared recipe", e)
          null

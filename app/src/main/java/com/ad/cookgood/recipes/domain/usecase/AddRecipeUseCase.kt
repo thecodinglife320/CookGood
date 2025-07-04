@@ -7,6 +7,5 @@ import javax.inject.Inject
 class AddRecipeUseCase @Inject constructor(
    private val recipeRepository: RecipeRepository,
 ) {
-
    suspend operator fun invoke(recipe: Recipe) = recipeRepository.insertRecipe(recipe)
 }

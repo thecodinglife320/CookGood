@@ -35,7 +35,7 @@ fun CoilImage(
             .build(),
          contentDescription = "Ảnh vừa chụp",
          modifier = modifier,
-         contentScale = ContentScale.Crop,
+         contentScale = ContentScale.FillBounds,
          onSuccess = { isLoading = false }
       )
    }

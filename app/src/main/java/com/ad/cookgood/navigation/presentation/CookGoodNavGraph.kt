@@ -157,7 +157,7 @@ fun CookGoodNavHost(
             }
          )
       ) {
-         SharedRecipeDetailScreen()
+         SharedRecipeDetailScreen(navigateUp = { navController.navigateUp() })
       }
    }
 }
