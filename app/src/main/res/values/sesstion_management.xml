@@ -2,7 +2,7 @@
 <resources>
     <string name="signout">Đăng xuất</string>
     <string name="signout_success">Đăng xuất thành công</string>
-    <string name="link_anonymous">Liên kết tài khoản ẩn danh với tài khoản Google</string>
+    <string name="link_anonymous">Liên kết tài khoản</string>
     <string name="link_anonymous_success">Liên kết thành công</string>
     <string name="user_profile">Thông tin tài khoản</string>
 </resources>

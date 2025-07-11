@@ -2,7 +2,7 @@
 skinparam DefaultFontName "Liberation Serif"
 skinparam DefaultFontSize 15
 left to right direction
-:Người dùng: as user
+:Người dùng\nthông thường: as user
 :Người dùng khách: as anonymous
 
 rectangle {
@@ -86,7 +86,7 @@ newpage
 skinparam DefaultFontName "Liberation Serif"
 skinparam DefaultFontSize 15
 left to right direction
-:Người dùng: as user
+:Người dùng\nthông thường: as user
 
 rectangle {
 usecase signIn as "Đăng nhập"

@@ -24,16 +24,6 @@ endif
   : Cập nhật bảng Công thức;
   : Xóa và chèn lại nguyên liệu;
   : Xóa và chèn lại bước làm;
-: Thực hiện transaction;
-
-|Room Database|
-if (Transaction thành công?) then (Có)
-  : Commit thay đổi;
-  : Trả về kết quả;
-else (Lỗi)
-  : Rollback tự động;
-  : Trả về lỗi;
-endif
 
 |Lớp Biểu diễn\n(Presentation)|
 if (Thành công?) then (Có)

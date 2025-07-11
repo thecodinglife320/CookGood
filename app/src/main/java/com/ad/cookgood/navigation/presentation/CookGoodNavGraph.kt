@@ -59,7 +59,14 @@ fun CookGoodNavHost(
 
       //search screen
       composable(route = SearchScreen.route) {
-         SearchScreen()
+         SearchScreen({
+            navController.navigate(
+               SharedRecipeDetailScreen.route.replace(
+                  "{${SharedRecipeDetailScreen.sharedRecipeIdArg}}",
+                  "$it"
+               )
+            )
+         })
       }
 
       //my cook book screen

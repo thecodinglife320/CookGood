@@ -33,7 +33,6 @@ class MyRecipeRepositoryImpl @Inject constructor(
          it.map {
             it.toDomain()
          }
-
       }
 
    override fun getIngredientsByRecipeId(recipeId: Long) =

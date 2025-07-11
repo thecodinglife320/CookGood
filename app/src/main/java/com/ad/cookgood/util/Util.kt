@@ -9,9 +9,11 @@ import com.ad.cookgood.uploadimage.data.FileDetails
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.text.Normalizer
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.regex.Pattern
 
 fun isNetworkAvailable(context: Context): Boolean {
    val connectivityManager =
@@ -27,8 +29,8 @@ fun isNetworkAvailable(context: Context): Boolean {
 }
 
 suspend fun getFileDetailsFromUri(context: Context, uri: Uri): FileDetails? {
-   var filename: String? = null
-   var mimeType: String? = null
+   var filename: String?
+   var mimeType: String?
    var inputStream: InputStream? = null
    var byteArrayOutputStream: ByteArrayOutputStream? = null
 
@@ -83,6 +85,24 @@ suspend fun getFileDetailsFromUri(context: Context, uri: Uri): FileDetails? {
          Log.e("FileDetails", "Error closing streams: ${e.message}", e)
       }
    }
+}
+
+fun normalizeStringForSearch(input: String?): String {
+   if (input == null) return ""
+
+   // 1. Chuyển sang chữ thường
+   var normalized = input.lowercase()
+
+   // 2. Loại bỏ dấu bằng cách chuyển sang dạng NFD (Normalization Form D)
+   //    và loại bỏ các ký tự dấu (non-spacing marks)
+   normalized = Normalizer.normalize(normalized, Normalizer.Form.NFD)
+   val pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+")
+   normalized = pattern.matcher(normalized).replaceAll("")
+
+   // 3. Xử lý đặc biệt cho chữ 'đ' (vì nó không bị loại bỏ bởi bước trên)
+   normalized = normalized.replace('đ', 'd')
+
+   return normalized
 }
 
 fun getAppWriteFileViewUrl(

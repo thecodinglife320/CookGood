@@ -9,4 +9,3 @@ sealed interface SharedMyRecipeGridUiState {
       val sharedMyRecipeUiStates: List<SharedRecipe>
    ) : SharedMyRecipeGridUiState
 }
-

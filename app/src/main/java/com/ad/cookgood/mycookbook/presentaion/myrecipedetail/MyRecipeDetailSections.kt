@@ -67,13 +67,13 @@ fun RecipeInfoCard(
    modifier: Modifier = Modifier,
    cookTimeMinutes: String = "10 phut",
    cookTimeHours: String = "3 tieng",
-   servings: String = "10 nguoi",
+   servings: String = "10",
    brief: String = "Dac san tay bac"
 ) {
    val recipeInfoMap = mapOf(
       R.string.recipe_entry_info_label to brief,
-      R.string.recipe_entry_cook_time_label to "$cookTimeHours $cookTimeMinutes",
-      R.string.recipe_entry_serving_labelTruoc to servings,
+      R.string.recipe_entry_cook_time_label to "$cookTimeHours tiếng $cookTimeMinutes phút",
+      R.string.recipe_entry_serving_labelTruoc to "$servings người",
    )
    Card(modifier) {
       Column {
@@ -140,12 +140,6 @@ fun InstructionRow(
                      .height(200.dp)
                      .fillMaxWidth()
                )
-
-               //instruction text
-               Text(
-                  text = instructionUiStates[index].name,
-                  textAlign = TextAlign.Center
-               )
             }
 
             //next button
@@ -160,6 +154,12 @@ fun InstructionRow(
                )
             }
          }
+         //instruction text
+         Text(
+            text = instructionUiStates[index].name,
+            textAlign = TextAlign.Justify,
+            modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+         )
       }
    }
 }

@@ -6,6 +6,8 @@ import com.google.firebase.firestore.DocumentId
 data class FirebaseRecipe(
    @DocumentId val id: String? = null,
    val recipe: Recipe = Recipe(),
-   val userId: String? = null
+   val userId: String? = null,
+   val normalizedTitle: String = "",
+   val uploadAt: Long = System.currentTimeMillis()
 )
 

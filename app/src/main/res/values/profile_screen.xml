@@ -5,4 +5,5 @@
     <string name="email">Email</string>
     <string name="update_profile">Cập nhật</string>
     <string name="profile_updated">Thông tin cá nhân đã được cập nhật</string>
+    <string name="profile_update_failed">Cập nhật thông tin cá nhân thất bại</string>
 </resources>

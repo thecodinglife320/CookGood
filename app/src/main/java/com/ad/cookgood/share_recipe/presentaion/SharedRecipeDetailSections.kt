@@ -6,19 +6,15 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowBackIos
-import androidx.compose.material.icons.automirrored.outlined.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SecondaryTabRow
@@ -38,9 +34,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ad.cookgood.R
+import com.ad.cookgood.mycookbook.presentaion.myrecipedetail.InstructionRow
 import com.ad.cookgood.recipes.presentation.state.IngredientUiState
 import com.ad.cookgood.recipes.presentation.state.InstructionUiState
-import com.ad.cookgood.shared.CoilImage
 
 @Composable
 fun BasicInfo(
@@ -156,70 +152,9 @@ fun SecondaryTextTabs(
          1 -> {
             if (instructionUiStates.isNotEmpty()) {
 
-               var index by remember { mutableIntStateOf(0) }
-
-               Column {
-
-                  //button and image
-                  Row(
-                     verticalAlignment = Alignment.Companion.CenterVertically,
-                     horizontalArrangement = Arrangement.spacedBy(10.dp)
-                  ) {
-
-                     //previous button
-                     FilledIconButton(
-                        onClick = { index-- },
-                        enabled = index != 0,
-                        modifier = Modifier.weight(0.3f)
-                     ) {
-                        Icon(
-                           imageVector = Icons.AutoMirrored.Outlined.ArrowBackIos,
-                           contentDescription = null
-                        )
-                     }
-
-                     Column(
-                        Modifier
-                           .weight(2.4f)
-                     ) {
-                        //step number
-                        Text(
-                           stringResource(
-                              R.string.step_number,
-                              instructionUiStates[index].stepNumber
-                           ),
-                           color = MaterialTheme.colorScheme.onBackground
-                        )
-
-                        //image per step
-                        CoilImage(
-                           uri = instructionUiStates[index].uri,
-                           modifier = Modifier
-                              .height(200.dp)
-                              .fillMaxWidth()
-                        )
-
-                        //instruction text
-                        Text(
-                           color = MaterialTheme.colorScheme.onBackground,
-                           text = instructionUiStates[index].name,
-                           textAlign = TextAlign.Center
-                        )
-                     }
-
-                     //next button
-                     FilledIconButton(
-                        onClick = { index++ },
-                        enabled = index != instructionUiStates.size - 1,
-                        modifier = Modifier.weight(0.3f)
-                     ) {
-                        Icon(
-                           imageVector = Icons.AutoMirrored.Outlined.ArrowForwardIos,
-                           contentDescription = null
-                        )
-                     }
-                  }
-               }
+               InstructionRow(
+                  instructionUiStates = instructionUiStates,
+               )
             } else Text(
                "Chưa có cách làm",
                modifier = Modifier.align(Alignment.CenterHorizontally),

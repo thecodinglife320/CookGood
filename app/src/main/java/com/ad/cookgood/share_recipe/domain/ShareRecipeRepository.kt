@@ -12,8 +12,9 @@ interface ShareRecipeRepository {
       sharedInstructions: List<SharedInstruction>,
       sharedIngredients: List<SharedIngredient>
    )
-
    suspend fun getSharedRecipe(sharedRecipeId: String): SharedRecipeDetails?
    fun getSharedMyRecipes(userId: String): Flow<List<SharedRecipe>>
+   suspend fun searchRecipesByName(queryText: String): List<SharedRecipe>
+   suspend fun getRecentSharedRecipes(limit: Int): List<SharedRecipe>
 }
 

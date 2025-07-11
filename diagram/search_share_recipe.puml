@@ -21,6 +21,8 @@ endif
 
 |Lớp Dữ liệu\n(Data)|
 : Kết nối Firebase;
+:Gửi yêu cầu truy vấn
+cho Firebase;
 
 |Firebase|
 :Thực thi truy vấn\ntrên Cloud Firestore;
@@ -35,7 +37,7 @@ endif
 :Trả kết quả cho Use Case;
 
 |Lớp Nghiệp vụ\n(Domain)|
-: Áp dụng sorting (nếu cần);
+: Áp dụng sorting;
 : Lọc kết quả trùng lặp;
 : Trả kết quả cho lớp biểu diễn;
 

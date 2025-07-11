@@ -75,9 +75,9 @@ class MyRecipeViewModel @Inject constructor(
             MyRecipeUiState(
                id = it.id,
                recipeUiState = it.recipe.toRecipeUiState().copy(
-                  cookTimeMinutes = "${it.recipe.cookTime % 60} phút",
-                  cookTimeHours = "${it.recipe.cookTime / 60} tiếng",
-                  servings = "${it.recipe.serving} người"
+                  cookTimeMinutes = "${it.recipe.cookTime % 60}",
+                  cookTimeHours = "${it.recipe.cookTime / 60}",
+                  servings = "${it.recipe.serving}"
                )
             )
          }
@@ -219,7 +219,8 @@ fun MyRecipeUiState.toSharedRecipe(userId: String, uploadedRecipePhoto: String? 
    SharedRecipe(
       recipe = recipeUiState.toDomain().copy(photo = uploadedRecipePhoto),
       userId = userId,
-      id = ""
+      id = "",
+      uploadAt = 0,
    )
 
 fun IngredientUiState.toSharedIngredient() =

@@ -99,8 +99,8 @@ fun SharedRecipeDetailScreen(
       ) { p ->
          SharedRecipeDetailScreenContent(
             modifier = Modifier.padding(p),
-            cookTime = "${recipeUiState.cookTimeHours} ${recipeUiState.cookTimeMinutes} ",
-            servings = recipeUiState.servings,
+            cookTime = "${recipeUiState.cookTimeHours}h ${recipeUiState.cookTimeMinutes}' ",
+            servings = recipeUiState.servings + " người",
             description = recipeUiState.brief,
             instructionUiStates = it.sharedInstructions.map { e -> e.instruction.toUiState() },
             ingredientUiStates = it.sharedIngredients.map { e -> e.ingredient.toUiState() },

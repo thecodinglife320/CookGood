@@ -1,6 +1,6 @@
 @startuml
 skinparam DefaultFontName "Liberation Serif"
-skinparam DefaultFontSize 20
+skinparam DefaultFontSize 30
 
 |Người dùng|
 :Chỉnh sửa thông tin cá nhân;
@@ -8,7 +8,7 @@ skinparam DefaultFontSize 20
 
 |Ứng dụng|
 :Chuẩn bị dữ liệu cập nhật;
-:Gửi yêu cầu đến hệ thống;
+:Gửi yêu cầu đến Firebase;
 
 |Firebase|
 if (Xử lý thành công?) then (Có)

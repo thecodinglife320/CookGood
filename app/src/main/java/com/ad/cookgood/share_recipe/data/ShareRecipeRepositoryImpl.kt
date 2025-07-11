@@ -7,7 +7,9 @@ import com.ad.cookgood.share_recipe.domain.model.SharedInstruction
 import com.ad.cookgood.share_recipe.domain.model.SharedRecipe
 import com.ad.cookgood.share_recipe.domain.model.SharedRecipeDetails
 import com.ad.cookgood.share_recipe.domain.model.toRemote
+import com.ad.cookgood.util.normalizeStringForSearch
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -95,6 +97,57 @@ class ShareRecipeRepositoryImpl @Inject constructor(
       awaitClose { subscription.remove() }
    }
 
+   override suspend fun searchRecipesByName(queryText: String): List<SharedRecipe> {
+      val results = mutableListOf<FirebaseRecipe>()
+      val normalizedQuery = normalizeStringForSearch(queryText)
+      Log.d(TAG, "Normalized query: $normalizedQuery")
+      try {
+         // Ký tự cuối cùng trong dải Unicode để tạo ra giới hạn trên
+         // Ví dụ: nếu prefix là "App", giới hạn trên sẽ là "App\uf8ff"
+         // Điều này đảm bảo rằng tất cả các chuỗi bắt đầu bằng "App" sẽ được bao gồm.
+         val endBoundary = normalizedQuery + "\uf8ff"
+
+         val querySnapshot = db.collection("recipes")
+            .orderBy("normalizedTitle") // Cần index cho trường này
+            .whereGreaterThanOrEqualTo("normalizedTitle", normalizedQuery)
+            .whereLessThanOrEqualTo("normalizedTitle", endBoundary)
+            .get()
+            .await()
+
+         for (document in querySnapshot.documents) {
+            document.toObject(FirebaseRecipe::class.java)?.let {
+               results.add(it)
+            }
+         }
+         Log.d(TAG, "Successfully fetched ${results.size} recipes starting with title: $queryText")
+      } catch (e: Exception) {
+         Log.e(TAG, "Error querying shared recipes starting with title", e)
+      }
+      return results.map { it.toSharedRecipe() }
+   }
+
+   override suspend fun getRecentSharedRecipes(limit: Int): List<SharedRecipe> {
+      val results = mutableListOf<FirebaseRecipe>()
+      try {
+         Log.d("FirestoreQuery", "Fetching recent shared recipes with limit: $limit")
+         val querySnapshot = db.collection("recipes")
+            .orderBy("uploadAt", Query.Direction.DESCENDING)
+            .limit(limit.toLong())
+            .get()
+            .await()
+
+         for (document in querySnapshot.documents) {
+            document.toObject(FirebaseRecipe::class.java)?.let { firebaseRecipe ->
+               results.add(firebaseRecipe)
+            }
+         }
+         Log.d(TAG, "Successfully fetched ${results.size} recent recipes.")
+      } catch (e: Exception) {
+         Log.e(TAG, "Error fetching recent shared recipes", e)
+      }
+      return results.map { it.toSharedRecipe() }
+   }
+
    private companion object {
       const val TAG = "ShareRecipeRepositoryImpl"
    }
@@ -116,4 +169,5 @@ fun FirebaseRecipe.toSharedRecipe() = SharedRecipe(
    id = id!!,
    recipe = recipe,
    userId = userId!!,
+   uploadAt = uploadAt,
 )

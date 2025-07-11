@@ -25,16 +25,6 @@ endif
 :Xóa nguyên liệu liên quan;
 :Xóa hướng dẫn liên quan;
 
-
-|Room Database|
-: Thực hiện transaction;
-if (Thành công?) then (Có)
-  : Trả về kết quả thành công;
-else (Lỗi)
-  : Rollback thay đổi;
-  : Trả về lỗi;
-endif
-
 |Lớp Biểu diễn|
 if (Thành công?) then (Có)
   :Đưa người dùng trở về\nmàn hình danh sách công thức;

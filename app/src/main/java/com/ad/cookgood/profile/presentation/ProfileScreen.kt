@@ -60,6 +60,7 @@ fun ProfileScreen(
    val scope = rememberCoroutineScope()
    val snackBarUiState by vm.snackBarUiState.collectAsState()
    val profileUiState by vm.profileUiState.collectAsState()
+   val isUpdating by vm.isUpdating.collectAsState()
 
    if (snackBarUiState.showSnackBar) {
       SideEffect {
@@ -72,7 +73,6 @@ fun ProfileScreen(
             when (result) {
                SnackbarResult.Dismissed -> {
                   vm.onDismissSnackBar()
-                  if (!snackBarUiState.isError) navigateUp()
                }
 
                SnackbarResult.ActionPerformed -> ""
@@ -106,6 +106,7 @@ fun ProfileScreen(
          onImagePicked = {
             vm.onImagePicked(it)
          },
+         isUpdating = isUpdating
       )
    }
 }
@@ -122,6 +123,7 @@ fun ProfileScreenContent(
    onNameChange: (String) -> Unit = {},
    updateUserProfile: () -> Unit = {},
    onImagePicked: (Uri) -> Unit = {},
+   isUpdating: Boolean = false
 ) {
 
    val singleImagePickerLauncher = rememberLauncherForActivityResult(
@@ -198,7 +200,9 @@ fun ProfileScreenContent(
 
             Spacer(Modifier.size(32.dp))
             OutlinedButton(updateUserProfile) {
-               Text(stringResource(R.string.update_profile))
+               if (isUpdating) {
+                  CircularProgressIndicator(Modifier.size(24.dp))
+               } else Text(stringResource(R.string.update_profile))
             }
          }
       }

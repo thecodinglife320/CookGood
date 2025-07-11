@@ -20,6 +20,7 @@ import io.appwrite.ID
 import io.appwrite.models.InputFile
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,14 +34,15 @@ class ProfileViewModel @Inject constructor(
 
    private val _profileUiState: MutableStateFlow<ProfileUiState> =
       MutableStateFlow(ProfileUiState.Loading)
-   val profileUiState: StateFlow<ProfileUiState> = _profileUiState
+   val profileUiState = _profileUiState.asStateFlow()
 
    private val _snackBarUiState = MutableStateFlow(SnackBarUiState())
 
-   private var uploadedUserPhoto: String? = null
-
    //expose state
    val snackBarUiState: StateFlow<SnackBarUiState> = _snackBarUiState
+
+   private val _isUpdating = MutableStateFlow(false)
+   val isUpdating: StateFlow<Boolean> = _isUpdating
 
    init {
       loadUserProfile()
@@ -59,7 +61,7 @@ class ProfileViewModel @Inject constructor(
                }
             }
          }
-      } else handleError()
+      } else handleNetWorkError()
    }
 
    fun onNameChange(name: String) {
@@ -71,20 +73,58 @@ class ProfileViewModel @Inject constructor(
    fun updateUserProfile() {
       if (isNetworkAvailable(application)) {
          viewModelScope.launch {
-            uploadImage()
-            val name = (_profileUiState.value as ProfileUiState.Success).name!!
-            updateUserProfileUseCase(name, uploadedUserPhoto?.toUri())
-            _snackBarUiState.value = _snackBarUiState.value.copy(
-               message = application.getString(R.string.profile_updated),
-               showSnackBar = true
+            _isUpdating.value = true
+            val fileDetail = getFileDetailsFromUri(
+               application,
+               (_profileUiState.value as ProfileUiState.Success).uri!!
             )
+            fileDetail?.let {
+               val file = InputFile.fromBytes(
+                  fileDetail.bytes,
+                  fileDetail.filename!!,
+                  fileDetail.mimeType ?: "application/octet-stream"
+               )
+               uploadImageUseCase(file, ID.unique(), BuildConfig.APPWRITE_BUCKET_ID)
+                  .onSuccess {
+                     getAppWriteFileViewUrl(
+                        bucketId = BuildConfig.APPWRITE_BUCKET_ID,
+                        fileId = it.id,
+                        projectId = BuildConfig.APPWRITE_PROJECT_ID
+                     ).let {
+                        updateUserProfileUseCase(
+                           (_profileUiState.value as ProfileUiState.Success).name!!,
+                           it.toUri()
+                        )
+                        _snackBarUiState.value = _snackBarUiState.value.copy(
+                           message = application.getString(R.string.profile_updated),
+                           isError = false,
+                           showSnackBar = true
+                        )
+                        _isUpdating.value = false
+                     }
+                  }
+                  .onFailure {
+                     handleError(it)
+                  }
+
+            } ?: Log.d(TAG, "loi lay thong tin file")
          }
-      } else handleError()
+      } else handleNetWorkError()
    }
 
-   fun handleError() {
+   fun handleNetWorkError() {
       _snackBarUiState.value = _snackBarUiState.value.copy(
          message = application.getString(R.string.network_error),
+         isError = true,
+         showSnackBar = true
+      )
+   }
+
+   fun handleError(throwable: Throwable? = null) {
+      Log.e(TAG, "handleError: ", throwable)
+      _isUpdating.value = false
+      _snackBarUiState.value = _snackBarUiState.value.copy(
+         message = application.getString(R.string.profile_update_failed),
          isError = true,
          showSnackBar = true
       )
@@ -101,33 +141,6 @@ class ProfileViewModel @Inject constructor(
       _profileUiState.value = (_profileUiState.value as ProfileUiState.Success).copy(
          uri = uri
       )
-   }
-
-   fun uploadImage() {
-      viewModelScope.launch {
-         val fileDetail = getFileDetailsFromUri(
-            application,
-            (_profileUiState.value as ProfileUiState.Success).uri!!
-         )
-         if (fileDetail != null) {
-            val file = InputFile.fromBytes(
-               fileDetail.bytes,
-               fileDetail.filename!!,
-               fileDetail.mimeType ?: "application/octet-stream"
-            )
-            val result = uploadImageUseCase(file, ID.unique(), BuildConfig.APPWRITE_BUCKET_ID)
-            result.onSuccess {
-               uploadedUserPhoto = getAppWriteFileViewUrl(
-                  bucketId = BuildConfig.APPWRITE_BUCKET_ID,
-                  fileId = it.id,
-                  projectId = BuildConfig.APPWRITE_PROJECT_ID
-               )
-               Log.d(TAG, "uploadImage: $it")
-            }.onFailure {
-               Log.e(TAG, it.message.toString())
-            }
-         }
-      }
    }
 
    companion object {
