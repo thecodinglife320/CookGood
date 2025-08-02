@@ -43,9 +43,6 @@ android {
       compose = true
       buildConfig = true
    }
-   ksp { // Nếu bạn đang sử dụng KSP
-      arg("room.schemaLocation", "$project.directory/schemas".toString())
-   }
 }
 
 dependencies {

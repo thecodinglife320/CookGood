@@ -1,0 +1,97 @@
+@startuml
+skinparam DefaultFontName "Liberation Serif"
+skinparam DefaultFontSize 15
+left to right direction
+' ===== Các lớp chính =====
+
+class User {
+  - id: String
+  - displayName: String
+  - email: String
+  - photoUrl: String
+  - isAnonymous: Boolean
+  --
+  +addRecipe(recipe: Recipe): void
+  +removeRecipe(recipeId: String): void
+  +addFavorite(recipe: Recipe): void
+  +removeFavorite(recipeId: String): void
+  +shareRecipe(recipe: Recipe): void
+  +getSharedRecipes(): List<Recipe>
+  +getFavorites(): List<Recipe>
+  +getRecipes(): List<Recipe>
+}
+
+class Recipe {
+  - id: String
+  - title: String
+  - brief: String
+  - servings: Int
+  - cookTime: Int
+  - uri: Uri
+  --
+  +addIngredient(ingredient: Ingredient): void
+  +removeIngredient(name: String): void
+  +addInstruction(instruction: Instruction): void
+  +removeInstruction(stepNumber: Int): void
+  +getTotalSteps(): Int
+  +getTotalIngredient(): Int
+}
+
+class Ingredient {
+  - name: String
+  +toString(): String
+}
+
+class Instruction {
+  - stepNumber: Int
+  - name: String
+  - uri: Uri
+  --
+  +toString(): String
+}
+
+' ===== Quan hệ giữa các lớp chính =====
+
+User "1" *-- "0..*" Recipe : creates
+User "1" --> "0..*" Recipe : favorites
+User "1" --> "0..*" Recipe : shares
+
+Recipe "1" *-- "0..*" Ingredient
+Recipe "1" *-- "0..*" Instruction
+
+' ===== Hệ thống xác thực =====
+
+interface AuthResult
+
+class Success {
+  - user: User
+  --
+  +getUser(): User
+}
+
+class LinkSuccess {
+  - name: String?
+  - url: Uri?
+  --
+  +getLinkInfo(): String
+}
+
+class Error {
+  - reason: AuthError
+  --
+  +getErrorMessage(): String
+}
+
+class AuthError {
+  - messageRes: Int
+  --
+  +getMessage(): String
+}
+
+AuthResult <|.. Success
+AuthResult <|.. LinkSuccess
+AuthResult <|.. Error
+
+Error --> AuthError
+
+@enduml
