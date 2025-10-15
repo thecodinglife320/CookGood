@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
    alias(libs.plugins.android.application)
    alias(libs.plugins.kotlin.android)
@@ -7,20 +10,39 @@ plugins {
    alias(libs.plugins.google.gms.google.services)
 }
 
+// Load local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+   localProperties.load(FileInputStream(localPropertiesFile))
+}
+
 android {
    namespace = "com.ad.cookgood"
-   compileSdk = 35
+   compileSdk = 36
 
    defaultConfig {
       applicationId = "com.ad.cookgood"
       minSdk = 26
-      targetSdk = 35
+      targetSdk = 36
       versionCode = 1
       versionName = "1.0"
       testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-      buildConfigField("String", "APPWRITE_ENDPOINT", "\"https://fra.cloud.appwrite.io/v1\"")
-      buildConfigField("String", "APPWRITE_PROJECT_ID", "\"684170a5002413c6c4c8\"")
-      buildConfigField("String", "APPWRITE_BUCKET_ID", "\"68417176002dac7c6a1e\"")
+
+      // Read the API key and add it to BuildConfig
+      buildConfigField("String", "APPWRITE_ENDPOINT",
+         "\"${localProperties.getProperty("APPWRITE_ENDPOINT")}\""
+      )
+      buildConfigField("String", "APPWRITE_PROJECT_ID",
+         "\"${localProperties.getProperty("APPWRITE_PROJECT_ID")}\""
+      )
+      buildConfigField("String", "APPWRITE_BUCKET_ID",
+         "\"${localProperties.getProperty("APPWRITE_BUCKET_ID")}\""
+      )
+      buildConfigField("String", "GOOGLECLIENTID",
+         "\"${localProperties.getProperty("GOOGLECLIENTID")}\""
+      )
    }
 
    buildTypes {
@@ -51,53 +73,47 @@ dependencies {
    implementation(libs.androidx.lifecycle.runtime.ktx)
    implementation(libs.androidx.activity.compose)
    implementation(platform(libs.androidx.compose.bom))
+   implementation(platform(libs.firebase.bom))
    implementation(libs.androidx.ui)
    implementation(libs.androidx.ui.graphics)
    implementation(libs.androidx.ui.tooling.preview)
    implementation(libs.androidx.material3)
-   implementation(libs.androidx.constraintlayout.compose)
 
-   implementation(libs.androidx.room.ktx)
-   implementation(libs.androidx.room.runtime)
-   implementation(libs.androidx.hilt.navigation.compose)
-   implementation(libs.androidx.camera.core)
-   implementation(libs.androidx.camera.camera2)
    implementation(libs.accompanist.permissions)
-   implementation(libs.androidx.camera.lifecycle)
-   implementation(libs.coil.compose)
-   implementation(libs.androidx.camera.compose)
-   implementation(libs.firebase.auth)
-   implementation(libs.androidx.credentials)
-   implementation(libs.androidx.credentials.play.services.auth)
-   implementation(libs.googleid)
    implementation(libs.androidx.ui.text.google.fonts)
+
    implementation(libs.exoplayer.core)
    implementation(libs.exoplayer.ui)
+
+   implementation(libs.firebase.auth)
    implementation(libs.firebase.firestore)
-   testImplementation(libs.mockito.core)
-   androidTestImplementation(libs.core.ktx)
+
+   //room
+   implementation(libs.bundles.room)
    ksp(libs.androidx.room.compiler)
 
-   implementation(libs.hilt.android)
+   //hilt
+   implementation(libs.bundles.hilt)
    ksp(libs.hilt.android.compiler)
 
-   testImplementation(libs.junit)
-   testImplementation(libs.kotlinx.coroutines.test)
+   //camerax
+   implementation(libs.bundles.camerax)
 
+   //coil
+   implementation(libs.bundles.coil)
+
+   //google sign in
+   implementation(libs.bundles.googleSignin)
+
+   implementation(libs.androidx.navigation.compose)
+   implementation(libs.material.icons.extended)
+   implementation(libs.sdk.for1.android)
+
+   testImplementation(libs.junit)
    androidTestImplementation(libs.androidx.junit)
    androidTestImplementation(libs.androidx.espresso.core)
    androidTestImplementation(platform(libs.androidx.compose.bom))
    androidTestImplementation(libs.androidx.ui.test.junit4)
-   androidTestImplementation(libs.androidx.runner)
-   androidTestImplementation(libs.androidx.rules)
-   androidTestImplementation(libs.androidx.room.testing)
-   androidTestImplementation(libs.kotlinx.coroutines.test)
-
    debugImplementation(libs.androidx.ui.tooling)
    debugImplementation(libs.androidx.ui.test.manifest)
-
-   implementation(libs.androidx.navigation.compose)
-   implementation(libs.material3)
-   implementation(libs.material.icons.extended)
-   implementation(libs.sdk.for1.android)
 }

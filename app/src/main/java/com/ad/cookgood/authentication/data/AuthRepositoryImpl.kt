@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialCancellationException
+import com.ad.cookgood.BuildConfig
 import com.ad.cookgood.authentication.domain.AuthRepository
 import com.ad.cookgood.authentication.domain.model.AuthError
 import com.ad.cookgood.authentication.domain.model.AuthResult
@@ -21,7 +22,6 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class AuthRepositoryImpl @Inject constructor(
-   @Named("GoogleClientId") private val clientId: String,
    private val firebaseAuth: FirebaseAuth
 ) : AuthRepository {
 
@@ -68,7 +68,7 @@ class AuthRepositoryImpl @Inject constructor(
    private suspend fun getGoogleAuthCredential(context: Activity): AuthCredential {
       val option = GetGoogleIdOption.Builder()
          .setFilterByAuthorizedAccounts(false)
-         .setServerClientId(clientId)
+         .setServerClientId(BuildConfig.GOOGLECLIENTID)
          .setAutoSelectEnabled(true) // Consider if this is always the desired behavior
          .build()
 
