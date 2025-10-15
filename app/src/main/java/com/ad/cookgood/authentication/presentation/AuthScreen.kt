@@ -1,6 +1,7 @@
 package com.ad.cookgood.authentication.presentation
 
 import android.app.Activity
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
@@ -8,6 +9,7 @@ import android.widget.FrameLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -41,12 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+import androidx.media3.ui.PlayerView
 import com.ad.cookgood.R
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -95,9 +97,7 @@ fun AuthScreen(
       }
 
       AuthScreenContent(
-         modifier = Modifier
-            .padding(it)
-            .fillMaxSize(),
+         it,
          onAnonymousSignInButtonClick = { vm.signInAnonymous() },
          onGoogleSignInButtonClick = { it -> vm.signInWithGoogle(it) },
          isLoadingGoogle = isLoadingGoogle,
@@ -106,10 +106,10 @@ fun AuthScreen(
    }
 }
 
-@Preview
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun AuthScreenContent(
-   modifier: Modifier = Modifier,
+   paddingValues: PaddingValues,
    onAnonymousSignInButtonClick: () -> Unit = {},
    onGoogleSignInButtonClick: (Activity) -> Unit = {},
    isLoadingGoogle: Boolean = true,
@@ -117,22 +117,48 @@ fun AuthScreenContent(
 ) {
 
    val context = LocalContext.current
-   val videoUri = getVideoUri(context)
-   val exoPlayer = remember { context.buildExoPlayer(videoUri) }
 
-   DisposableEffect(
-      AndroidView(
-         factory = { it.buildPlayerView(exoPlayer) },
-         modifier = Modifier.fillMaxSize()
-      )
-   ) {
+   val videoUri = Uri.Builder()
+      .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE) // "android.resource"
+      .authority(context.packageName) // Tên gói ứng dụng
+      .appendPath(R.raw.clouds.toString()) // ID tài nguyên
+      .build()
+
+   val exoPlayer = remember {
+      ExoPlayer.Builder(context).build().apply {
+         val mediaItem = MediaItem.fromUri(videoUri)
+         setMediaItem(mediaItem)
+         prepare()
+         playWhenReady = true
+         repeatMode = ExoPlayer.REPEAT_MODE_ALL
+      }
+   }
+
+   DisposableEffect(Unit) {
       onDispose {
          exoPlayer.release()
       }
    }
 
+   AndroidView(
+      factory = {
+         // Tạo PlayerView trong AndroidView Factory
+         PlayerView(it).apply {
+            player = exoPlayer
+            useController = false
+            layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+         }
+      },
+      update = { view ->
+         // Được gọi khi trạng thái Compose thay đổi (Không cần thiết cho ví dụ đơn giản này)
+         // Ví dụ: view.player = newPlayer
+      }
+   )
+
    Column(
-      modifier,
+      modifier = Modifier
+         .fillMaxSize()
+         .padding(paddingValues),
       horizontalAlignment = Alignment.CenterHorizontally,
       verticalArrangement = Arrangement.Center
    ) {
@@ -161,26 +187,4 @@ fun AuthScreenContent(
          }
       }
    }
-}
-
-private fun Context.buildExoPlayer(uri: Uri) =
-   ExoPlayer.Builder(this).build().apply {
-      setMediaItem(MediaItem.fromUri(uri))
-      repeatMode = Player.REPEAT_MODE_ALL
-      playWhenReady = true
-      prepare()
-   }
-
-private fun Context.buildPlayerView(exoPlayer: ExoPlayer) =
-   StyledPlayerView(this).apply {
-      player = exoPlayer
-      layoutParams = FrameLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-      useController = false
-      resizeMode = RESIZE_MODE_ZOOM
-   }
-
-private fun getVideoUri(context: Context): Uri {
-   val rawId = context.resources.getIdentifier("clouds", "raw", context.packageName)
-   val videoUri = "android.resource://${context.packageName}/$rawId"
-   return videoUri.toUri()
 }

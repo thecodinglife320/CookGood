@@ -82,9 +82,6 @@ dependencies {
    implementation(libs.accompanist.permissions)
    implementation(libs.androidx.ui.text.google.fonts)
 
-   implementation(libs.exoplayer.core)
-   implementation(libs.exoplayer.ui)
-
    implementation(libs.firebase.auth)
    implementation(libs.firebase.firestore)
 
@@ -104,6 +101,9 @@ dependencies {
 
    //google sign in
    implementation(libs.bundles.googleSignin)
+
+   //media3
+   implementation(libs.bundles.media3)
 
    implementation(libs.androidx.navigation.compose)
    implementation(libs.material.icons.extended)
